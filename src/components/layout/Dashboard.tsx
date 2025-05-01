@@ -18,6 +18,7 @@ import WithdrawalOptions from '../features/WithdrawalOptions';
 import UploadProof from '../features/UploadProof';
 import Quantify from '../features/Quantify';
 import InviteUsers from '../features/InviteUsers';
+import CryptoRates from '../features/CryptoRates';
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('balance');
@@ -37,6 +38,11 @@ const Dashboard: React.FC = () => {
   return (
     <div className="container mx-auto py-6 max-w-4xl">
       <h1 className="text-2xl font-bold mb-6">Bem-vindo, {user?.phoneNumber}</h1>
+      
+      {/* Display crypto rates at the top */}
+      <div className="mb-6">
+        <CryptoRates />
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Menu sidebar on desktop, tabs on mobile */}

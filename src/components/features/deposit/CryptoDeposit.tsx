@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useCryptoRates } from '@/utils/cryptoRates';
 
 interface CryptoDepositProps {
   amount: string;
@@ -11,6 +12,20 @@ interface CryptoDepositProps {
 }
 
 const CryptoDeposit: React.FC<CryptoDepositProps> = ({ amount, setAmount, onDeposit }) => {
+  const { rates, isLoading } = useCryptoRates();
+  const [aocAmount, setAocAmount] = useState<string>('');
+
+  // Calculate AOcripto equivalent when USDT amount changes
+  useEffect(() => {
+    if (amount && !isNaN(parseFloat(amount))) {
+      const usdtValue = parseFloat(amount);
+      const aocValue = usdtValue * rates.usdtToAoc;
+      setAocAmount(aocValue.toLocaleString());
+    } else {
+      setAocAmount('');
+    }
+  }, [amount, rates.usdtToAoc]);
+
   return (
     <div className="space-y-4">
       <div className="bg-muted p-4 rounded-md text-center">
@@ -32,6 +47,12 @@ const CryptoDeposit: React.FC<CryptoDepositProps> = ({ amount, setAmount, onDepo
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
+        {aocAmount && (
+          <div className="text-sm text-muted-foreground mt-1">
+            Equivalente a <span className="font-medium">{aocAmount} AOcripto</span>
+            <span className="block text-xs">Taxa de conversão: 1 USDT = {rates.usdtToAoc} AOcripto</span>
+          </div>
+        )}
       </div>
       
       <Button 
