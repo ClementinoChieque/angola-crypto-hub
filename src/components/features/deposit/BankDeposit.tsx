@@ -3,9 +3,15 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
-import { Ban } from 'lucide-react';
+import { Banknote } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 type DepositMethod = 'USDT' | 'BAE' | 'BFA' | 'BIC' | 'ATL';
 
@@ -15,57 +21,74 @@ interface BankDepositProps {
   onDeposit: (method: DepositMethod) => void;
 }
 
+interface BankOption {
+  value: DepositMethod;
+  label: string;
+  accountNumber: string;
+}
+
 const BankDeposit: React.FC<BankDepositProps> = ({ amount, setAmount, onDeposit }) => {
-  const [bankTab, setBankTab] = useState<DepositMethod>('BAE');
+  const [selectedBank, setSelectedBank] = useState<DepositMethod>('BAE');
   
-  const bankAccounts = {
-    BAE: "123456789",
-    BFA: "987654321",
-    BIC: "456789123",
-    ATL: "789123456"
-  };
+  const bankOptions: BankOption[] = [
+    { value: 'BAE', label: 'Banco Angolano de Investimentos', accountNumber: '123456789' },
+    { value: 'BFA', label: 'Banco de Fomento Angola', accountNumber: '987654321' },
+    { value: 'BIC', label: 'Banco BIC', accountNumber: '456789123' },
+    { value: 'ATL', label: 'Banco Atlântico', accountNumber: '789123456' }
+  ];
+
+  const selectedBankInfo = bankOptions.find(bank => bank.value === selectedBank);
 
   return (
-    <Tabs value={bankTab} onValueChange={(v) => setBankTab(v as DepositMethod)} className="w-full">
-      <TabsList className="grid grid-cols-4 mb-4">
-        <TabsTrigger value="BAE">BAE</TabsTrigger>
-        <TabsTrigger value="BFA">BFA</TabsTrigger>
-        <TabsTrigger value="BIC">BIC</TabsTrigger>
-        <TabsTrigger value="ATL">ATL</TabsTrigger>
-      </TabsList>
+    <div className="space-y-4 mt-4">
+      <div className="space-y-2">
+        <Label htmlFor="bank-select">Nome do Banco</Label>
+        <Select value={selectedBank} onValueChange={(value) => setSelectedBank(value as DepositMethod)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o banco" />
+          </SelectTrigger>
+          <SelectContent>
+            {bankOptions.map(bank => (
+              <SelectItem key={bank.value} value={bank.value}>
+                {bank.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       
-      <div className="space-y-4 mt-4">
+      {selectedBankInfo && (
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <Ban size={24} className="text-crypto-blue" />
+            <Banknote size={24} className="text-crypto-blue" />
             <div>
-              <h3 className="font-medium">{bankTab}</h3>
+              <h3 className="font-medium">{selectedBankInfo.label}</h3>
               <p className="text-sm text-muted-foreground">
-                Conta: {bankAccounts[bankTab]}
+                Conta: {selectedBankInfo.accountNumber}
               </p>
             </div>
           </div>
         </Card>
-        
-        <div className="space-y-2">
-          <Label htmlFor="amount-bank">Valor (AKZ)</Label>
-          <Input
-            id="amount-bank"
-            type="number"
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-        </div>
-        
-        <Button 
-          onClick={() => onDeposit(bankTab)}
-          className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
-        >
-          Confirmar Depósito
-        </Button>
+      )}
+      
+      <div className="space-y-2">
+        <Label htmlFor="amount-bank">Valor (AKZ)</Label>
+        <Input
+          id="amount-bank"
+          type="number"
+          placeholder="0.00"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
       </div>
-    </Tabs>
+      
+      <Button 
+        onClick={() => onDeposit(selectedBank)}
+        className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
+      >
+        Confirmar Depósito
+      </Button>
+    </div>
   );
 };
 
