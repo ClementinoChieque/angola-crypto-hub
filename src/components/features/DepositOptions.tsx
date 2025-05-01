@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/UserContext';
-import { Bank } from 'lucide-react';
+import { Ban } from 'lucide-react';
 
 type DepositMethod = 'USDT' | 'BAE' | 'BFA' | 'BIC' | 'ATL';
 
@@ -102,7 +102,7 @@ const DepositOptions: React.FC = () => {
             <div className="space-y-4 mt-4">
               <Card className="p-4">
                 <div className="flex items-center gap-3">
-                  <Bank size={24} className="text-crypto-blue" />
+                  <Ban size={24} className="text-crypto-blue" />
                   <div>
                     <h3 className="font-medium">{bankTab}</h3>
                     <p className="text-sm text-muted-foreground">

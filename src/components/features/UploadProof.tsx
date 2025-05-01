@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/UserContext';
-import { Upload, X, FileUpload } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 
 const UploadProof: React.FC = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -155,7 +155,7 @@ const UploadProof: React.FC = () => {
               variant="outline"
               className="mt-4"
             >
-              <FileUpload className="mr-2 h-4 w-4" />
+              <Upload className="mr-2 h-4 w-4" />
               Selecionar arquivo
             </Button>
           </div>
