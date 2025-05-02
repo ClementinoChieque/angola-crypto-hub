@@ -19,6 +19,7 @@ import UploadProof from '../features/UploadProof';
 import Quantify from '../features/Quantify';
 import InviteUsers from '../features/InviteUsers';
 import CryptoRates from '../features/CryptoRates';
+import CryptoChart from '../features/CryptoChart';
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('balance');
@@ -39,9 +40,10 @@ const Dashboard: React.FC = () => {
     <div className="container mx-auto py-6 max-w-4xl">
       <h1 className="text-2xl font-bold mb-6">Bem-vindo, {user?.phoneNumber}</h1>
       
-      {/* Display crypto rates at the top */}
-      <div className="mb-6">
+      {/* Top section with crypto rates and chart */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <CryptoRates />
+        <CryptoChart />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

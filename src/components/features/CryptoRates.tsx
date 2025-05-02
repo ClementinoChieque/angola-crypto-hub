@@ -26,10 +26,10 @@ const CryptoRates: React.FC = () => {
             <Skeleton className="h-6 w-full" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="bg-muted p-3 rounded">
               <p className="text-sm text-muted-foreground">Bitcoin (BTC)</p>
-              <p className="font-medium">{rates.btcToUsd.toLocaleString()} USD</p>
+              <p className="font-medium">${rates.btcToUsd.toLocaleString()} USD</p>
               <p className="text-xs text-muted-foreground">
                 ≈ {rates.btcToAoc.toLocaleString()} AOcripto
               </p>
@@ -40,6 +40,14 @@ const CryptoRates: React.FC = () => {
               <p className="font-medium">1 USDT = {rates.usdtToAoc.toLocaleString()} AOcripto</p>
               <p className="text-xs text-muted-foreground">
                 1 AOcripto = {(1/rates.usdtToAoc).toFixed(6)} USDT
+              </p>
+            </div>
+
+            <div className="bg-muted p-3 rounded">
+              <p className="text-sm text-muted-foreground">Kwanza (AKZ)</p>
+              <p className="font-medium">1 AOcripto = {rates.aocToAkz} AKZ</p>
+              <p className="text-xs text-muted-foreground">
+                {rates.usdtToAoc} AOcripto = {rates.usdtToAoc * rates.aocToAkz} AKZ
               </p>
             </div>
           </div>
