@@ -1,12 +1,15 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import PhoneAuth from '@/components/auth/PhoneAuth';
 import Dashboard from '@/components/layout/Dashboard';
 import Navbar from '@/components/layout/Navbar';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -23,7 +26,16 @@ const Index = () => {
                 Sua plataforma segura para compra, venda e investimento em criptomoedas
               </p>
             </div>
-            <PhoneAuth />
+            <div className="flex flex-col gap-4 items-center">
+              <Button 
+                size="lg" 
+                onClick={() => navigate('/auth')} 
+                className="bg-crypto-blue hover:bg-crypto-light-blue"
+              >
+                Entrar com Email
+              </Button>
+              <PhoneAuth />
+            </div>
           </div>
         )}
       </div>

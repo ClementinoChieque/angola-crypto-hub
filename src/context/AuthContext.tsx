@@ -1,5 +1,8 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { getCurrentUser, getCurrentSession } from '@/services/auth';
+import { useToast } from '@/hooks/use-toast';
 
 type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul';
 
@@ -8,6 +11,8 @@ type User = {
   countryCode: string;
   country: Country;
   isAuthenticated: boolean;
+  email?: string;
+  id?: string;
 };
 
 type AuthContextType = {
@@ -31,15 +36,59 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { toast } = useToast();
 
-  // Check if user is already logged in from local storage
+  // Initialize auth state from Supabase
   useEffect(() => {
-    const storedUser = localStorage.getItem('crypto_user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setIsAuthenticated(true);
-    }
+    const initAuth = async () => {
+      try {
+        const session = await getCurrentSession();
+        if (session) {
+          const sbUser = await getCurrentUser();
+          const userFromSupabase = {
+            id: sbUser.id,
+            phoneNumber: sbUser.phone || '',
+            countryCode: sbUser.phone || '',
+            country: 'Angola' as Country,
+            isAuthenticated: true,
+            email: sbUser.email
+          };
+          setUser(userFromSupabase);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+      }
+    };
+
+    initAuth();
+
+    // Set up auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+          const supabaseUser = session.user;
+          const userUpdate = {
+            id: supabaseUser.id,
+            phoneNumber: supabaseUser.phone || '',
+            countryCode: supabaseUser.phone || '',
+            country: 'Angola' as Country,
+            isAuthenticated: true,
+            email: supabaseUser.email
+          };
+          setUser(userUpdate);
+          setIsAuthenticated(true);
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      }
+    );
+
+    // Clean up subscription
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   const login = (phoneNumber: string, countryCode: string, country: Country) => {
@@ -47,12 +96,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(newUser);
     setIsAuthenticated(true);
     localStorage.setItem('crypto_user', JSON.stringify(newUser));
+    toast({
+      title: "Login bem-sucedido",
+      description: "Bem-vindo à plataforma!"
+    });
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('crypto_user');
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem('crypto_user');
+      toast({
+        title: "Logout realizado",
+        description: "Até breve!"
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      toast({
+        title: "Erro ao fazer logout",
+        description: "Tente novamente mais tarde",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
