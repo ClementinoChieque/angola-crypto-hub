@@ -1,3 +1,4 @@
+
 // This is a custom hook to manage toast notifications in the application
 import * as React from "react"
 
@@ -141,7 +142,6 @@ function toast(props: Toast) {
     type: "ADD_TOAST",
     toast: {
       ...props,
-      id,
       open: true,
       onOpenChange: (open) => {
         if (!open) dismiss()
