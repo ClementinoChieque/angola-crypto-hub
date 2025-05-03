@@ -2,15 +2,21 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export type SignUpCredentials = {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
   username?: string;
   fullName?: string;
 };
 
 export type SignInCredentials = {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
+};
+
+export type PhoneSignUpCredentials = {
+  phone: string;
+  username?: string;
+  fullName?: string;
 };
 
 export const signUp = async ({ email, password, username, fullName }: SignUpCredentials) => {
@@ -33,6 +39,41 @@ export const signIn = async ({ email, password }: SignInCredentials) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const signUpWithPhone = async ({ phone, username, fullName }: PhoneSignUpCredentials) => {
+  const { data, error } = await supabase.auth.signInWithOtp({
+    phone,
+    options: {
+      data: {
+        username,
+        full_name: fullName,
+      },
+    },
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const signInWithPhone = async (phone: string) => {
+  const { data, error } = await supabase.auth.signInWithOtp({
+    phone,
+  });
+
+  if (error) throw error;
+  return data;
+};
+
+export const verifyOTP = async (phone: string, token: string) => {
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone,
+    token,
+    type: 'sms',
   });
 
   if (error) throw error;

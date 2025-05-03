@@ -45,14 +45,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const session = await getCurrentSession();
         if (session) {
           const sbUser = await getCurrentUser();
+          
+          // Extract phone number information
+          const phone = sbUser.phone || '';
+          let countryCode = '';
+          
+          // Extract country code from phone number (e.g. +244, +258)
+          const countryCodeMatch = phone.match(/^\+\d{2,3}/);
+          if (countryCodeMatch) {
+            countryCode = countryCodeMatch[0];
+          }
+          
+          // Determine country based on code
+          let country: Country = 'Angola';
+          if (countryCode === '+244') country = 'Angola';
+          else if (countryCode === '+258') country = 'Moçambique';
+          else if (countryCode === '+238') country = 'Cabo Verde';
+          else if (countryCode === '+264') country = 'Namibia';
+          else if (countryCode === '+27') country = 'Africa do Sul';
+          
           const userFromSupabase = {
             id: sbUser.id,
-            phoneNumber: sbUser.phone || '',
-            countryCode: sbUser.phone || '',
-            country: 'Angola' as Country,
+            phoneNumber: phone,
+            countryCode: countryCode,
+            country,
             isAuthenticated: true,
             email: sbUser.email
           };
+          
           setUser(userFromSupabase);
           setIsAuthenticated(true);
         }
@@ -68,14 +88,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       async (event, session) => {
         if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
           const supabaseUser = session.user;
+          
+          // Extract phone number information
+          const phone = supabaseUser.phone || '';
+          let countryCode = '';
+          
+          // Extract country code from phone number (e.g. +244, +258)
+          const countryCodeMatch = phone.match(/^\+\d{2,3}/);
+          if (countryCodeMatch) {
+            countryCode = countryCodeMatch[0];
+          }
+          
+          // Determine country based on code
+          let country: Country = 'Angola';
+          if (countryCode === '+244') country = 'Angola';
+          else if (countryCode === '+258') country = 'Moçambique';
+          else if (countryCode === '+238') country = 'Cabo Verde';
+          else if (countryCode === '+264') country = 'Namibia';
+          else if (countryCode === '+27') country = 'Africa do Sul';
+          
           const userUpdate = {
             id: supabaseUser.id,
-            phoneNumber: supabaseUser.phone || '',
-            countryCode: supabaseUser.phone || '',
-            country: 'Angola' as Country,
+            phoneNumber: phone,
+            countryCode,
+            country,
             isAuthenticated: true,
             email: supabaseUser.email
           };
+          
           setUser(userUpdate);
           setIsAuthenticated(true);
         } else if (event === 'SIGNED_OUT') {

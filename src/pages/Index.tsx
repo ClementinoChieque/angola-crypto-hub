@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import PhoneAuth from '@/components/auth/PhoneAuth';
 import Dashboard from '@/components/layout/Dashboard';
 import Navbar from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
@@ -32,9 +31,8 @@ const Index = () => {
                 onClick={() => navigate('/auth')} 
                 className="bg-crypto-blue hover:bg-crypto-light-blue"
               >
-                Entrar com Email
+                Entrar com Telefone
               </Button>
-              <PhoneAuth />
             </div>
           </div>
         )}
