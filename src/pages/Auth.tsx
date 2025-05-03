@@ -39,7 +39,11 @@ const Auth = () => {
       });
       
       if (session) {
-        login(session.user.phone_number || '', session.user.phone, { name: 'Angola' } as any);
+        // Use optional chaining and provide default empty string for phone
+        const phoneNumber = session.user.phone || '';
+        const countryCode = session.user.phone || '';
+        
+        login(phoneNumber, countryCode, 'Angola');
         toast({
           title: "Login bem-sucedido",
           description: "Bem-vindo de volta!"
@@ -80,7 +84,11 @@ const Auth = () => {
       });
       
       if (session) {
-        login(session.user.phone_number || '', session.user.phone, { name: 'Angola' } as any);
+        // Use optional chaining and provide default empty string for phone
+        const phoneNumber = session.user.phone || '';
+        const countryCode = session.user.phone || '';
+        
+        login(phoneNumber, countryCode, 'Angola');
         toast({
           title: "Registro bem-sucedido",
           description: "Sua conta foi criada com sucesso!"

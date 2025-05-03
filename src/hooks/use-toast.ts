@@ -1,4 +1,3 @@
-
 // This is a custom hook to manage toast notifications in the application
 import * as React from "react"
 
@@ -128,7 +127,7 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">
 
-function toast({ ...props }: Toast) {
+function toast(props: Toast) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
