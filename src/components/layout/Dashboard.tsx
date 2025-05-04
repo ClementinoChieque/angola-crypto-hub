@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { 
-  CircleDollarSign, 
   Upload, 
   Circle, 
   UserPlus 
@@ -18,12 +17,11 @@ import CryptoChart from '../features/CryptoChart';
 import BalanceStatus from '../features/BalanceStatus';
 
 const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('invest');
+  const [activeTab, setActiveTab] = useState('upload');
   const { user } = useAuth();
   const { isDepositVerified } = useUser();
 
   const menuItems = [
-    { id: 'invest', label: 'Investir', icon: <CircleDollarSign size={20} />, disabled: !isDepositVerified },
     { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={20} /> },
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={20} /> },
@@ -52,7 +50,6 @@ const Dashboard: React.FC = () => {
                   key={item.id}
                   className={`menu-item ${activeTab === item.id ? 'menu-item-active' : ''}`}
                   onClick={() => setActiveTab(item.id)}
-                  disabled={item.disabled}
                 >
                   {item.icon}
                   <span>{item.label}</span>
@@ -65,12 +62,11 @@ const Dashboard: React.FC = () => {
         {/* Mobile tabs */}
         <div className="md:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-4 mb-4">
+            <TabsList className="grid grid-cols-3 mb-4">
               {menuItems.map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
-                  disabled={item.disabled}
                   className="flex flex-col items-center py-2 text-xs"
                 >
                   {item.icon}
@@ -84,25 +80,6 @@ const Dashboard: React.FC = () => {
         {/* Content area - Span 2 columns on desktop */}
         <div className="md:col-span-2">
           <Card className="p-6">
-            {/* Invest Tab */}
-            {activeTab === 'invest' && (
-              <div className="text-center">
-                <h2 className="text-xl font-semibold mb-4">Investir</h2>
-                <p>Opções de investimento disponíveis</p>
-                {/* Investment options would go here */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                  <Card className="p-4 text-left hover:bg-muted/50 cursor-pointer transition-colors">
-                    <h3 className="font-medium">Cripto Staking</h3>
-                    <p className="text-sm text-muted-foreground">Rentabilidade até 12% ao ano</p>
-                  </Card>
-                  <Card className="p-4 text-left hover:bg-muted/50 cursor-pointer transition-colors">
-                    <h3 className="font-medium">Trading Automatizado</h3>
-                    <p className="text-sm text-muted-foreground">Rentabilidade variável</p>
-                  </Card>
-                </div>
-              </div>
-            )}
-            
             {/* Upload Tab */}
             {activeTab === 'upload' && <UploadProof />}
             
