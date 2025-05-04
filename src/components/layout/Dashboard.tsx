@@ -1,9 +1,6 @@
 
 import React, { useState } from 'react';
 import { 
-  Wallet, 
-  ArrowUp, 
-  ArrowDown, 
   CircleDollarSign, 
   Upload, 
   Circle, 
@@ -13,8 +10,6 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@/context/UserContext';
 import { useAuth } from '@/context/AuthContext';
-import DepositOptions from '../features/DepositOptions';
-import WithdrawalOptions from '../features/WithdrawalOptions';
 import UploadProof from '../features/UploadProof';
 import Quantify from '../features/Quantify';
 import InviteUsers from '../features/InviteUsers';
@@ -23,14 +18,11 @@ import CryptoChart from '../features/CryptoChart';
 import BalanceStatus from '../features/BalanceStatus';
 
 const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('balance');
+  const [activeTab, setActiveTab] = useState('invest');
   const { user } = useAuth();
-  const { balance, isDepositVerified } = useUser();
+  const { isDepositVerified } = useUser();
 
   const menuItems = [
-    { id: 'balance', label: 'Ver Saldo', icon: <Wallet size={20} /> },
-    { id: 'deposit', label: 'Deposito', icon: <ArrowUp size={20} /> },
-    { id: 'withdrawal', label: 'Saque', icon: <ArrowDown size={20} /> },
     { id: 'invest', label: 'Investir', icon: <CircleDollarSign size={20} />, disabled: !isDepositVerified },
     { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={20} /> },
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={20} /> },
@@ -41,7 +33,7 @@ const Dashboard: React.FC = () => {
     <div className="container mx-auto py-6 max-w-4xl">
       <h1 className="text-2xl font-bold mb-6">Bem-vindo, {user?.phoneNumber}</h1>
       
-      {/* Add BalanceStatus component at the top of the dashboard */}
+      {/* Balance Status Component */}
       <BalanceStatus />
       
       {/* Top section with crypto rates and chart */}
@@ -74,20 +66,7 @@ const Dashboard: React.FC = () => {
         <div className="md:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-4 mb-4">
-              {menuItems.slice(0, 4).map((item) => (
-                <TabsTrigger
-                  key={item.id}
-                  value={item.id}
-                  disabled={item.disabled}
-                  className="flex flex-col items-center py-2 text-xs"
-                >
-                  {item.icon}
-                  <span className="mt-1">{item.label}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            <TabsList className="grid grid-cols-3 mb-4">
-              {menuItems.slice(4).map((item) => (
+              {menuItems.map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
@@ -105,27 +84,6 @@ const Dashboard: React.FC = () => {
         {/* Content area - Span 2 columns on desktop */}
         <div className="md:col-span-2">
           <Card className="p-6">
-            {/* Balance Tab */}
-            {activeTab === 'balance' && (
-              <div className="text-center">
-                <h2 className="text-xl font-semibold mb-4">Seu Saldo</h2>
-                <div className="text-4xl font-bold text-crypto-blue">
-                  {balance.amount.toLocaleString()} {balance.currency}
-                </div>
-                <p className="mt-4 text-muted-foreground">
-                  {isDepositVerified 
-                    ? "Seu depósito foi verificado. Você pode investir agora!" 
-                    : "Aguardando verificação do depósito pelo administrador."}
-                </p>
-              </div>
-            )}
-            
-            {/* Deposit Tab */}
-            {activeTab === 'deposit' && <DepositOptions />}
-            
-            {/* Withdrawal Tab */}
-            {activeTab === 'withdrawal' && <WithdrawalOptions />}
-            
             {/* Invest Tab */}
             {activeTab === 'invest' && (
               <div className="text-center">

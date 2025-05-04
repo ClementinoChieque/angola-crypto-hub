@@ -5,7 +5,6 @@ import { useAuth } from '@/context/AuthContext';
 import Dashboard from '@/components/layout/Dashboard';
 import Navbar from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
-import BalanceStatus from '@/components/features/BalanceStatus';
 
 const Index = () => {
   const { isAuthenticated } = useAuth();
