@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithPhone, signUpWithPhone, verifyOTP } from '@/services/auth';
+import { signIn, signUp } from '@/services/auth';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,10 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from '@/context/AuthContext';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 const countryCodes = [
   { code: '+244', country: 'Angola' },
@@ -22,39 +25,77 @@ const countryCodes = [
 
 type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul';
 
+// Schema de validação para login
+const loginSchema = z.object({
+  phoneNumber: z.string().min(9, "Número de telefone deve ter pelo menos 9 dígitos"),
+  countryCode: z.string(),
+  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+});
+
+// Schema de validação para registro
+const registerSchema = z.object({
+  phoneNumber: z.string().min(9, "Número de telefone deve ter pelo menos 9 dígitos"),
+  countryCode: z.string(),
+  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  username: z.string().min(3, "Nome de usuário deve ter pelo menos 3 caracteres"),
+  fullName: z.string().min(3, "Nome completo é obrigatório"),
+});
+
 const Auth = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
   const [isLoading, setIsLoading] = useState(false);
-  const [showOTPVerification, setShowOTPVerification] = useState(false);
-  const [otp, setOtp] = useState('');
   const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Phone login form state
-  const [loginPhoneNumber, setLoginPhoneNumber] = useState('');
-  const [loginCountryCode, setLoginCountryCode] = useState('+244');
+  // Form para login
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      phoneNumber: '',
+      countryCode: '+244',
+      password: '',
+    },
+  });
 
-  // Register form state
-  const [registerPhoneNumber, setRegisterPhoneNumber] = useState('');
-  const [registerCountryCode, setRegisterCountryCode] = useState('+244');
-  const [registerUsername, setRegisterUsername] = useState('');
-  const [registerFullName, setRegisterFullName] = useState('');
+  // Form para registro
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      phoneNumber: '',
+      countryCode: '+244',
+      password: '',
+      username: '',
+      fullName: '',
+    },
+  });
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogin = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
 
     try {
       // Format phone number
-      const formattedPhone = `${loginCountryCode}${loginPhoneNumber.replace(/\D/g, '')}`;
+      const formattedPhone = `${values.countryCode}${values.phoneNumber.replace(/\D/g, '')}`;
       
-      await signInWithPhone(formattedPhone);
-      setShowOTPVerification(true);
-      toast({
-        title: "Código enviado",
-        description: "Verifique seu telefone para o código de confirmação"
+      const { session } = await signIn({
+        phone: formattedPhone,
+        password: values.password,
       });
+      
+      if (session) {
+        // Find country name based on code
+        const countryData = countryCodes.find(c => c.code === values.countryCode);
+        const country = countryData ? countryData.country as Country : 'Angola';
+        
+        login(formattedPhone, values.countryCode, country);
+        
+        toast({
+          title: "Login bem-sucedido",
+          description: "Bem-vindo de volta!"
+        });
+        
+        navigate('/');
+      }
     } catch (error) {
       toast({
         title: "Erro ao fazer login",
@@ -66,25 +107,39 @@ const Auth = () => {
     }
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
 
     try {
       // Format phone number
-      const formattedPhone = `${registerCountryCode}${registerPhoneNumber.replace(/\D/g, '')}`;
+      const formattedPhone = `${values.countryCode}${values.phoneNumber.replace(/\D/g, '')}`;
       
-      await signUpWithPhone({
+      const { session } = await signUp({
         phone: formattedPhone,
-        username: registerUsername,
-        fullName: registerFullName
+        password: values.password,
+        username: values.username,
+        fullName: values.fullName
       });
       
-      setShowOTPVerification(true);
-      toast({
-        title: "Código enviado",
-        description: "Verifique seu telefone para o código de confirmação"
-      });
+      if (session) {
+        // Find country name based on code
+        const countryData = countryCodes.find(c => c.code === values.countryCode);
+        const country = countryData ? countryData.country as Country : 'Angola';
+        
+        login(formattedPhone, values.countryCode, country);
+        
+        toast({
+          title: "Registro bem-sucedido",
+          description: "Sua conta foi criada com sucesso!"
+        });
+        
+        navigate('/');
+      } else {
+        toast({
+          title: "Registro realizado",
+          description: "Verifique seu telefone para confirmar o registro",
+        });
+      }
     } catch (error) {
       toast({
         title: "Erro no cadastro",
@@ -95,83 +150,6 @@ const Auth = () => {
       setIsLoading(false);
     }
   };
-
-  const handleVerifyOTP = async () => {
-    setIsLoading(true);
-
-    try {
-      const phoneNumber = activeTab === 'login' 
-        ? `${loginCountryCode}${loginPhoneNumber}` 
-        : `${registerCountryCode}${registerPhoneNumber}`;
-
-      const { session } = await verifyOTP(phoneNumber, otp);
-      
-      if (session) {
-        // Find country name based on code
-        const countryData = countryCodes.find(c => c.code === (activeTab === 'login' ? loginCountryCode : registerCountryCode));
-        const country = countryData ? countryData.country as Country : 'Angola';
-        
-        login(phoneNumber, activeTab === 'login' ? loginCountryCode : registerCountryCode, country);
-        
-        toast({
-          title: activeTab === 'login' ? "Login bem-sucedido" : "Registro bem-sucedido",
-          description: activeTab === 'login' ? "Bem-vindo de volta!" : "Sua conta foi criada com sucesso!"
-        });
-        
-        navigate('/');
-      }
-    } catch (error) {
-      toast({
-        title: "Erro na verificação",
-        description: (error as Error).message,
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (showOTPVerification) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <Card className="w-full max-w-md p-6">
-          <h1 className="text-2xl font-bold text-center mb-6 text-crypto-blue">Verificação de Código</h1>
-          <p className="text-center mb-6">
-            Digite o código de verificação enviado para o seu telefone
-          </p>
-          
-          <div className="flex justify-center mb-6">
-            <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-              <InputOTPGroup>
-                <InputOTPSlot index={0} />
-                <InputOTPSlot index={1} />
-                <InputOTPSlot index={2} />
-                <InputOTPSlot index={3} />
-                <InputOTPSlot index={4} />
-                <InputOTPSlot index={5} />
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
-          
-          <Button 
-            onClick={handleVerifyOTP}
-            className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
-            disabled={isLoading || otp.length !== 6}
-          >
-            {isLoading ? "Verificando..." : "Verificar"}
-          </Button>
-          
-          <Button
-            variant="ghost"
-            className="w-full mt-2"
-            onClick={() => setShowOTPVerification(false)}
-          >
-            Voltar
-          </Button>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -185,108 +163,193 @@ const Auth = () => {
           </TabsList>
           
           <TabsContent value="login">
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="login-country-code">País</Label>
-                <Select 
-                  value={loginCountryCode} 
-                  onValueChange={setLoginCountryCode}
-                >
-                  <SelectTrigger id="login-country-code">
-                    <SelectValue placeholder="Selecione o país" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countryCodes.map((country) => (
-                      <SelectItem key={country.code} value={country.code}>
-                        {country.country} ({country.code})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="login-phone">Número de Telefone</Label>
-                <Input 
-                  id="login-phone" 
-                  type="tel"
-                  value={loginPhoneNumber}
-                  onChange={(e) => setLoginPhoneNumber(e.target.value)}
-                  placeholder="Número de telefone sem código do país"
-                  required
+            <Form {...loginForm}>
+              <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
+                <FormField
+                  control={loginForm.control}
+                  name="countryCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>País</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o país" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {countryCodes.map((country) => (
+                            <SelectItem key={country.code} value={country.code}>
+                              {country.country} ({country.code})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
-                disabled={isLoading}
-              >
-                {isLoading ? "Processando..." : "Entrar"}
-              </Button>
-            </form>
+                
+                <FormField
+                  control={loginForm.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número de Telefone</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="tel"
+                          placeholder="Número de telefone sem código do país"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Senha</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="password"
+                          placeholder="Sua senha"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button 
+                  type="submit" 
+                  className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Processando..." : "Entrar"}
+                </Button>
+              </form>
+            </Form>
           </TabsContent>
           
           <TabsContent value="register">
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="register-country-code">País</Label>
-                <Select 
-                  value={registerCountryCode} 
-                  onValueChange={setRegisterCountryCode}
+            <Form {...registerForm}>
+              <form onSubmit={registerForm.handleSubmit(handleRegister)} className="space-y-4">
+                <FormField
+                  control={registerForm.control}
+                  name="countryCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>País</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o país" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {countryCodes.map((country) => (
+                            <SelectItem key={country.code} value={country.code}>
+                              {country.country} ({country.code})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={registerForm.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número de Telefone</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="tel"
+                          placeholder="Número de telefone sem código do país"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={registerForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Senha</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="password"
+                          placeholder="Crie uma senha forte"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={registerForm.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome de usuário</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Seu nome de usuário único"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={registerForm.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome completo</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Seu nome completo"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button 
+                  type="submit" 
+                  className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
+                  disabled={isLoading}
                 >
-                  <SelectTrigger id="register-country-code">
-                    <SelectValue placeholder="Selecione o país" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countryCodes.map((country) => (
-                      <SelectItem key={country.code} value={country.code}>
-                        {country.country} ({country.code})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="register-phone">Número de Telefone</Label>
-                <Input 
-                  id="register-phone"
-                  type="tel"
-                  value={registerPhoneNumber}
-                  onChange={(e) => setRegisterPhoneNumber(e.target.value)}
-                  placeholder="Número de telefone sem código do país"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="register-username">Nome de usuário</Label>
-                <Input 
-                  id="register-username"
-                  value={registerUsername}
-                  onChange={(e) => setRegisterUsername(e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="register-fullname">Nome completo</Label>
-                <Input 
-                  id="register-fullname"
-                  value={registerFullName}
-                  onChange={(e) => setRegisterFullName(e.target.value)}
-                />
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
-                disabled={isLoading}
-              >
-                {isLoading ? "Processando..." : "Cadastrar"}
-              </Button>
-            </form>
+                  {isLoading ? "Processando..." : "Cadastrar"}
+                </Button>
+              </form>
+            </Form>
           </TabsContent>
         </Tabs>
       </Card>

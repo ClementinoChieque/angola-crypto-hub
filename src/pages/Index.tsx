@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import Dashboard from '@/components/layout/Dashboard';
@@ -31,7 +31,7 @@ const Index = () => {
                 onClick={() => navigate('/auth')} 
                 className="bg-crypto-blue hover:bg-crypto-light-blue"
               >
-                Entrar com Telefone
+                Entrar / Cadastrar
               </Button>
             </div>
           </div>
