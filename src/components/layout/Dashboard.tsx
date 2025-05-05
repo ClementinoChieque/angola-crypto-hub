@@ -36,10 +36,10 @@ const Dashboard: React.FC = () => {
       {/* Balance Status Component */}
       <BalanceStatus />
       
-      {/* Top section with crypto rates and chart - hide chart on smaller screens */}
+      {/* Top section with crypto rates and chart - show on all devices now */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-3 md:mb-6">
         <CryptoRates />
-        {!isMobile && <CryptoChart />}
+        <CryptoChart />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">

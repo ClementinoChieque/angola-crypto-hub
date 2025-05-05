@@ -20,6 +20,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCryptoHistory } from '@/utils/cryptoRates';
 import { ChartLine } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const timeRanges = [
   { value: '1d', label: '24h' },
@@ -30,13 +31,14 @@ const timeRanges = [
 const CryptoChart: React.FC = () => {
   const [timeRange, setTimeRange] = React.useState('7d');
   const { historyData, isLoading } = useCryptoHistory(timeRange);
+  const isMobile = useIsMobile();
 
   if (isLoading) {
     return (
-      <Card className="p-4 h-[300px] flex items-center justify-center">
+      <Card className="p-2 md:p-4 h-[220px] md:h-[300px] flex items-center justify-center">
         <div className="animate-pulse text-center">
-          <ChartLine size={24} className="mx-auto mb-2 text-muted-foreground" />
-          <p className="text-muted-foreground">Carregando dados históricos...</p>
+          <ChartLine size={isMobile ? 20 : 24} className="mx-auto mb-2 text-muted-foreground" />
+          <p className="text-muted-foreground text-xs md:text-sm">Carregando dados históricos...</p>
         </div>
       </Card>
     );
@@ -48,13 +50,17 @@ const CryptoChart: React.FC = () => {
   };
 
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-lg">Análise do Gráfico</h3>
+    <Card className="p-2 md:p-4">
+      <div className="flex items-center justify-between mb-2 md:mb-4">
+        <h3 className="font-semibold text-sm md:text-lg">Análise do Gráfico</h3>
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-auto">
-          <TabsList className="grid grid-cols-3">
+          <TabsList className="grid grid-cols-3 h-7 md:h-9">
             {timeRanges.map((range) => (
-              <TabsTrigger key={range.value} value={range.value}>
+              <TabsTrigger 
+                key={range.value} 
+                value={range.value}
+                className="text-xs md:text-sm py-0.5 px-2 md:px-3"
+              >
                 {range.label}
               </TabsTrigger>
             ))}
@@ -62,7 +68,7 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      <div className="h-[300px]">
+      <div className="h-[180px] md:h-[300px]">
         <ChartContainer config={chartConfig}>
           <LineChart data={historyData}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
@@ -70,23 +76,29 @@ const CryptoChart: React.FC = () => {
               dataKey="date" 
               tickFormatter={(value) => format(new Date(value), 'dd/MM')}
               stroke="var(--foreground)"
-              fontSize={12}
+              fontSize={isMobile ? 10 : 12}
+              tick={{ fontSize: isMobile ? 8 : 12 }}
+              tickCount={isMobile ? 3 : 5}
             />
             <YAxis 
               yAxisId="btc"
               orientation="left"
               stroke="var(--foreground)"
-              fontSize={12}
-              tickCount={5}
+              fontSize={isMobile ? 8 : 12}
+              tickCount={isMobile ? 3 : 5}
               tickFormatter={(value) => `$${Math.round(value).toLocaleString()}`}
+              tick={{ fontSize: isMobile ? 8 : 12 }}
+              width={isMobile ? 40 : 60}
             />
             <YAxis 
               yAxisId="aoc"
               orientation="right"
               stroke="var(--foreground)"
-              fontSize={12}
-              tickCount={5}
+              fontSize={isMobile ? 8 : 12}
+              tickCount={isMobile ? 3 : 5}
               tickFormatter={(value) => `${Math.round(value).toLocaleString()}`}
+              tick={{ fontSize: isMobile ? 8 : 12 }}
+              width={isMobile ? 35 : 50}
             />
             <Tooltip content={<ChartTooltipContent />} />
             <Legend content={<ChartLegendContent />} />
@@ -96,8 +108,9 @@ const CryptoChart: React.FC = () => {
               name="bitcoin"
               stroke="var(--color-bitcoin)"
               yAxisId="btc"
-              activeDot={{ r: 8 }}
+              activeDot={{ r: isMobile ? 4 : 8 }}
               dot={false}
+              strokeWidth={isMobile ? 1 : 2}
             />
             <Line
               type="monotone"
@@ -105,15 +118,16 @@ const CryptoChart: React.FC = () => {
               name="aocripto"
               stroke="var(--color-aocripto)"
               yAxisId="aoc"
-              activeDot={{ r: 6 }}
+              activeDot={{ r: isMobile ? 4 : 6 }}
               dot={false}
+              strokeWidth={isMobile ? 1 : 2}
             />
           </LineChart>
         </ChartContainer>
       </div>
       
-      <div className="mt-4 text-sm text-muted-foreground">
-        <p className="font-medium mb-1">Análise:</p>
+      <div className="mt-2 md:mt-4 text-xs md:text-sm text-muted-foreground">
+        <p className="font-medium mb-0.5 md:mb-1">Análise:</p>
         {timeRange === '1d' && (
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>
         )}
