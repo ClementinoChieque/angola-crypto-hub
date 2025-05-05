@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/UserContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useFileUpload } from './useFileUpload';
 import ImagePreview from './ImagePreview';
 import UploadArea from './UploadArea';
@@ -24,6 +25,7 @@ const UploadProofContainer: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const { addProofUpload, proofUploads } = useUser();
+  const isMobile = useIsMobile();
 
   const handleSubmit = () => {
     if (!previewUrl) {
@@ -56,11 +58,11 @@ const UploadProofContainer: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4 text-center">Upload de Comprovativo</h2>
+    <div className="space-y-4 md:space-y-6">
+      <h2 className="text-lg md:text-xl font-semibold mb-2 md:mb-4 text-center">Upload de Comprovativo</h2>
       
       <div 
-        className={`border-2 border-dashed rounded-lg p-6 text-center ${
+        className={`border-2 border-dashed rounded-lg p-3 md:p-6 text-center ${
           dragActive ? 'border-crypto-blue bg-crypto-blue/5' : 'border-muted-foreground/25'
         } transition-colors`}
         onDragEnter={handleDrag}
@@ -81,6 +83,7 @@ const UploadProofContainer: React.FC = () => {
             handleChange={handleChange}
             handleButtonClick={handleButtonClick}
             fileInputRef={fileInputRef}
+            isMobile={isMobile}
           />
         )}
       </div>
@@ -90,6 +93,7 @@ const UploadProofContainer: React.FC = () => {
           onClick={handleSubmit}
           className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
           disabled={isUploading}
+          size={isMobile ? "sm" : "default"}
         >
           {isUploading ? "Enviando..." : "Enviar Comprovativo"}
         </Button>

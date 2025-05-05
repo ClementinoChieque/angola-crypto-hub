@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@/context/UserContext';
 import { useAuth } from '@/context/AuthContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import UploadProof from '../features/UploadProof';
 import Quantify from '../features/Quantify';
 import InviteUsers from '../features/InviteUsers';
@@ -20,27 +21,28 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('upload');
   const { user } = useAuth();
   const { isDepositVerified } = useUser();
-
+  const isMobile = useIsMobile();
+  
   const menuItems = [
-    { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={20} /> },
-    { id: 'quantify', label: 'Quantificar', icon: <Circle size={20} /> },
-    { id: 'invite', label: 'Convidar', icon: <UserPlus size={20} /> },
+    { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={isMobile ? 16 : 20} /> },
+    { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
+    { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
   ];
 
   return (
-    <div className="container mx-auto py-6 max-w-4xl">
-      <h1 className="text-2xl font-bold mb-6">Bem-vindo, {user?.phoneNumber}</h1>
+    <div className="container mx-auto py-2 md:py-6 max-w-4xl px-2 md:px-4">
+      <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Bem-vindo, {user?.phoneNumber}</h1>
       
       {/* Balance Status Component */}
       <BalanceStatus />
       
-      {/* Top section with crypto rates and chart */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      {/* Top section with crypto rates and chart - hide chart on smaller screens */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-3 md:mb-6">
         <CryptoRates />
-        <CryptoChart />
+        {!isMobile && <CryptoChart />}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
         {/* Menu sidebar on desktop, tabs on mobile */}
         <div className="hidden md:block">
           <Card className="p-4 h-full">
@@ -59,15 +61,15 @@ const Dashboard: React.FC = () => {
           </Card>
         </div>
         
-        {/* Mobile tabs */}
+        {/* Mobile tabs - optimized with smaller padding */}
         <div className="md:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-3 mb-4">
+            <TabsList className="grid grid-cols-3 mb-3">
               {menuItems.map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
-                  className="flex flex-col items-center py-2 text-xs"
+                  className="flex flex-col items-center py-1.5 text-xs"
                 >
                   {item.icon}
                   <span className="mt-1">{item.label}</span>
@@ -79,7 +81,7 @@ const Dashboard: React.FC = () => {
         
         {/* Content area - Span 2 columns on desktop */}
         <div className="md:col-span-2">
-          <Card className="p-6">
+          <Card className="p-3 md:p-6">
             {/* Upload Tab */}
             {activeTab === 'upload' && <UploadProof />}
             
