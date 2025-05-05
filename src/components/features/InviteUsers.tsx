@@ -51,7 +51,7 @@ const InviteUsers: React.FC = () => {
               variant="outline"
               onClick={copyToClipboard}
               className="flex-shrink-0"
-              size={isMobile ? "icon-sm" : "icon"}
+              size={isMobile ? "sm" : "icon"}
             >
               <Copy size={isMobile ? 14 : 16} />
             </Button>
