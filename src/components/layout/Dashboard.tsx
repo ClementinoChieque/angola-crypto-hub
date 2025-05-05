@@ -36,16 +36,16 @@ const Dashboard: React.FC = () => {
       {/* Balance Status Component */}
       <BalanceStatus />
       
-      {/* Top section with crypto rates and chart - show on all devices now */}
+      {/* Top section with crypto rates and chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-3 md:mb-8">
         <CryptoRates />
         <CryptoChart />
       </div>
       
-      {/* Increased vertical margin for better separation on desktop */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 mt-4 md:mt-10">
+      {/* Increased vertical margin and z-index for the menu section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 mt-4 md:mt-12">
         {/* Menu sidebar on desktop, tabs on mobile */}
-        <div className="hidden md:block">
+        <div className="hidden md:block relative z-10"> {/* Added z-index and relative positioning */}
           <Card className="p-4 h-full">
             <div className="flex flex-col space-y-3">
               {menuItems.map((item) => (
@@ -62,8 +62,8 @@ const Dashboard: React.FC = () => {
           </Card>
         </div>
         
-        {/* Mobile tabs - optimized with smaller padding */}
-        <div className="md:hidden">
+        {/* Mobile tabs with improved z-index */}
+        <div className="md:hidden relative z-10"> {/* Added z-index and relative positioning */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-3 mb-3">
               {menuItems.map((item) => (
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Content area - Span 2 columns on desktop */}
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 relative z-10"> {/* Added z-index and relative positioning */}
           <Card className="p-3 md:p-6">
             {/* Upload Tab */}
             {activeTab === 'upload' && <UploadProof />}

@@ -50,7 +50,7 @@ const CryptoChart: React.FC = () => {
   };
 
   return (
-    <Card className="p-2 md:p-4">
+    <Card className="p-2 md:p-4 relative z-0"> {/* Added z-index to ensure chart is below other elements */}
       <div className="flex items-center justify-between mb-2 md:mb-4">
         <h3 className="font-semibold text-sm md:text-lg">Análise do Gráfico</h3>
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-auto">
@@ -68,7 +68,7 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      <div className="h-[180px] md:h-[300px]">
+      <div className="h-[180px] md:h-[250px]"> {/* Reduced height on desktop */}
         <ChartContainer config={chartConfig}>
           <LineChart data={historyData}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
@@ -126,7 +126,7 @@ const CryptoChart: React.FC = () => {
         </ChartContainer>
       </div>
       
-      <div className="mt-2 md:mt-4 text-xs md:text-sm text-muted-foreground">
+      <div className="mt-2 md:mt-3 text-xs md:text-sm text-muted-foreground">
         <p className="font-medium mb-0.5 md:mb-1">Análise:</p>
         {timeRange === '1d' && (
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>
