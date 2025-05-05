@@ -37,16 +37,17 @@ const Dashboard: React.FC = () => {
       <BalanceStatus />
       
       {/* Top section with crypto rates and chart - show on all devices now */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-3 md:mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-3 md:mb-8">
         <CryptoRates />
         <CryptoChart />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+      {/* Increased vertical margin for better separation on desktop */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 mt-4 md:mt-10">
         {/* Menu sidebar on desktop, tabs on mobile */}
         <div className="hidden md:block">
           <Card className="p-4 h-full">
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-3">
               {menuItems.map((item) => (
                 <button
                   key={item.id}
