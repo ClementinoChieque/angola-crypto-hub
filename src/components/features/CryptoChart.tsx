@@ -78,12 +78,12 @@ const CryptoChart: React.FC = () => {
         </div>
       </div>
       
-      {/* Increased chart height for desktop */}
-      <div className="h-[180px] md:h-[220px]">
+      {/* Modified chart height and margin */}
+      <div className="h-[190px] md:h-[240px]">
         <ChartContainer config={chartConfig}>
           <LineChart 
             data={historyData}
-            margin={{ top: 10, right: 30, left: 5, bottom: 35 }} // Increased margins to show labels clearly
+            margin={{ top: 10, right: 30, left: 5, bottom: 40 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
             <XAxis 
@@ -93,7 +93,7 @@ const CryptoChart: React.FC = () => {
               fontSize={12}
               tick={{ fontSize: 12 }}
               tickCount={5}
-              height={30} // Increased height for X-axis to ensure labels fit
+              height={35}
             />
             <YAxis 
               yAxisId="btc"
@@ -104,7 +104,7 @@ const CryptoChart: React.FC = () => {
               tickFormatter={(value) => `$${Math.round(value).toLocaleString()}`}
               tick={{ fontSize: 11 }}
               width={isMobile ? 45 : 70}
-              domain={['dataMin - 5000', 'dataMax + 5000']} // Better value range
+              domain={['dataMin - 5000', 'dataMax + 5000']}
             />
             <YAxis 
               yAxisId="aoc"
@@ -115,7 +115,7 @@ const CryptoChart: React.FC = () => {
               tickFormatter={(value) => `${Math.round(value).toLocaleString()}`}
               tick={{ fontSize: 11 }}
               width={isMobile ? 40 : 75}
-              domain={['dataMin - 5000000', 'dataMax + 5000000']} // Better value range
+              domain={['dataMin - 5000000', 'dataMax + 5000000']}
             />
             <Tooltip content={<ChartTooltipContent />} />
             <Line
