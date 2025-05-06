@@ -50,16 +50,16 @@ const CryptoChart: React.FC = () => {
   };
 
   return (
-    <Card className="p-2 md:p-4 relative z-0"> {/* Added z-index to ensure chart is below other elements */}
-      <div className="flex items-center justify-between mb-2 md:mb-4">
-        <h3 className="font-semibold text-sm md:text-lg">Análise do Gráfico</h3>
+    <Card className="p-4 overflow-hidden bg-white shadow-sm"> {/* Matched to reference image styling */}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-base">Análise do Gráfico</h3>
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-auto">
-          <TabsList className="grid grid-cols-3 h-7 md:h-9">
+          <TabsList className="grid grid-cols-3 h-8">
             {timeRanges.map((range) => (
               <TabsTrigger 
                 key={range.value} 
                 value={range.value}
-                className="text-xs md:text-sm py-0.5 px-2 md:px-3"
+                className="text-xs px-3"
               >
                 {range.label}
               </TabsTrigger>
@@ -68,7 +68,7 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      <div className="h-[180px] md:h-[250px]"> {/* Reduced height on desktop */}
+      <div className="h-[180px] md:h-[180px]"> {/* Fixed height to match reference image */}
         <ChartContainer config={chartConfig}>
           <LineChart data={historyData}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
@@ -77,57 +77,68 @@ const CryptoChart: React.FC = () => {
               tickFormatter={(value) => format(new Date(value), 'dd/MM')}
               stroke="var(--foreground)"
               fontSize={isMobile ? 10 : 12}
-              tick={{ fontSize: isMobile ? 8 : 12 }}
-              tickCount={isMobile ? 3 : 5}
+              tick={{ fontSize: isMobile ? 8 : 11 }}
+              tickCount={isMobile ? 3 : 7}
             />
             <YAxis 
               yAxisId="btc"
               orientation="left"
               stroke="var(--foreground)"
-              fontSize={isMobile ? 8 : 12}
-              tickCount={isMobile ? 3 : 5}
+              fontSize={isMobile ? 8 : 11}
+              tickCount={isMobile ? 3 : 4}
               tickFormatter={(value) => `$${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: isMobile ? 8 : 12 }}
+              tick={{ fontSize: isMobile ? 8 : 11 }}
               width={isMobile ? 40 : 60}
             />
             <YAxis 
               yAxisId="aoc"
               orientation="right"
               stroke="var(--foreground)"
-              fontSize={isMobile ? 8 : 12}
-              tickCount={isMobile ? 3 : 5}
+              fontSize={isMobile ? 8 : 11}
+              tickCount={isMobile ? 3 : 4}
               tickFormatter={(value) => `${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: isMobile ? 8 : 12 }}
+              tick={{ fontSize: isMobile ? 8 : 11 }}
               width={isMobile ? 35 : 50}
             />
             <Tooltip content={<ChartTooltipContent />} />
-            <Legend content={<ChartLegendContent />} />
             <Line
               type="monotone"
               dataKey="btcPrice"
               name="bitcoin"
-              stroke="var(--color-bitcoin)"
+              stroke="#f7931a"
               yAxisId="btc"
-              activeDot={{ r: isMobile ? 4 : 8 }}
+              activeDot={{ r: isMobile ? 4 : 6 }}
               dot={false}
-              strokeWidth={isMobile ? 1 : 2}
+              strokeWidth={2}
             />
             <Line
               type="monotone"
               dataKey="aocValue"
               name="aocripto"
-              stroke="var(--color-aocripto)"
+              stroke="#3b82f6"
               yAxisId="aoc"
               activeDot={{ r: isMobile ? 4 : 6 }}
               dot={false}
-              strokeWidth={isMobile ? 1 : 2}
+              strokeWidth={2}
             />
           </LineChart>
         </ChartContainer>
       </div>
       
-      <div className="mt-2 md:mt-3 text-xs md:text-sm text-muted-foreground">
-        <p className="font-medium mb-0.5 md:mb-1">Análise:</p>
+      {/* Legend squares as shown in reference image */}
+      <div className="flex justify-center items-center gap-6 mt-4">
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-[#f7931a] mr-2"></div>
+          <span className="text-xs text-gray-600">Bitcoin</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-[#3b82f6] mr-2"></div>
+          <span className="text-xs text-gray-600">AOcripto</span>
+        </div>
+      </div>
+      
+      <div className="mt-4 text-sm text-gray-600">
+        <p className="font-medium mb-1">Análise:</p>
         {timeRange === '1d' && (
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>
         )}
