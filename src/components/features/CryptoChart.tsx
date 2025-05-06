@@ -9,15 +9,13 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts';
 import { Card } from '@/components/ui/card';
 import {
   ChartContainer,
   ChartTooltipContent,
-  ChartLegendContent,
 } from '@/components/ui/chart';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCryptoHistory } from '@/utils/cryptoRates';
 import { ChartLine } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -51,8 +49,8 @@ const CryptoChart: React.FC = () => {
 
   return (
     <Card className="p-4 overflow-hidden bg-white shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-base">Análise do Gráfico</h3>
+      <div className="flex items-center justify-between mb-5">
+        <h3 className="font-semibold text-lg">Análise do Gráfico</h3>
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-auto">
           <TabsList className="grid grid-cols-3 h-8">
             {timeRanges.map((range) => (
@@ -68,53 +66,56 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      {/* Legend moved to top, above the chart */}
-      <div className="flex justify-center items-center gap-6 mb-3">
+      {/* Legend above the chart with clearer formatting */}
+      <div className="flex justify-start items-center gap-8 mb-4">
         <div className="flex items-center">
-          <div className="w-4 h-4 bg-[#f7931a] mr-2"></div>
-          <span className="text-xs text-gray-600">Bitcoin</span>
+          <div className="w-5 h-5 bg-[#f7931a] rounded-sm mr-2"></div>
+          <span className="text-sm text-gray-700">Bitcoin</span>
         </div>
         <div className="flex items-center">
-          <div className="w-4 h-4 bg-[#3b82f6] mr-2"></div>
-          <span className="text-xs text-gray-600">AOcripto</span>
+          <div className="w-5 h-5 bg-[#3b82f6] rounded-sm mr-2"></div>
+          <span className="text-sm text-gray-700">AOcripto</span>
         </div>
       </div>
       
-      <div className="h-[150px] md:h-[150px]">
+      {/* Increased chart height for desktop */}
+      <div className="h-[180px] md:h-[220px]">
         <ChartContainer config={chartConfig}>
           <LineChart 
             data={historyData}
-            margin={{ top: 5, right: 20, left: 5, bottom: 20 }} // Increased bottom margin to ensure X-axis labels are visible
+            margin={{ top: 10, right: 30, left: 5, bottom: 35 }} // Increased margins to show labels clearly
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
             <XAxis 
               dataKey="date" 
               tickFormatter={(value) => format(new Date(value), 'dd/MM')}
               stroke="var(--foreground)"
-              fontSize={10}
-              tick={{ fontSize: 10 }}
-              tickCount={7}
-              height={25} // Increased height for X-axis to ensure labels fit
+              fontSize={12}
+              tick={{ fontSize: 12 }}
+              tickCount={5}
+              height={30} // Increased height for X-axis to ensure labels fit
             />
             <YAxis 
               yAxisId="btc"
               orientation="left"
               stroke="var(--foreground)"
-              fontSize={9}
+              fontSize={11}
               tickCount={4}
               tickFormatter={(value) => `$${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: 9 }}
-              width={isMobile ? 40 : 55}
+              tick={{ fontSize: 11 }}
+              width={isMobile ? 45 : 70}
+              domain={['dataMin - 5000', 'dataMax + 5000']} // Better value range
             />
             <YAxis 
               yAxisId="aoc"
               orientation="right"
               stroke="var(--foreground)"
-              fontSize={9}
+              fontSize={11}
               tickCount={4}
               tickFormatter={(value) => `${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: 9 }}
-              width={isMobile ? 35 : 45}
+              tick={{ fontSize: 11 }}
+              width={isMobile ? 40 : 75}
+              domain={['dataMin - 5000000', 'dataMax + 5000000']} // Better value range
             />
             <Tooltip content={<ChartTooltipContent />} />
             <Line
@@ -123,9 +124,9 @@ const CryptoChart: React.FC = () => {
               name="bitcoin"
               stroke="#f7931a"
               yAxisId="btc"
-              activeDot={{ r: isMobile ? 3 : 5 }}
+              activeDot={{ r: 6 }}
+              strokeWidth={2.5}
               dot={false}
-              strokeWidth={2}
             />
             <Line
               type="monotone"
@@ -133,15 +134,15 @@ const CryptoChart: React.FC = () => {
               name="aocripto"
               stroke="#3b82f6"
               yAxisId="aoc"
-              activeDot={{ r: isMobile ? 3 : 5 }}
+              activeDot={{ r: 6 }}
+              strokeWidth={2.5}
               dot={false}
-              strokeWidth={2}
             />
           </LineChart>
         </ChartContainer>
       </div>
       
-      <div className="mt-3 text-sm text-gray-600">
+      <div className="mt-4 text-sm text-gray-600">
         <p className="font-medium mb-1">Análise:</p>
         {timeRange === '1d' && (
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>

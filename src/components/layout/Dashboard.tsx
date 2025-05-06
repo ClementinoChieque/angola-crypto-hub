@@ -37,13 +37,13 @@ const Dashboard: React.FC = () => {
       <BalanceStatus />
       
       {/* Top section with crypto rates and chart */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-3 md:mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 mb-3 md:mb-12">
         <CryptoRates />
         <CryptoChart />
       </div>
       
       {/* Clear separation between chart section and menu section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 mt-8 md:mt-14">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 mt-8 md:mt-16">
         {/* Menu sidebar on desktop, tabs on mobile */}
         <div className="hidden md:block relative z-20">
           <Card className="p-4 h-full">
