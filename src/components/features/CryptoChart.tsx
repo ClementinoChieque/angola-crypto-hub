@@ -48,16 +48,16 @@ const CryptoChart: React.FC = () => {
   };
 
   return (
-    <Card className="p-4 overflow-hidden bg-white shadow-sm">
-      <div className="flex items-center justify-between mb-5">
-        <h3 className="font-semibold text-lg">Análise do Gráfico</h3>
+    <Card className="p-3 md:p-4 overflow-hidden bg-white shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 md:mb-5 gap-2">
+        <h3 className="font-semibold text-base md:text-lg">Análise do Gráfico</h3>
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-auto">
-          <TabsList className="grid grid-cols-3 h-8">
+          <TabsList className="grid grid-cols-3 h-7 md:h-8 min-w-[180px]">
             {timeRanges.map((range) => (
               <TabsTrigger 
                 key={range.value} 
                 value={range.value}
-                className="text-xs px-3"
+                className="text-xs px-2 md:px-3"
               >
                 {range.label}
               </TabsTrigger>
@@ -66,55 +66,57 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      {/* Legend above the chart with clearer formatting */}
-      <div className="flex justify-start items-center gap-8 mb-4">
+      {/* Legend above the chart with clearer formatting for mobile */}
+      <div className="flex flex-wrap justify-start items-center gap-4 md:gap-8 mb-2 md:mb-4">
         <div className="flex items-center">
-          <div className="w-5 h-5 bg-[#f7931a] rounded-sm mr-2"></div>
-          <span className="text-sm text-gray-700">Bitcoin</span>
+          <div className="w-4 h-4 md:w-5 md:h-5 bg-[#f7931a] rounded-sm mr-1 md:mr-2"></div>
+          <span className="text-xs md:text-sm text-gray-700">Bitcoin</span>
         </div>
         <div className="flex items-center">
-          <div className="w-5 h-5 bg-[#3b82f6] rounded-sm mr-2"></div>
-          <span className="text-sm text-gray-700">AOcripto</span>
+          <div className="w-4 h-4 md:w-5 md:h-5 bg-[#3b82f6] rounded-sm mr-1 md:mr-2"></div>
+          <span className="text-xs md:text-sm text-gray-700">AOcripto</span>
         </div>
       </div>
       
-      {/* Modified chart height and margin */}
-      <div className="h-[190px] md:h-[240px]">
+      {/* Optimized chart height and margins for mobile */}
+      <div className="h-[170px] md:h-[240px]">
         <ChartContainer config={chartConfig}>
           <LineChart 
             data={historyData}
-            margin={{ top: 10, right: 30, left: 5, bottom: 40 }}
+            margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 25 } : { top: 10, right: 30, left: 5, bottom: 40 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
             <XAxis 
               dataKey="date" 
-              tickFormatter={(value) => format(new Date(value), 'dd/MM')}
+              tickFormatter={(value) => format(new Date(value), isMobile ? 'd/M' : 'dd/MM')}
               stroke="var(--foreground)"
-              fontSize={12}
-              tick={{ fontSize: 12 }}
-              tickCount={5}
-              height={35}
+              fontSize={isMobile ? 10 : 12}
+              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tickCount={isMobile ? 4 : 5}
+              height={isMobile ? 25 : 35}
             />
             <YAxis 
               yAxisId="btc"
               orientation="left"
               stroke="var(--foreground)"
-              fontSize={11}
-              tickCount={4}
-              tickFormatter={(value) => `$${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: 11 }}
-              width={isMobile ? 45 : 70}
+              fontSize={isMobile ? 9 : 11}
+              tickCount={isMobile ? 3 : 4}
+              tickFormatter={(value) => isMobile ? `$${Math.round(value/1000)}k` : `$${Math.round(value).toLocaleString()}`}
+              tick={{ fontSize: isMobile ? 9 : 11 }}
+              width={isMobile ? 35 : 70}
               domain={['dataMin - 5000', 'dataMax + 5000']}
             />
             <YAxis 
               yAxisId="aoc"
               orientation="right"
               stroke="var(--foreground)"
-              fontSize={11}
-              tickCount={4}
-              tickFormatter={(value) => `${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: 11 }}
-              width={isMobile ? 40 : 75}
+              fontSize={isMobile ? 9 : 11}
+              tickCount={isMobile ? 3 : 4}
+              tickFormatter={(value) => isMobile ? 
+                `${(value/1000000).toFixed(1)}M` : 
+                `${Math.round(value).toLocaleString()}`}
+              tick={{ fontSize: isMobile ? 9 : 11 }}
+              width={isMobile ? 35 : 75}
               domain={['dataMin - 5000000', 'dataMax + 5000000']}
             />
             <Tooltip content={<ChartTooltipContent />} />
@@ -124,8 +126,8 @@ const CryptoChart: React.FC = () => {
               name="bitcoin"
               stroke="#f7931a"
               yAxisId="btc"
-              activeDot={{ r: 6 }}
-              strokeWidth={2.5}
+              activeDot={{ r: isMobile ? 4 : 6 }}
+              strokeWidth={isMobile ? 2 : 2.5}
               dot={false}
             />
             <Line
@@ -134,16 +136,16 @@ const CryptoChart: React.FC = () => {
               name="aocripto"
               stroke="#3b82f6"
               yAxisId="aoc"
-              activeDot={{ r: 6 }}
-              strokeWidth={2.5}
+              activeDot={{ r: isMobile ? 4 : 6 }}
+              strokeWidth={isMobile ? 2 : 2.5}
               dot={false}
             />
           </LineChart>
         </ChartContainer>
       </div>
       
-      <div className="mt-4 text-sm text-gray-600">
-        <p className="font-medium mb-1">Análise:</p>
+      <div className="mt-3 md:mt-4 text-xs md:text-sm text-gray-600">
+        <p className="font-medium mb-0.5 md:mb-1">Análise:</p>
         {timeRange === '1d' && (
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>
         )}
