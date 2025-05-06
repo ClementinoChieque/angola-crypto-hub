@@ -68,11 +68,23 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      <div className="h-[150px] md:h-[150px]"> {/* Reduced height here */}
+      {/* Legend moved to top, above the chart */}
+      <div className="flex justify-center items-center gap-6 mb-3">
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-[#f7931a] mr-2"></div>
+          <span className="text-xs text-gray-600">Bitcoin</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-4 h-4 bg-[#3b82f6] mr-2"></div>
+          <span className="text-xs text-gray-600">AOcripto</span>
+        </div>
+      </div>
+      
+      <div className="h-[150px] md:h-[150px]">
         <ChartContainer config={chartConfig}>
           <LineChart 
             data={historyData}
-            margin={{ top: 5, right: 20, left: 5, bottom: 5 }} // Added margin to ensure axis labels are visible
+            margin={{ top: 5, right: 20, left: 5, bottom: 20 }} // Increased bottom margin to ensure X-axis labels are visible
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
             <XAxis 
@@ -82,7 +94,7 @@ const CryptoChart: React.FC = () => {
               fontSize={10}
               tick={{ fontSize: 10 }}
               tickCount={7}
-              height={20} // Ensure X-axis has enough height for labels
+              height={25} // Increased height for X-axis to ensure labels fit
             />
             <YAxis 
               yAxisId="btc"
@@ -129,19 +141,7 @@ const CryptoChart: React.FC = () => {
         </ChartContainer>
       </div>
       
-      {/* Legend squares as shown in reference image */}
-      <div className="flex justify-center items-center gap-6 mt-1">
-        <div className="flex items-center">
-          <div className="w-4 h-4 bg-[#f7931a] mr-2"></div>
-          <span className="text-xs text-gray-600">Bitcoin</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 bg-[#3b82f6] mr-2"></div>
-          <span className="text-xs text-gray-600">AOcripto</span>
-        </div>
-      </div>
-      
-      <div className="mt-2 text-sm text-gray-600">
+      <div className="mt-3 text-sm text-gray-600">
         <p className="font-medium mb-1">Análise:</p>
         {timeRange === '1d' && (
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>
