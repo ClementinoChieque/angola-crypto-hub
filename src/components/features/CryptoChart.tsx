@@ -35,7 +35,7 @@ const CryptoChart: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Card className="p-2 md:p-4 h-[220px] md:h-[300px] flex items-center justify-center">
+      <Card className="p-2 md:p-4 h-[220px] md:h-[250px] flex items-center justify-center">
         <div className="animate-pulse text-center">
           <ChartLine size={isMobile ? 20 : 24} className="mx-auto mb-2 text-muted-foreground" />
           <p className="text-muted-foreground text-xs md:text-sm">Carregando dados históricos...</p>
@@ -50,7 +50,7 @@ const CryptoChart: React.FC = () => {
   };
 
   return (
-    <Card className="p-4 overflow-hidden bg-white shadow-sm"> {/* Matched to reference image styling */}
+    <Card className="p-4 overflow-hidden bg-white shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-base">Análise do Gráfico</h3>
         <Tabs value={timeRange} onValueChange={setTimeRange} className="w-auto">
@@ -68,37 +68,41 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      <div className="h-[180px] md:h-[180px]"> {/* Fixed height to match reference image */}
+      <div className="h-[150px] md:h-[150px]"> {/* Reduced height here */}
         <ChartContainer config={chartConfig}>
-          <LineChart data={historyData}>
+          <LineChart 
+            data={historyData}
+            margin={{ top: 5, right: 20, left: 5, bottom: 5 }} // Added margin to ensure axis labels are visible
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
             <XAxis 
               dataKey="date" 
               tickFormatter={(value) => format(new Date(value), 'dd/MM')}
               stroke="var(--foreground)"
-              fontSize={isMobile ? 10 : 12}
-              tick={{ fontSize: isMobile ? 8 : 11 }}
-              tickCount={isMobile ? 3 : 7}
+              fontSize={10}
+              tick={{ fontSize: 10 }}
+              tickCount={7}
+              height={20} // Ensure X-axis has enough height for labels
             />
             <YAxis 
               yAxisId="btc"
               orientation="left"
               stroke="var(--foreground)"
-              fontSize={isMobile ? 8 : 11}
-              tickCount={isMobile ? 3 : 4}
+              fontSize={9}
+              tickCount={4}
               tickFormatter={(value) => `$${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: isMobile ? 8 : 11 }}
-              width={isMobile ? 40 : 60}
+              tick={{ fontSize: 9 }}
+              width={isMobile ? 40 : 55}
             />
             <YAxis 
               yAxisId="aoc"
               orientation="right"
               stroke="var(--foreground)"
-              fontSize={isMobile ? 8 : 11}
-              tickCount={isMobile ? 3 : 4}
+              fontSize={9}
+              tickCount={4}
               tickFormatter={(value) => `${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: isMobile ? 8 : 11 }}
-              width={isMobile ? 35 : 50}
+              tick={{ fontSize: 9 }}
+              width={isMobile ? 35 : 45}
             />
             <Tooltip content={<ChartTooltipContent />} />
             <Line
@@ -107,7 +111,7 @@ const CryptoChart: React.FC = () => {
               name="bitcoin"
               stroke="#f7931a"
               yAxisId="btc"
-              activeDot={{ r: isMobile ? 4 : 6 }}
+              activeDot={{ r: isMobile ? 3 : 5 }}
               dot={false}
               strokeWidth={2}
             />
@@ -117,7 +121,7 @@ const CryptoChart: React.FC = () => {
               name="aocripto"
               stroke="#3b82f6"
               yAxisId="aoc"
-              activeDot={{ r: isMobile ? 4 : 6 }}
+              activeDot={{ r: isMobile ? 3 : 5 }}
               dot={false}
               strokeWidth={2}
             />
@@ -126,7 +130,7 @@ const CryptoChart: React.FC = () => {
       </div>
       
       {/* Legend squares as shown in reference image */}
-      <div className="flex justify-center items-center gap-6 mt-4">
+      <div className="flex justify-center items-center gap-6 mt-1">
         <div className="flex items-center">
           <div className="w-4 h-4 bg-[#f7931a] mr-2"></div>
           <span className="text-xs text-gray-600">Bitcoin</span>
@@ -137,7 +141,7 @@ const CryptoChart: React.FC = () => {
         </div>
       </div>
       
-      <div className="mt-4 text-sm text-gray-600">
+      <div className="mt-2 text-sm text-gray-600">
         <p className="font-medium mb-1">Análise:</p>
         {timeRange === '1d' && (
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>

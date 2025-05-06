@@ -43,9 +43,9 @@ const Dashboard: React.FC = () => {
       </div>
       
       {/* Clear separation between chart section and menu section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 mt-6 md:mt-16">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 mt-8 md:mt-12">
         {/* Menu sidebar on desktop, tabs on mobile */}
-        <div className="hidden md:block">
+        <div className="hidden md:block relative z-10">
           <Card className="p-4 h-full">
             <div className="flex flex-col space-y-3">
               {menuItems.map((item) => (
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Content area - Span 2 columns on desktop */}
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 relative z-10">
           <Card className="p-3 md:p-6">
             {/* Upload Tab */}
             {activeTab === 'upload' && <UploadProof />}
