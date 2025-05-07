@@ -282,10 +282,14 @@ const CryptoChart: React.FC = () => {
               />
               <Tooltip
                 labelFormatter={(value) => format(new Date(value), 'dd/MM/yyyy')}
-                formatter={(value, name) => [
-                  `$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 4 })}`,
-                  name === 'price' ? 'Preço' : name.charAt(0).toUpperCase() + name.slice(1)
-                ]}
+                formatter={(value, name) => {
+                  // Fix: Convert name to string before using string methods
+                  const nameStr = String(name);
+                  return [
+                    `$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 4 })}`,
+                    nameStr === 'price' ? 'Preço' : nameStr.charAt(0).toUpperCase() + nameStr.slice(1)
+                  ];
+                }}
               />
               
               {/* Draw price line */}
@@ -448,4 +452,3 @@ const CryptoChart: React.FC = () => {
 };
 
 export default CryptoChart;
-
