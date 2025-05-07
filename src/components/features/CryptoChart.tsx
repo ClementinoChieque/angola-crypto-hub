@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import {
   LineChart,
@@ -9,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from 'recharts';
 import { Card } from '@/components/ui/card';
 import {
@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCryptoHistory } from '@/utils/cryptoRates';
 import { ChartLine } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const timeRanges = [
   { value: '1d', label: '24h' },
@@ -26,10 +27,60 @@ const timeRanges = [
   { value: '30d', label: '30D' },
 ];
 
+// Define colors for each cryptocurrency
+const cryptoColors = {
+  bitcoin: '#f7931a',
+  ethereum: '#627eea',
+  solana: '#00ffbd',
+  cardano: '#0033ad',
+  binancecoin: '#f3ba2f',
+  aocripto: '#3b82f6',
+};
+
 const CryptoChart: React.FC = () => {
-  const [timeRange, setTimeRange] = React.useState('7d');
+  const [timeRange, setTimeRange] = useState('7d');
+  const [selectedCryptos, setSelectedCryptos] = useState(['bitcoin', 'ethereum', 'aocripto']);
   const { historyData, isLoading } = useCryptoHistory(timeRange);
   const isMobile = useIsMobile();
+
+  // Process data for the chart to include all selected cryptocurrencies
+  const processedData = historyData.map(item => {
+    const result: any = { date: item.date };
+    
+    // Add price for each selected cryptocurrency
+    Object.keys(item.prices).forEach(cryptoId => {
+      if (selectedCryptos.includes(cryptoId)) {
+        result[cryptoId] = item.prices[cryptoId];
+      }
+    });
+    
+    return result;
+  });
+
+  // Helper function to toggle cryptocurrency selection
+  const toggleCrypto = (cryptoId: string) => {
+    setSelectedCryptos(prev => {
+      // If already selected, remove it
+      if (prev.includes(cryptoId)) {
+        return prev.filter(id => id !== cryptoId);
+      }
+      // Otherwise add it
+      return [...prev, cryptoId];
+    });
+  };
+
+  // Create chart config from selected cryptos
+  const chartConfig = Object.fromEntries(
+    Object.entries(cryptoColors)
+      .filter(([key]) => selectedCryptos.includes(key))
+      .map(([key, color]) => [
+        key, 
+        { 
+          label: key === 'aocripto' ? 'AOcripto' : key.charAt(0).toUpperCase() + key.slice(1), 
+          theme: { light: color, dark: color } 
+        }
+      ])
+  );
 
   if (isLoading) {
     return (
@@ -41,11 +92,6 @@ const CryptoChart: React.FC = () => {
       </Card>
     );
   }
-
-  const chartConfig = {
-    bitcoin: { label: 'Bitcoin', theme: { light: '#f7931a', dark: '#f7931a' } },
-    aocripto: { label: 'AOcripto', theme: { light: '#2563eb', dark: '#3b82f6' } },
-  };
 
   return (
     <Card className="p-3 md:p-4 overflow-hidden bg-white shadow-sm">
@@ -66,23 +112,32 @@ const CryptoChart: React.FC = () => {
         </Tabs>
       </div>
       
-      {/* Legend above the chart with clearer formatting for mobile */}
-      <div className="flex flex-wrap justify-start items-center gap-4 md:gap-8 mb-2 md:mb-4">
-        <div className="flex items-center">
-          <div className="w-4 h-4 md:w-5 md:h-5 bg-[#f7931a] rounded-sm mr-1 md:mr-2"></div>
-          <span className="text-xs md:text-sm text-gray-700">Bitcoin</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 md:w-5 md:h-5 bg-[#3b82f6] rounded-sm mr-1 md:mr-2"></div>
-          <span className="text-xs md:text-sm text-gray-700">AOcripto</span>
-        </div>
+      {/* Currency selection toggle group */}
+      <div className="mb-3 md:mb-4 overflow-x-auto">
+        <ToggleGroup type="multiple" className="flex flex-wrap gap-1" value={selectedCryptos} onValueChange={(value) => {
+          if (value.length) setSelectedCryptos(value);
+        }}>
+          {Object.entries(cryptoColors).map(([cryptoId, color]) => (
+            <ToggleGroupItem 
+              key={cryptoId}
+              value={cryptoId}
+              className="text-xs h-6 md:h-7 px-2 py-1"
+              style={{ borderColor: color, color: selectedCryptos.includes(cryptoId) ? 'white' : color, 
+                      backgroundColor: selectedCryptos.includes(cryptoId) ? color : 'transparent' }}
+            >
+              {cryptoId === 'aocripto' ? 'AOcripto' : 
+               cryptoId === 'binancecoin' ? 'BNB' :
+               cryptoId.charAt(0).toUpperCase() + cryptoId.slice(1)}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
       
       {/* Optimized chart height and margins for mobile */}
       <div className="h-[170px] md:h-[240px]">
         <ChartContainer config={chartConfig}>
           <LineChart 
-            data={historyData}
+            data={processedData}
             margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 25 } : { top: 10, right: 30, left: 5, bottom: 40 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
@@ -96,50 +151,32 @@ const CryptoChart: React.FC = () => {
               height={isMobile ? 25 : 35}
             />
             <YAxis 
-              yAxisId="btc"
+              yAxisId="price"
               orientation="left"
               stroke="var(--foreground)"
               fontSize={isMobile ? 9 : 11}
               tickCount={isMobile ? 3 : 4}
-              tickFormatter={(value) => isMobile ? `$${Math.round(value/1000)}k` : `$${Math.round(value).toLocaleString()}`}
+              tickFormatter={(value) => isMobile ? `$${(value >= 1000) ? (value/1000).toFixed(1) + 'k' : value}` : `$${value.toLocaleString()}`}
               tick={{ fontSize: isMobile ? 9 : 11 }}
               width={isMobile ? 35 : 70}
-              domain={['dataMin - 5000', 'dataMax + 5000']}
-            />
-            <YAxis 
-              yAxisId="aoc"
-              orientation="right"
-              stroke="var(--foreground)"
-              fontSize={isMobile ? 9 : 11}
-              tickCount={isMobile ? 3 : 4}
-              tickFormatter={(value) => isMobile ? 
-                `${(value/1000000).toFixed(1)}M` : 
-                `${Math.round(value).toLocaleString()}`}
-              tick={{ fontSize: isMobile ? 9 : 11 }}
-              width={isMobile ? 35 : 75}
-              domain={['dataMin - 5000000', 'dataMax + 5000000']}
+              domain={['auto', 'auto']}
             />
             <Tooltip content={<ChartTooltipContent />} />
-            <Line
-              type="monotone"
-              dataKey="btcPrice"
-              name="bitcoin"
-              stroke="#f7931a"
-              yAxisId="btc"
-              activeDot={{ r: isMobile ? 4 : 6 }}
-              strokeWidth={isMobile ? 2 : 2.5}
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="aocValue"
-              name="aocripto"
-              stroke="#3b82f6"
-              yAxisId="aoc"
-              activeDot={{ r: isMobile ? 4 : 6 }}
-              strokeWidth={isMobile ? 2 : 2.5}
-              dot={false}
-            />
+            
+            {/* Dynamically create Lines based on selected cryptocurrencies */}
+            {selectedCryptos.map(cryptoId => (
+              <Line
+                key={cryptoId}
+                type="monotone"
+                dataKey={cryptoId}
+                name={cryptoId}
+                stroke={cryptoColors[cryptoId as keyof typeof cryptoColors]}
+                yAxisId="price"
+                activeDot={{ r: isMobile ? 4 : 6 }}
+                strokeWidth={isMobile ? 2 : 2.5}
+                dot={false}
+              />
+            ))}
           </LineChart>
         </ChartContainer>
       </div>
@@ -150,10 +187,18 @@ const CryptoChart: React.FC = () => {
           <p>Análise de curto prazo mostra variações dentro das últimas 24 horas.</p>
         )}
         {timeRange === '7d' && (
-          <p>Análise de médio prazo indica tendência de {historyData[historyData.length - 1]?.btcPrice > historyData[0]?.btcPrice ? 'alta' : 'baixa'} na semana.</p>
+          <p>Análise de médio prazo indica tendência de {
+            selectedCryptos.length > 0 && processedData.length > 0 ? 
+            (processedData[processedData.length - 1][selectedCryptos[0]] > processedData[0][selectedCryptos[0]] ? 'alta' : 'baixa') 
+            : 'variação'
+          } na semana.</p>
         )}
         {timeRange === '30d' && (
-          <p>Análise de longo prazo revela padrão de {historyData[historyData.length - 1]?.btcPrice > historyData[0]?.btcPrice ? 'valorização' : 'desvalorização'} no mês.</p>
+          <p>Análise de longo prazo revela padrão de {
+            selectedCryptos.length > 0 && processedData.length > 0 ? 
+            (processedData[processedData.length - 1][selectedCryptos[0]] > processedData[0][selectedCryptos[0]] ? 'valorização' : 'desvalorização') 
+            : 'variação'
+          } no mês.</p>
         )}
       </div>
     </Card>
