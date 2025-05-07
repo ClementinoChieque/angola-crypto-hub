@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCryptoRates } from '@/utils/cryptoRates';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const CryptoRates: React.FC = () => {
   const { rates, isLoading } = useCryptoRates();
   const [displayMode, setDisplayMode] = useState<'all' | 'popular'>('popular');
+  const [animatedPrices, setAnimatedPrices] = useState<Record<string, number>>({});
   
   // Define popular cryptocurrencies to show in compact mode
   const popularCryptos = ['bitcoin', 'ethereum', 'binancecoin'];
@@ -27,6 +28,47 @@ const CryptoRates: React.FC = () => {
       return Object.keys(rates.cryptoPrices).filter(crypto => popularCryptos.includes(crypto));
     }
     return Object.keys(rates.cryptoPrices);
+  };
+
+  // Effect for price animation every 2 seconds
+  useEffect(() => {
+    if (isLoading || Object.keys(rates.cryptoPrices).length === 0) return;
+    
+    // Initialize animated prices with current values
+    const initialPrices: Record<string, number> = {};
+    Object.keys(rates.cryptoPrices).forEach(crypto => {
+      initialPrices[crypto] = rates.cryptoPrices[crypto].currentPrice;
+    });
+    setAnimatedPrices(initialPrices);
+    
+    // Update prices every 2 seconds
+    const interval = setInterval(() => {
+      const updatedPrices: Record<string, number> = {};
+      Object.keys(rates.cryptoPrices).forEach(crypto => {
+        // Small random variation (±0.15%)
+        const basePrice = rates.cryptoPrices[crypto].currentPrice;
+        const variation = (Math.random() * 0.003) - 0.0015; // -0.15% to +0.15%
+        updatedPrices[crypto] = basePrice * (1 + variation);
+      });
+      setAnimatedPrices(updatedPrices);
+    }, 2000);
+    
+    // Cleanup
+    return () => clearInterval(interval);
+  }, [isLoading, rates.cryptoPrices]);
+
+  // Function to get the displayed price (animated if available, otherwise actual)
+  const getDisplayPrice = (cryptoId: string) => {
+    if (animatedPrices[cryptoId]) {
+      return animatedPrices[cryptoId];
+    }
+    return rates.cryptoPrices[cryptoId]?.currentPrice || 0;
+  };
+
+  // Determine if price went up or down from previous
+  const getPriceChange = (cryptoId: string) => {
+    if (!animatedPrices[cryptoId] || !rates.cryptoPrices[cryptoId]) return 'neutral';
+    return animatedPrices[cryptoId] > rates.cryptoPrices[cryptoId].currentPrice ? 'up' : 'down';
   };
 
   return (
@@ -58,13 +100,21 @@ const CryptoRates: React.FC = () => {
             {/* Cryptocurrencies */}
             {getCryptosToDisplay().map(cryptoId => {
               const crypto = rates.cryptoPrices[cryptoId];
+              const priceChangeClass = getPriceChange(cryptoId) === 'up' 
+                ? 'text-green-500 transition-colors' 
+                : getPriceChange(cryptoId) === 'down' 
+                ? 'text-red-500 transition-colors' 
+                : '';
+              
               return (
                 <div key={cryptoId} className="bg-muted p-3 rounded">
                   <div className="flex justify-between items-center mb-1">
                     <p className="text-sm font-medium">
                       {cryptoId.charAt(0).toUpperCase() + cryptoId.slice(1)} ({crypto.symbol})
                     </p>
-                    <p className="font-medium">${formatPrice(crypto.currentPrice)} USDT</p>
+                    <p className={`font-medium ${priceChangeClass}`}>
+                      ${formatPrice(getDisplayPrice(cryptoId))} USDT
+                    </p>
                   </div>
                   
                   <div className="flex justify-between text-xs text-muted-foreground">
