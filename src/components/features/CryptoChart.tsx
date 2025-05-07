@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import {
@@ -217,7 +216,7 @@ const CryptoChart: React.FC = () => {
               domain={['auto', 'auto']}
             />
             <Tooltip content={<ChartTooltipContent />} />
-            <ReferenceLine y={0} stroke="#000" />
+            <ReferenceLine y={0} stroke="#000" yAxisId="price" />
             
             {selectedCryptos.map(cryptoId => (
               <Bar
