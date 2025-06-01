@@ -19,8 +19,13 @@ const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b shadow-sm">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-xl text-crypto-blue">Crypto Hub</span>
+        <div className="flex items-center gap-3">
+          <img 
+            src="/lovable-uploads/a968357d-2b22-46e9-9a6c-d590de85e923.png" 
+            alt="Bitget12" 
+            className="h-8 w-8"
+          />
+          <span className="font-bold text-xl text-crypto-blue">Bitget12</span>
         </div>
 
         {/* Desktop Navigation */}
@@ -59,7 +64,14 @@ const Navbar: React.FC = () => {
           <SheetContent side="right" className="w-[80%] sm:w-[350px]">
             <div className="flex flex-col h-full">
               <div className="flex items-center justify-between py-4 border-b">
-                <span className="font-bold text-xl text-crypto-blue">Menu</span>
+                <div className="flex items-center gap-2">
+                  <img 
+                    src="/lovable-uploads/a968357d-2b22-46e9-9a6c-d590de85e923.png" 
+                    alt="Bitget12" 
+                    className="h-6 w-6"
+                  />
+                  <span className="font-bold text-xl text-crypto-blue">Menu</span>
+                </div>
                 <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
                   <X className="h-5 w-5" />
                 </Button>

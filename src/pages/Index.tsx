@@ -20,7 +20,14 @@ const Index = () => {
         ) : (
           <div className="flex flex-col items-center justify-center min-h-[80vh]">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-crypto-dark mb-2">Angola Crypto Hub</h1>
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <img 
+                  src="/lovable-uploads/a968357d-2b22-46e9-9a6c-d590de85e923.png" 
+                  alt="Bitget12" 
+                  className="h-12 w-12"
+                />
+                <h1 className="text-3xl font-bold text-crypto-dark">Bitget12</h1>
+              </div>
               <p className="text-muted-foreground">
                 Sua plataforma segura para compra, venda e investimento em criptomoedas
               </p>
