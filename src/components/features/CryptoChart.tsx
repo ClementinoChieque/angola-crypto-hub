@@ -10,6 +10,7 @@ import CryptoToggleGroup from './crypto-chart/CryptoToggleGroup';
 import ChartAnalysis from './crypto-chart/ChartAnalysis';
 import LoadingState from './crypto-chart/LoadingState';
 import ChartRenderer from './crypto-chart/ChartRenderer';
+import PerformanceComparison from './crypto-chart/PerformanceComparison';
 import { useOptimizedChartData } from './crypto-chart/hooks/useOptimizedChartData';
 import { ChartType, ChartTimeRange } from './crypto-chart/types';
 
@@ -50,39 +51,50 @@ const CryptoChart: React.FC = () => {
   }
 
   return (
-    <Card className="p-3 md:p-4 overflow-hidden bg-white shadow-sm">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 md:mb-5 gap-2">
-        <h3 className="font-semibold text-base md:text-lg">Análise do Gráfico</h3>
-        <div className="flex flex-col md:flex-row gap-2">
-          <ChartTypePicker chartType={chartType} setChartType={handleChartTypeChange} />
-          <TimeRangePicker timeRange={timeRange} setTimeRange={handleTimeRangeChange} />
+    <div>
+      <Card className="p-3 md:p-4 overflow-hidden bg-white shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 md:mb-5 gap-2">
+          <h3 className="font-semibold text-base md:text-lg">Análise do Gráfico</h3>
+          <div className="flex flex-col md:flex-row gap-2">
+            <ChartTypePicker chartType={chartType} setChartType={handleChartTypeChange} />
+            <TimeRangePicker timeRange={timeRange} setTimeRange={handleTimeRangeChange} />
+          </div>
         </div>
-      </div>
-      
-      {/* Only show crypto selection for line and bar charts */}
-      {chartType !== 'candle' && (
-        <CryptoToggleGroup 
+        
+        {/* Only show crypto selection for line and bar charts */}
+        {chartType !== 'candle' && (
+          <CryptoToggleGroup 
+            selectedCryptos={selectedCryptos} 
+            setSelectedCryptos={handleSelectedCryptosChange}
+          />
+        )}
+        
+        <ChartRenderer
+          chartType={chartType}
+          processedData={processedData}
+          selectedCryptos={selectedCryptos}
+          historyData={historyData}
+          activeCrypto={activeCrypto}
+          setActiveCrypto={handleActiveCryptoChange}
+          isMobile={isMobile}
+        />
+        
+        <ChartAnalysis 
+          timeRange={timeRange} 
           selectedCryptos={selectedCryptos} 
-          setSelectedCryptos={handleSelectedCryptosChange}
+          processedData={processedData}
+        />
+      </Card>
+      
+      {/* Performance Comparison - Only show for line and bar charts with multiple cryptos */}
+      {chartType !== 'candle' && selectedCryptos.length > 1 && (
+        <PerformanceComparison
+          processedData={processedData}
+          selectedCryptos={selectedCryptos}
+          timeRange={timeRange}
         />
       )}
-      
-      <ChartRenderer
-        chartType={chartType}
-        processedData={processedData}
-        selectedCryptos={selectedCryptos}
-        historyData={historyData}
-        activeCrypto={activeCrypto}
-        setActiveCrypto={handleActiveCryptoChange}
-        isMobile={isMobile}
-      />
-      
-      <ChartAnalysis 
-        timeRange={timeRange} 
-        selectedCryptos={selectedCryptos} 
-        processedData={processedData}
-      />
-    </Card>
+    </div>
   );
 };
 
