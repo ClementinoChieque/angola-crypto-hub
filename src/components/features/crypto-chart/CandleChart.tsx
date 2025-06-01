@@ -28,6 +28,9 @@ const CandleChartComponent: React.FC<CandleChartProps> = memo(({
   setActiveCrypto, 
   isMobile 
 }) => {
+  console.log('CandleChart - rendering with data points:', candleData?.length || 0);
+  console.log('CandleChart - activeCrypto:', activeCrypto);
+
   // Optimize candle data for mobile
   const optimizedCandleData = useMemo(() => {
     if (isMobile && candleData.length > 20) {
@@ -42,6 +45,14 @@ const CandleChartComponent: React.FC<CandleChartProps> = memo(({
       name: getCryptoDisplayName(cryptoId)
     }));
   }, []);
+
+  if (!candleData || candleData.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-muted-foreground">
+        <p>Sem dados para exibir</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -64,6 +75,8 @@ const CandleChartComponent: React.FC<CandleChartProps> = memo(({
       </div>
       
       <LineChart
+        width={800}
+        height={isMobile ? 170 : 240}
         data={optimizedCandleData}
         margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 25 } : { top: 10, right: 30, left: 5, bottom: 40 }}
       >

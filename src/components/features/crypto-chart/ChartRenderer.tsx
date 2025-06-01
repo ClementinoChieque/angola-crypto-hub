@@ -1,6 +1,7 @@
 
 import React, { memo, useMemo } from 'react';
 import { ChartContainer } from '@/components/ui/chart';
+import { ResponsiveContainer } from 'recharts';
 import LineChartComponent from './LineChart';
 import BarChartComponent from './BarChart';
 import CandleChartComponent from './CandleChart';
@@ -26,6 +27,11 @@ const ChartRenderer: React.FC<ChartRendererProps> = memo(({
   setActiveCrypto,
   isMobile
 }) => {
+  console.log('ChartRenderer - chartType:', chartType);
+  console.log('ChartRenderer - processedData length:', processedData?.length || 0);
+  console.log('ChartRenderer - selectedCryptos:', selectedCryptos);
+  console.log('ChartRenderer - historyData length:', historyData?.length || 0);
+
   // Memoize chart config to prevent unnecessary recalculations
   const chartConfig = useMemo(() => {
     return Object.fromEntries(
@@ -43,8 +49,24 @@ const ChartRenderer: React.FC<ChartRendererProps> = memo(({
 
   // Memoize candlestick data processing
   const candleData = useMemo(() => {
+    if (chartType !== 'candle') return [];
     return processCandlestickData(historyData, activeCrypto);
-  }, [historyData, activeCrypto]);
+  }, [historyData, activeCrypto, chartType]);
+
+  // Check if we have data to render
+  const hasData = chartType === 'candle' 
+    ? candleData.length > 0 
+    : processedData.length > 0 && selectedCryptos.length > 0;
+
+  console.log('ChartRenderer - hasData:', hasData);
+
+  if (!hasData) {
+    return (
+      <div className="h-[170px] md:h-[240px] flex items-center justify-center text-muted-foreground">
+        <p>Carregando dados do gráfico...</p>
+      </div>
+    );
+  }
 
   // Memoize chart component rendering
   const chartComponent = useMemo(() => {
@@ -85,7 +107,9 @@ const ChartRenderer: React.FC<ChartRendererProps> = memo(({
   return (
     <div className="h-[170px] md:h-[240px]">
       <ChartContainer config={chartConfig}>
-        {chartComponent}
+        <ResponsiveContainer width="100%" height="100%">
+          {chartComponent}
+        </ResponsiveContainer>
       </ChartContainer>
     </div>
   );

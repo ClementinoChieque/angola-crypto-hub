@@ -8,7 +8,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
 import { ChartTooltipContent } from '@/components/ui/chart';
 import { CRYPTO_COLORS } from './types';
@@ -24,8 +23,21 @@ const LineChartComponent: React.FC<LineChartProps> = memo(({
   selectedCryptos, 
   isMobile 
 }) => {
+  console.log('LineChart - rendering with data points:', processedData?.length || 0);
+  console.log('LineChart - selectedCryptos:', selectedCryptos);
+
+  if (!processedData || processedData.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-muted-foreground">
+        <p>Sem dados para exibir</p>
+      </div>
+    );
+  }
+
   return (
     <RechartsLineChart 
+      width={800}
+      height={isMobile ? 170 : 240}
       data={processedData}
       margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 25 } : { top: 10, right: 30, left: 5, bottom: 40 }}
     >

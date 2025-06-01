@@ -22,6 +22,11 @@ const CryptoChart: React.FC = () => {
   const { historyData, isLoading } = useCryptoHistory(timeRange);
   const isMobile = useIsMobile();
 
+  console.log('CryptoChart - historyData length:', historyData?.length || 0);
+  console.log('CryptoChart - isLoading:', isLoading);
+  console.log('CryptoChart - timeRange:', timeRange);
+  console.log('CryptoChart - selectedCryptos:', selectedCryptos);
+
   // Use optimized data hook
   const { processedData } = useOptimizedChartData({
     historyData,
@@ -29,20 +34,26 @@ const CryptoChart: React.FC = () => {
     isMobile
   });
 
+  console.log('CryptoChart - processedData length:', processedData?.length || 0);
+
   // Memoize callback functions to prevent unnecessary re-renders
   const handleTimeRangeChange = useCallback((range: ChartTimeRange) => {
+    console.log('Time range changed to:', range);
     setTimeRange(range);
   }, []);
 
   const handleChartTypeChange = useCallback((type: ChartType) => {
+    console.log('Chart type changed to:', type);
     setChartType(type);
   }, []);
 
   const handleSelectedCryptosChange = useCallback((cryptos: string[]) => {
+    console.log('Selected cryptos changed to:', cryptos);
     setSelectedCryptos(cryptos);
   }, []);
 
   const handleActiveCryptoChange = useCallback((crypto: string) => {
+    console.log('Active crypto changed to:', crypto);
     setActiveCrypto(crypto);
   }, []);
 

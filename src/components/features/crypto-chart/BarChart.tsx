@@ -8,7 +8,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
 import { ChartTooltipContent } from '@/components/ui/chart';
@@ -25,8 +24,21 @@ const BarChartComponent: React.FC<BarChartProps> = memo(({
   selectedCryptos, 
   isMobile 
 }) => {
+  console.log('BarChart - rendering with data points:', processedData?.length || 0);
+  console.log('BarChart - selectedCryptos:', selectedCryptos);
+
+  if (!processedData || processedData.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-muted-foreground">
+        <p>Sem dados para exibir</p>
+      </div>
+    );
+  }
+
   return (
     <RechartsBarChart
+      width={800}
+      height={isMobile ? 170 : 240}
       data={processedData}
       margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 25 } : { top: 10, right: 30, left: 5, bottom: 40 }}
     >
