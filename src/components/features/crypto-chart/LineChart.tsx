@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { format } from 'date-fns';
 import {
   LineChart as RechartsLineChart,
@@ -19,7 +19,7 @@ interface LineChartProps {
   isMobile: boolean;
 }
 
-const LineChartComponent: React.FC<LineChartProps> = ({ 
+const LineChartComponent: React.FC<LineChartProps> = memo(({ 
   processedData, 
   selectedCryptos, 
   isMobile 
@@ -38,6 +38,7 @@ const LineChartComponent: React.FC<LineChartProps> = ({
         tick={{ fontSize: isMobile ? 10 : 12 }}
         tickCount={isMobile ? 4 : 5}
         height={isMobile ? 25 : 35}
+        interval={isMobile ? 'preserveStartEnd' : 'preserveStart'}
       />
       <YAxis 
         yAxisId="price"
@@ -50,7 +51,10 @@ const LineChartComponent: React.FC<LineChartProps> = ({
         width={isMobile ? 35 : 70}
         domain={['auto', 'auto']}
       />
-      <Tooltip content={<ChartTooltipContent />} />
+      <Tooltip 
+        content={<ChartTooltipContent />}
+        animationDuration={isMobile ? 100 : 200}
+      />
       
       {selectedCryptos.map(cryptoId => (
         <Line
@@ -63,10 +67,14 @@ const LineChartComponent: React.FC<LineChartProps> = ({
           activeDot={{ r: isMobile ? 4 : 6 }}
           strokeWidth={isMobile ? 2 : 2.5}
           dot={false}
+          connectNulls={false}
+          isAnimationActive={!isMobile}
         />
       ))}
     </RechartsLineChart>
   );
-};
+});
+
+LineChartComponent.displayName = 'LineChartComponent';
 
 export default LineChartComponent;

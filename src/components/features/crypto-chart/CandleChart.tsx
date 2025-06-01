@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { format } from 'date-fns';
 import {
   LineChart,
@@ -22,12 +22,27 @@ interface CandleChartProps {
   isMobile: boolean;
 }
 
-const CandleChartComponent: React.FC<CandleChartProps> = ({ 
+const CandleChartComponent: React.FC<CandleChartProps> = memo(({ 
   candleData, 
   activeCrypto, 
   setActiveCrypto, 
   isMobile 
 }) => {
+  // Optimize candle data for mobile
+  const optimizedCandleData = useMemo(() => {
+    if (isMobile && candleData.length > 20) {
+      return candleData.filter((_, index) => index % 2 === 0);
+    }
+    return candleData;
+  }, [candleData, isMobile]);
+
+  const cryptoOptions = useMemo(() => {
+    return Object.keys(CRYPTO_COLORS).map(cryptoId => ({
+      id: cryptoId,
+      name: getCryptoDisplayName(cryptoId)
+    }));
+  }, []);
+
   return (
     <div>
       <div className="mb-2 text-xs">
@@ -39,9 +54,9 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
             <SelectValue placeholder="Selecione uma criptomoeda" />
           </SelectTrigger>
           <SelectContent>
-            {Object.keys(CRYPTO_COLORS).map(cryptoId => (
-              <SelectItem key={cryptoId} value={cryptoId} className="text-xs">
-                {getCryptoDisplayName(cryptoId)}
+            {cryptoOptions.map(({ id, name }) => (
+              <SelectItem key={id} value={id} className="text-xs">
+                {name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -49,7 +64,7 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
       </div>
       
       <LineChart
-        data={candleData}
+        data={optimizedCandleData}
         margin={isMobile ? { top: 5, right: 10, left: 0, bottom: 25 } : { top: 10, right: 30, left: 5, bottom: 40 }}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
@@ -61,6 +76,7 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
           tick={{ fontSize: isMobile ? 10 : 12 }}
           tickCount={isMobile ? 4 : 5}
           height={isMobile ? 25 : 35}
+          interval={isMobile ? 'preserveStartEnd' : 'preserveStart'}
         />
         <YAxis
           yAxisId="price"
@@ -76,13 +92,13 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
         <Tooltip
           labelFormatter={(value) => format(new Date(value), 'dd/MM/yyyy')}
           formatter={(value, name) => {
-            // Convert name to string before using string methods
             const nameStr = String(name);
             return [
               `$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 4 })}`,
               nameStr === 'price' ? 'Preço' : nameStr.charAt(0).toUpperCase() + nameStr.slice(1)
             ];
           }}
+          animationDuration={isMobile ? 100 : 200}
         />
         
         {/* Draw price line */}
@@ -93,6 +109,7 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
           yAxisId="price"
           strokeWidth={2}
           dot={false}
+          isAnimationActive={!isMobile}
         />
         
         {/* Draw high/low lines */}
@@ -104,6 +121,7 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
           strokeWidth={1}
           strokeDasharray="3 3"
           dot={false}
+          isAnimationActive={false}
         />
         <Line
           type="monotone"
@@ -113,10 +131,11 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
           strokeWidth={1}
           strokeDasharray="3 3"
           dot={false}
+          isAnimationActive={false}
         />
         
-        {/* Draw open/close */}
-        {candleData.map((entry: any, index: number) => {
+        {/* Draw open/close reference lines */}
+        {optimizedCandleData.map((entry: any, index: number) => {
           const isIncreasing = entry.close > entry.open;
           const color = isIncreasing ? 'rgba(0,200,0,0.7)' : 'rgba(200,0,0,0.7)';
           
@@ -134,6 +153,8 @@ const CandleChartComponent: React.FC<CandleChartProps> = ({
       </LineChart>
     </div>
   );
-};
+});
+
+CandleChartComponent.displayName = 'CandleChartComponent';
 
 export default CandleChartComponent;

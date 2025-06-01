@@ -1,20 +1,17 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
-import { ChartContainer } from '@/components/ui/chart';
 import { useCryptoHistory } from '@/utils/cryptoRates';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-import LineChartComponent from './crypto-chart/LineChart';
-import BarChartComponent from './crypto-chart/BarChart';
-import CandleChartComponent from './crypto-chart/CandleChart';
 import ChartTypePicker from './crypto-chart/ChartTypePicker';
 import TimeRangePicker from './crypto-chart/TimeRangePicker';
 import CryptoToggleGroup from './crypto-chart/CryptoToggleGroup';
 import ChartAnalysis from './crypto-chart/ChartAnalysis';
 import LoadingState from './crypto-chart/LoadingState';
-import { processCandlestickData } from './crypto-chart/utils';
-import { ChartType, ChartTimeRange, CRYPTO_COLORS } from './crypto-chart/types';
+import ChartRenderer from './crypto-chart/ChartRenderer';
+import { useOptimizedChartData } from './crypto-chart/hooks/useOptimizedChartData';
+import { ChartType, ChartTimeRange } from './crypto-chart/types';
 
 const CryptoChart: React.FC = () => {
   const [timeRange, setTimeRange] = useState<ChartTimeRange>('7d');
@@ -24,70 +21,29 @@ const CryptoChart: React.FC = () => {
   const { historyData, isLoading } = useCryptoHistory(timeRange);
   const isMobile = useIsMobile();
 
-  // Process data for the chart to include all selected cryptocurrencies
-  const processedData = historyData.map(item => {
-    const result: any = { date: item.date };
-    
-    // Add price for each selected cryptocurrency
-    Object.keys(item.prices).forEach(cryptoId => {
-      if (selectedCryptos.includes(cryptoId)) {
-        result[cryptoId] = item.prices[cryptoId];
-      }
-    });
-    
-    return result;
+  // Use optimized data hook
+  const { processedData } = useOptimizedChartData({
+    historyData,
+    selectedCryptos,
+    isMobile
   });
 
-  // Process data for candlestick chart (only for the active crypto)
-  const candleData = processCandlestickData(historyData, activeCrypto);
+  // Memoize callback functions to prevent unnecessary re-renders
+  const handleTimeRangeChange = useCallback((range: ChartTimeRange) => {
+    setTimeRange(range);
+  }, []);
 
-  // Create chart config from selected cryptos
-  const chartConfig = Object.fromEntries(
-    Object.entries(CRYPTO_COLORS)
-      .filter(([key]) => selectedCryptos.includes(key))
-      .map(([key, color]) => [
-        key, 
-        { 
-          label: key === 'aocripto' ? 'AOcripto' : key.charAt(0).toUpperCase() + key.slice(1), 
-          theme: { light: color, dark: color } 
-        }
-      ])
-  );
+  const handleChartTypeChange = useCallback((type: ChartType) => {
+    setChartType(type);
+  }, []);
 
-  // Function to render the appropriate chart based on selected type
-  const renderChart = () => {
-    switch (chartType) {
-      case 'line':
-        return (
-          <LineChartComponent 
-            processedData={processedData} 
-            selectedCryptos={selectedCryptos}
-            isMobile={isMobile}
-          />
-        );
-      
-      case 'bar':
-        return (
-          <BarChartComponent 
-            processedData={processedData} 
-            selectedCryptos={selectedCryptos}
-            isMobile={isMobile}
-          />
-        );
-      
-      case 'candle':
-        return (
-          <CandleChartComponent 
-            candleData={candleData}
-            activeCrypto={activeCrypto}
-            setActiveCrypto={setActiveCrypto}
-            isMobile={isMobile}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+  const handleSelectedCryptosChange = useCallback((cryptos: string[]) => {
+    setSelectedCryptos(cryptos);
+  }, []);
+
+  const handleActiveCryptoChange = useCallback((crypto: string) => {
+    setActiveCrypto(crypto);
+  }, []);
 
   if (isLoading) {
     return <LoadingState isMobile={isMobile} />;
@@ -98,11 +54,8 @@ const CryptoChart: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 md:mb-5 gap-2">
         <h3 className="font-semibold text-base md:text-lg">Análise do Gráfico</h3>
         <div className="flex flex-col md:flex-row gap-2">
-          {/* Chart type selector */}
-          <ChartTypePicker chartType={chartType} setChartType={setChartType} />
-          
-          {/* Time range selector */}
-          <TimeRangePicker timeRange={timeRange} setTimeRange={setTimeRange} />
+          <ChartTypePicker chartType={chartType} setChartType={handleChartTypeChange} />
+          <TimeRangePicker timeRange={timeRange} setTimeRange={handleTimeRangeChange} />
         </div>
       </div>
       
@@ -110,16 +63,19 @@ const CryptoChart: React.FC = () => {
       {chartType !== 'candle' && (
         <CryptoToggleGroup 
           selectedCryptos={selectedCryptos} 
-          setSelectedCryptos={setSelectedCryptos}
+          setSelectedCryptos={handleSelectedCryptosChange}
         />
       )}
       
-      {/* Optimized chart height and margins for mobile */}
-      <div className="h-[170px] md:h-[240px]">
-        <ChartContainer config={chartConfig}>
-          {renderChart()}
-        </ChartContainer>
-      </div>
+      <ChartRenderer
+        chartType={chartType}
+        processedData={processedData}
+        selectedCryptos={selectedCryptos}
+        historyData={historyData}
+        activeCrypto={activeCrypto}
+        setActiveCrypto={handleActiveCryptoChange}
+        isMobile={isMobile}
+      />
       
       <ChartAnalysis 
         timeRange={timeRange} 

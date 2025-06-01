@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { format } from 'date-fns';
 import {
   BarChart as RechartsBarChart,
@@ -20,7 +20,7 @@ interface BarChartProps {
   isMobile: boolean;
 }
 
-const BarChartComponent: React.FC<BarChartProps> = ({ 
+const BarChartComponent: React.FC<BarChartProps> = memo(({ 
   processedData, 
   selectedCryptos, 
   isMobile 
@@ -39,6 +39,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
         tick={{ fontSize: isMobile ? 10 : 12 }}
         tickCount={isMobile ? 4 : 5}
         height={isMobile ? 25 : 35}
+        interval={isMobile ? 'preserveStartEnd' : 'preserveStart'}
       />
       <YAxis
         yAxisId="price"
@@ -51,7 +52,10 @@ const BarChartComponent: React.FC<BarChartProps> = ({
         width={isMobile ? 35 : 70}
         domain={['auto', 'auto']}
       />
-      <Tooltip content={<ChartTooltipContent />} />
+      <Tooltip 
+        content={<ChartTooltipContent />}
+        animationDuration={isMobile ? 100 : 200}
+      />
       <ReferenceLine y={0} stroke="#000" yAxisId="price" />
       
       {selectedCryptos.map(cryptoId => (
@@ -63,10 +67,13 @@ const BarChartComponent: React.FC<BarChartProps> = ({
           yAxisId="price"
           radius={[4, 4, 0, 0]}
           barSize={isMobile ? 6 : 10}
+          isAnimationActive={!isMobile}
         />
       ))}
     </RechartsBarChart>
   );
-};
+});
+
+BarChartComponent.displayName = 'BarChartComponent';
 
 export default BarChartComponent;
