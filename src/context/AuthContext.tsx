@@ -4,7 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser, getCurrentSession } from '@/services/auth';
 import { useToast } from '@/hooks/use-toast';
 
-type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul';
+type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul' | 
+  'Portugal' | 'Espanha' | 'França' | 'Alemanha' | 'Itália' | 'Reino Unido' | 'Holanda' | 'Bélgica' | 'Suíça' | 'Áustria' |
+  'Nigéria' | 'Gana' | 'Quênia' | 'Tanzânia' | 'Uganda' | 'Ruanda' | 'Camarões' | 'Costa do Marfim' | 'Senegal' | 'Mali';
 
 type User = {
   phoneNumber: string;
@@ -58,11 +60,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           
           // Determine country based on code
           let country: Country = 'Angola';
-          if (countryCode === '+244') country = 'Angola';
-          else if (countryCode === '+258') country = 'Moçambique';
-          else if (countryCode === '+238') country = 'Cabo Verde';
-          else if (countryCode === '+264') country = 'Namibia';
-          else if (countryCode === '+27') country = 'Africa do Sul';
+          const countryMap: Record<string, Country> = {
+            '+244': 'Angola',
+            '+258': 'Moçambique',
+            '+238': 'Cabo Verde',
+            '+264': 'Namibia',
+            '+27': 'Africa do Sul',
+            '+234': 'Nigéria',
+            '+233': 'Gana',
+            '+254': 'Quênia',
+            '+255': 'Tanzânia',
+            '+256': 'Uganda',
+            '+250': 'Ruanda',
+            '+237': 'Camarões',
+            '+225': 'Costa do Marfim',
+            '+221': 'Senegal',
+            '+223': 'Mali',
+            '+351': 'Portugal',
+            '+34': 'Espanha',
+            '+33': 'França',
+            '+49': 'Alemanha',
+            '+39': 'Itália',
+            '+44': 'Reino Unido',
+            '+31': 'Holanda',
+            '+32': 'Bélgica',
+            '+41': 'Suíça',
+            '+43': 'Áustria',
+          };
+          
+          country = countryMap[countryCode] || 'Angola';
           
           const userFromSupabase = {
             id: sbUser.id,
@@ -101,11 +127,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           
           // Determine country based on code
           let country: Country = 'Angola';
-          if (countryCode === '+244') country = 'Angola';
-          else if (countryCode === '+258') country = 'Moçambique';
-          else if (countryCode === '+238') country = 'Cabo Verde';
-          else if (countryCode === '+264') country = 'Namibia';
-          else if (countryCode === '+27') country = 'Africa do Sul';
+          const countryMap: Record<string, Country> = {
+            '+244': 'Angola',
+            '+258': 'Moçambique',
+            '+238': 'Cabo Verde',
+            '+264': 'Namibia',
+            '+27': 'Africa do Sul',
+            '+234': 'Nigéria',
+            '+233': 'Gana',
+            '+254': 'Quênia',
+            '+255': 'Tanzânia',
+            '+256': 'Uganda',
+            '+250': 'Ruanda',
+            '+237': 'Camarões',
+            '+225': 'Costa do Marfim',
+            '+221': 'Senegal',
+            '+223': 'Mali',
+            '+351': 'Portugal',
+            '+34': 'Espanha',
+            '+33': 'França',
+            '+49': 'Alemanha',
+            '+39': 'Itália',
+            '+44': 'Reino Unido',
+            '+31': 'Holanda',
+            '+32': 'Bélgica',
+            '+41': 'Suíça',
+            '+43': 'Áustria',
+          };
+          
+          country = countryMap[countryCode] || 'Angola';
           
           const userUpdate = {
             id: supabaseUser.id,

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -16,14 +15,39 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 const countryCodes = [
+  // Países Africanos originais
   { code: '+244', country: 'Angola' },
   { code: '+258', country: 'Moçambique' },
   { code: '+238', country: 'Cabo Verde' },
   { code: '+264', country: 'Namibia' },
   { code: '+27', country: 'Africa do Sul' },
+  // Novos países Africanos
+  { code: '+234', country: 'Nigéria' },
+  { code: '+233', country: 'Gana' },
+  { code: '+254', country: 'Quênia' },
+  { code: '+255', country: 'Tanzânia' },
+  { code: '+256', country: 'Uganda' },
+  { code: '+250', country: 'Ruanda' },
+  { code: '+237', country: 'Camarões' },
+  { code: '+225', country: 'Costa do Marfim' },
+  { code: '+221', country: 'Senegal' },
+  { code: '+223', country: 'Mali' },
+  // Países Europeus
+  { code: '+351', country: 'Portugal' },
+  { code: '+34', country: 'Espanha' },
+  { code: '+33', country: 'França' },
+  { code: '+49', country: 'Alemanha' },
+  { code: '+39', country: 'Itália' },
+  { code: '+44', country: 'Reino Unido' },
+  { code: '+31', country: 'Holanda' },
+  { code: '+32', country: 'Bélgica' },
+  { code: '+41', country: 'Suíça' },
+  { code: '+43', country: 'Áustria' },
 ];
 
-type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul';
+type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul' | 
+  'Portugal' | 'Espanha' | 'França' | 'Alemanha' | 'Itália' | 'Reino Unido' | 'Holanda' | 'Bélgica' | 'Suíça' | 'Áustria' |
+  'Nigéria' | 'Gana' | 'Quênia' | 'Tanzânia' | 'Uganda' | 'Ruanda' | 'Camarões' | 'Costa do Marfim' | 'Senegal' | 'Mali';
 
 // Schema de validação para login
 const loginSchema = z.object({

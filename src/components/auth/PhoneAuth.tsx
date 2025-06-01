@@ -7,7 +7,9 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/context/AuthContext';
 
-type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul';
+type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul' | 
+  'Portugal' | 'Espanha' | 'França' | 'Alemanha' | 'Itália' | 'Reino Unido' | 'Holanda' | 'Bélgica' | 'Suíça' | 'Áustria' |
+  'Nigéria' | 'Gana' | 'Quênia' | 'Tanzânia' | 'Uganda' | 'Ruanda' | 'Camarões' | 'Costa do Marfim' | 'Senegal' | 'Mali';
 
 type CountryData = {
   code: string;
@@ -16,11 +18,34 @@ type CountryData = {
 };
 
 const countries: CountryData[] = [
+  // Países Africanos originais
   { code: '+244', name: 'Angola', flag: '🇦🇴' },
   { code: '+258', name: 'Moçambique', flag: '🇲🇿' },
   { code: '+238', name: 'Cabo Verde', flag: '🇨🇻' },
   { code: '+264', name: 'Namibia', flag: '🇳🇦' },
   { code: '+27', name: 'Africa do Sul', flag: '🇿🇦' },
+  // Novos países Africanos
+  { code: '+234', name: 'Nigéria', flag: '🇳🇬' },
+  { code: '+233', name: 'Gana', flag: '🇬🇭' },
+  { code: '+254', name: 'Quênia', flag: '🇰🇪' },
+  { code: '+255', name: 'Tanzânia', flag: '🇹🇿' },
+  { code: '+256', name: 'Uganda', flag: '🇺🇬' },
+  { code: '+250', name: 'Ruanda', flag: '🇷🇼' },
+  { code: '+237', name: 'Camarões', flag: '🇨🇲' },
+  { code: '+225', name: 'Costa do Marfim', flag: '🇨🇮' },
+  { code: '+221', name: 'Senegal', flag: '🇸🇳' },
+  { code: '+223', name: 'Mali', flag: '🇲🇱' },
+  // Países Europeus
+  { code: '+351', name: 'Portugal', flag: '🇵🇹' },
+  { code: '+34', name: 'Espanha', flag: '🇪🇸' },
+  { code: '+33', name: 'França', flag: '🇫🇷' },
+  { code: '+49', name: 'Alemanha', flag: '🇩🇪' },
+  { code: '+39', name: 'Itália', flag: '🇮🇹' },
+  { code: '+44', name: 'Reino Unido', flag: '🇬🇧' },
+  { code: '+31', name: 'Holanda', flag: '🇳🇱' },
+  { code: '+32', name: 'Bélgica', flag: '🇧🇪' },
+  { code: '+41', name: 'Suíça', flag: '🇨🇭' },
+  { code: '+43', name: 'Áustria', flag: '🇦🇹' },
 ];
 
 const PhoneAuth: React.FC = () => {
@@ -39,11 +64,9 @@ const PhoneAuth: React.FC = () => {
     // Basic validation - can be enhanced based on specific country rules
     const numericPhone = number.replace(/\D/g, '');
     
-    if (countryCode === '+244' && numericPhone.length !== 9) return false; // Angola
-    if (countryCode === '+258' && numericPhone.length !== 9) return false; // Mozambique
-    if (countryCode === '+238' && numericPhone.length !== 7) return false; // Cape Verde
-    if (countryCode === '+264' && numericPhone.length !== 9) return false; // Namibia
-    if (countryCode === '+27' && numericPhone.length !== 9) return false; // South Africa
+    // Validações básicas por país (podem ser expandidas)
+    if (['+244', '+258', '+238', '+264', '+27', '+234', '+233', '+254', '+255', '+256', '+250', '+237', '+225', '+221', '+223'].includes(countryCode) && numericPhone.length < 7) return false;
+    if (['+351', '+34', '+33', '+49', '+39', '+44', '+31', '+32', '+41', '+43'].includes(countryCode) && numericPhone.length < 8) return false;
     
     return true;
   };
