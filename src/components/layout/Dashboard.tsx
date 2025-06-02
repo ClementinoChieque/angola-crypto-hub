@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { 
   Upload, 
   Circle, 
-  UserPlus 
+  UserPlus,
+  Users
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,6 +14,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import UploadProof from '../features/UploadProof';
 import Quantify from '../features/Quantify';
 import InviteUsers from '../features/InviteUsers';
+import MyInvites from '../features/MyInvites';
 import CryptoRates from '../features/CryptoRates';
 import CryptoChart from '../features/CryptoChart';
 import BalanceStatus from '../features/BalanceStatus';
@@ -27,6 +29,7 @@ const Dashboard: React.FC = () => {
     { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={isMobile ? 16 : 20} /> },
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
+    { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
   ];
 
   return (
@@ -65,8 +68,8 @@ const Dashboard: React.FC = () => {
         {/* Mobile tabs */}
         <div className="md:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-3 mb-3">
-              {menuItems.map((item) => (
+            <TabsList className="grid grid-cols-2 mb-3">
+              {menuItems.slice(0, 2).map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
@@ -74,6 +77,18 @@ const Dashboard: React.FC = () => {
                 >
                   {item.icon}
                   <span className="mt-1">{item.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <TabsList className="grid grid-cols-2 mb-3">
+              {menuItems.slice(2, 4).map((item) => (
+                <TabsTrigger
+                  key={item.id}
+                  value={item.id}
+                  className="flex flex-col items-center py-1.5 text-xs"
+                >
+                  {item.icon}
+                  <span className="mt-1 text-center">{item.label}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -91,6 +106,9 @@ const Dashboard: React.FC = () => {
             
             {/* Invite Tab */}
             {activeTab === 'invite' && <InviteUsers />}
+            
+            {/* My Invites Tab */}
+            {activeTab === 'my-invites' && <MyInvites />}
           </Card>
         </div>
       </div>
