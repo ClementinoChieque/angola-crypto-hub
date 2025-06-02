@@ -3,10 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getCurrentUser, getCurrentSession } from '@/services/auth';
 import { useToast } from '@/hooks/use-toast';
-
-type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul' | 
-  'Portugal' | 'Espanha' | 'França' | 'Alemanha' | 'Itália' | 'Reino Unido' | 'Holanda' | 'Bélgica' | 'Suíça' | 'Áustria' |
-  'Nigéria' | 'Gana' | 'Quênia' | 'Tanzânia' | 'Uganda' | 'Ruanda' | 'Camarões' | 'Costa do Marfim' | 'Senegal' | 'Mali';
+import { Country } from '@/types/auth';
 
 type User = {
   phoneNumber: string;
@@ -76,6 +73,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             '+225': 'Costa do Marfim',
             '+221': 'Senegal',
             '+223': 'Mali',
+            '+251': 'Etiópia',
+            '+267': 'Botswana',
+            '+260': 'Zâmbia',
+            '+263': 'Zimbábue',
+            '+265': 'Malauí',
+            '+261': 'Madagascar',
+            '+230': 'Maurício',
+            '+248': 'Seicheles',
+            '+241': 'Gabão',
+            '+243': 'República Democrática do Congo',
             '+351': 'Portugal',
             '+34': 'Espanha',
             '+33': 'França',
@@ -86,6 +93,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             '+32': 'Bélgica',
             '+41': 'Suíça',
             '+43': 'Áustria',
+            '+48': 'Polônia',
+            '+420': 'República Tcheca',
+            '+36': 'Hungria',
+            '+421': 'Eslováquia',
+            '+40': 'Romênia',
+            '+359': 'Bulgária',
+            '+385': 'Croácia',
+            '+386': 'Eslovênia',
+            '+372': 'Estônia',
+            '+371': 'Letônia',
           };
           
           country = countryMap[countryCode] || 'Angola';
@@ -143,6 +160,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             '+225': 'Costa do Marfim',
             '+221': 'Senegal',
             '+223': 'Mali',
+            '+251': 'Etiópia',
+            '+267': 'Botswana',
+            '+260': 'Zâmbia',
+            '+263': 'Zimbábue',
+            '+265': 'Malauí',
+            '+261': 'Madagascar',
+            '+230': 'Maurício',
+            '+248': 'Seicheles',
+            '+241': 'Gabão',
+            '+243': 'República Democrática do Congo',
             '+351': 'Portugal',
             '+34': 'Espanha',
             '+33': 'França',
@@ -153,6 +180,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             '+32': 'Bélgica',
             '+41': 'Suíça',
             '+43': 'Áustria',
+            '+48': 'Polônia',
+            '+420': 'República Tcheca',
+            '+36': 'Hungria',
+            '+421': 'Eslováquia',
+            '+40': 'Romênia',
+            '+359': 'Bulgária',
+            '+385': 'Croácia',
+            '+386': 'Eslovênia',
+            '+372': 'Estônia',
+            '+371': 'Letônia',
           };
           
           country = countryMap[countryCode] || 'Angola';
