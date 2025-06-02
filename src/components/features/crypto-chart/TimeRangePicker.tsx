@@ -9,8 +9,16 @@ interface TimeRangePickerProps {
 }
 
 const TimeRangePicker: React.FC<TimeRangePickerProps> = ({ timeRange, setTimeRange }) => {
+  const handleTimeRangeChange = (value: string) => {
+    try {
+      setTimeRange(value as ChartTimeRange);
+    } catch (error) {
+      console.error('Error changing time range:', error);
+    }
+  };
+
   return (
-    <Tabs value={timeRange} onValueChange={(value) => setTimeRange(value as ChartTimeRange)} className="w-auto">
+    <Tabs value={timeRange} onValueChange={handleTimeRangeChange} className="w-auto">
       <TabsList className="grid grid-cols-3 h-7 md:h-8 min-w-[180px]">
         {TIME_RANGES.map((range) => (
           <TabsTrigger 

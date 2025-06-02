@@ -4,12 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/context/AuthContext';
-
-type Country = 'Angola' | 'Moçambique' | 'Cabo Verde' | 'Namibia' | 'Africa do Sul' | 
-  'Portugal' | 'Espanha' | 'França' | 'Alemanha' | 'Itália' | 'Reino Unido' | 'Holanda' | 'Bélgica' | 'Suíça' | 'Áustria' |
-  'Nigéria' | 'Gana' | 'Quênia' | 'Tanzânia' | 'Uganda' | 'Ruanda' | 'Camarões' | 'Costa do Marfim' | 'Senegal' | 'Mali';
+import { Country } from '@/types/auth';
 
 type CountryData = {
   code: string;
@@ -56,44 +53,80 @@ const PhoneAuth: React.FC = () => {
   const { login } = useAuth();
 
   const handleCountryChange = (value: string) => {
-    const country = countries.find(c => c.code === value);
-    if (country) setSelectedCountry(country);
+    try {
+      const country = countries.find(c => c.code === value);
+      if (country) {
+        setSelectedCountry(country);
+      }
+    } catch (error) {
+      console.error('Error changing country:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao selecionar país",
+        variant: "destructive",
+      });
+    }
   };
 
   const validatePhoneNumber = (number: string, countryCode: string) => {
-    // Basic validation - can be enhanced based on specific country rules
-    const numericPhone = number.replace(/\D/g, '');
-    
-    // Validações básicas por país (podem ser expandidas)
-    if (['+244', '+258', '+238', '+264', '+27', '+234', '+233', '+254', '+255', '+256', '+250', '+237', '+225', '+221', '+223'].includes(countryCode) && numericPhone.length < 7) return false;
-    if (['+351', '+34', '+33', '+49', '+39', '+44', '+31', '+32', '+41', '+43'].includes(countryCode) && numericPhone.length < 8) return false;
-    
-    return true;
+    try {
+      // Basic validation - can be enhanced based on specific country rules
+      const numericPhone = number.replace(/\D/g, '');
+      
+      // Validações básicas por país (podem ser expandidas)
+      if (['+244', '+258', '+238', '+264', '+27', '+234', '+233', '+254', '+255', '+256', '+250', '+237', '+225', '+221', '+223'].includes(countryCode) && numericPhone.length < 7) return false;
+      if (['+351', '+34', '+33', '+49', '+39', '+44', '+31', '+32', '+41', '+43'].includes(countryCode) && numericPhone.length < 8) return false;
+      
+      return true;
+    } catch (error) {
+      console.error('Error validating phone number:', error);
+      return false;
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoginLoading(true);
 
-    if (!validatePhoneNumber(phoneNumber, selectedCountry.code)) {
+    try {
+      if (!validatePhoneNumber(phoneNumber, selectedCountry.code)) {
+        toast({
+          title: "Número inválido",
+          description: "Por favor, verifique o número de telefone",
+          variant: "destructive",
+        });
+        setIsLoginLoading(false);
+        return;
+      }
+
+      // Simulate authentication delay
+      setTimeout(() => {
+        try {
+          login(phoneNumber, selectedCountry.code, selectedCountry.name);
+          toast({
+            title: "Login bem-sucedido",
+            description: "Bem-vindo à nossa corretora",
+          });
+        } catch (error) {
+          console.error('Login error:', error);
+          toast({
+            title: "Erro no login",
+            description: "Erro ao fazer login. Tente novamente.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoginLoading(false);
+        }
+      }, 1000);
+    } catch (error) {
+      console.error('Authentication error:', error);
       toast({
-        title: "Número inválido",
-        description: "Por favor, verifique o número de telefone",
+        title: "Erro",
+        description: "Erro na autenticação. Tente novamente.",
         variant: "destructive",
       });
       setIsLoginLoading(false);
-      return;
     }
-
-    // Simulate authentication delay
-    setTimeout(() => {
-      login(phoneNumber, selectedCountry.code, selectedCountry.name);
-      toast({
-        title: "Login bem-sucedido",
-        description: "Bem-vindo à nossa corretora",
-      });
-      setIsLoginLoading(false);
-    }, 1000);
   };
 
   return (

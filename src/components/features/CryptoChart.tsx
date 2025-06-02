@@ -38,75 +38,102 @@ const CryptoChart: React.FC = () => {
 
   // Memoize callback functions to prevent unnecessary re-renders
   const handleTimeRangeChange = useCallback((range: ChartTimeRange) => {
-    console.log('Time range changed to:', range);
-    setTimeRange(range);
+    try {
+      console.log('Time range changed to:', range);
+      setTimeRange(range);
+    } catch (error) {
+      console.error('Error changing time range:', error);
+    }
   }, []);
 
   const handleChartTypeChange = useCallback((type: ChartType) => {
-    console.log('Chart type changed to:', type);
-    setChartType(type);
+    try {
+      console.log('Chart type changed to:', type);
+      setChartType(type);
+    } catch (error) {
+      console.error('Error changing chart type:', error);
+    }
   }, []);
 
   const handleSelectedCryptosChange = useCallback((cryptos: string[]) => {
-    console.log('Selected cryptos changed to:', cryptos);
-    setSelectedCryptos(cryptos);
+    try {
+      console.log('Selected cryptos changed to:', cryptos);
+      setSelectedCryptos(cryptos);
+    } catch (error) {
+      console.error('Error changing selected cryptos:', error);
+    }
   }, []);
 
   const handleActiveCryptoChange = useCallback((crypto: string) => {
-    console.log('Active crypto changed to:', crypto);
-    setActiveCrypto(crypto);
+    try {
+      console.log('Active crypto changed to:', crypto);
+      setActiveCrypto(crypto);
+    } catch (error) {
+      console.error('Error changing active crypto:', error);
+    }
   }, []);
 
   if (isLoading) {
     return <LoadingState isMobile={isMobile} />;
   }
 
-  return (
-    <div>
-      <Card className="p-3 md:p-4 overflow-hidden bg-white shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 md:mb-5 gap-2">
-          <h3 className="font-semibold text-base md:text-lg">Análise do Gráfico</h3>
-          <div className="flex flex-col md:flex-row gap-2">
-            <ChartTypePicker chartType={chartType} setChartType={handleChartTypeChange} />
-            <TimeRangePicker timeRange={timeRange} setTimeRange={handleTimeRangeChange} />
+  try {
+    return (
+      <div>
+        <Card className="p-3 md:p-4 overflow-hidden bg-white shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3 md:mb-5 gap-2">
+            <h3 className="font-semibold text-base md:text-lg">Análise do Gráfico</h3>
+            <div className="flex flex-col md:flex-row gap-2">
+              <ChartTypePicker chartType={chartType} setChartType={handleChartTypeChange} />
+              <TimeRangePicker timeRange={timeRange} setTimeRange={handleTimeRangeChange} />
+            </div>
           </div>
-        </div>
-        
-        {/* Only show crypto selection for line and bar charts */}
-        {chartType !== 'candle' && (
-          <CryptoToggleGroup 
+          
+          {/* Only show crypto selection for line and bar charts */}
+          {chartType !== 'candle' && (
+            <CryptoToggleGroup 
+              selectedCryptos={selectedCryptos} 
+              setSelectedCryptos={handleSelectedCryptosChange}
+            />
+          )}
+          
+          <ChartRenderer
+            chartType={chartType}
+            processedData={processedData}
+            selectedCryptos={selectedCryptos}
+            historyData={historyData}
+            activeCrypto={activeCrypto}
+            setActiveCrypto={handleActiveCryptoChange}
+            isMobile={isMobile}
+          />
+          
+          <ChartAnalysis 
+            timeRange={timeRange} 
             selectedCryptos={selectedCryptos} 
-            setSelectedCryptos={handleSelectedCryptosChange}
+            processedData={processedData}
+          />
+        </Card>
+        
+        {/* Performance Comparison - Only show for line and bar charts with multiple cryptos */}
+        {chartType !== 'candle' && selectedCryptos.length > 1 && (
+          <PerformanceComparison
+            processedData={processedData}
+            selectedCryptos={selectedCryptos}
+            timeRange={timeRange}
           />
         )}
-        
-        <ChartRenderer
-          chartType={chartType}
-          processedData={processedData}
-          selectedCryptos={selectedCryptos}
-          historyData={historyData}
-          activeCrypto={activeCrypto}
-          setActiveCrypto={handleActiveCryptoChange}
-          isMobile={isMobile}
-        />
-        
-        <ChartAnalysis 
-          timeRange={timeRange} 
-          selectedCryptos={selectedCryptos} 
-          processedData={processedData}
-        />
-      </Card>
-      
-      {/* Performance Comparison - Only show for line and bar charts with multiple cryptos */}
-      {chartType !== 'candle' && selectedCryptos.length > 1 && (
-        <PerformanceComparison
-          processedData={processedData}
-          selectedCryptos={selectedCryptos}
-          timeRange={timeRange}
-        />
-      )}
-    </div>
-  );
+      </div>
+    );
+  } catch (error) {
+    console.error('Error rendering CryptoChart:', error);
+    return (
+      <div className="p-4">
+        <Card className="p-6 text-center">
+          <p className="text-muted-foreground">Erro ao carregar o gráfico. Tente recarregar a página.</p>
+        </Card>
+      </div>
+    );
+  }
 };
 
 export default CryptoChart;

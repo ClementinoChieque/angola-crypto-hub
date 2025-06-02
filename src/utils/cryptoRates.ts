@@ -44,6 +44,11 @@ export const fetchCryptoPrices = async (): Promise<Record<string, CryptoDetail>>
     const response = await fetch(
       `https://api.coingecko.com/api/v3/simple/price?ids=${CRYPTO_IDS.join(',')}&vs_currencies=usd`
     );
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch crypto prices');
+    }
+    
     const data: CryptoRates = await response.json();
     
     const result: Record<string, CryptoDetail> = {};
@@ -81,43 +86,48 @@ export const fetchCryptoPrices = async (): Promise<Record<string, CryptoDetail>>
 
 // Generate mock historical data based on actual current rates
 const generateHistoricalData = (days: number, currentRates: Record<string, CryptoDetail>): HistoricalData[] => {
-  const data: HistoricalData[] = [];
-  const now = new Date();
-  
-  // Create some volatility around the current price
-  for (let i = days; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(date.getDate() - i);
+  try {
+    const data: HistoricalData[] = [];
+    const now = new Date();
     
-    const prices: Record<string, number> = {};
-    
-    // Generate prices for each cryptocurrency
-    for (const cryptoId in currentRates) {
-      if (currentRates.hasOwnProperty(cryptoId)) {
-        const currentPrice = currentRates[cryptoId].currentPrice;
-        
-        // Random variation (+/- 10%)
-        const volatility = 0.10;
-        const randomFactor = 1 + (Math.random() * volatility * 2 - volatility);
-        
-        // Create a trend pattern
-        const trend = Math.sin(i / (days / 2) * Math.PI) * 0.05;
-        
-        // Combine factors
-        prices[cryptoId] = currentPrice * (randomFactor + trend);
+    // Create some volatility around the current price
+    for (let i = days; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      
+      const prices: Record<string, number> = {};
+      
+      // Generate prices for each cryptocurrency
+      for (const cryptoId in currentRates) {
+        if (currentRates.hasOwnProperty(cryptoId)) {
+          const currentPrice = currentRates[cryptoId].currentPrice;
+          
+          // Random variation (+/- 10%)
+          const volatility = 0.10;
+          const randomFactor = 1 + (Math.random() * volatility * 2 - volatility);
+          
+          // Create a trend pattern
+          const trend = Math.sin(i / (days / 2) * Math.PI) * 0.05;
+          
+          // Combine factors
+          prices[cryptoId] = currentPrice * (randomFactor + trend);
+        }
       }
+      
+      // Add AOcripto prices based on USDT rate
+      prices['aocripto'] = FIXED_AOC_TO_USDT_RATE;
+      
+      data.push({
+        date: date.toISOString(),
+        prices,
+      });
     }
     
-    // Add AOcripto prices based on USDT rate
-    prices['aocripto'] = FIXED_AOC_TO_USDT_RATE;
-    
-    data.push({
-      date: date.toISOString(),
-      prices,
-    });
+    return data;
+  } catch (error) {
+    console.error('Error generating historical data:', error);
+    return [];
   }
-  
-  return data;
 };
 
 export const useCryptoRates = () => {
@@ -164,8 +174,9 @@ export const useCryptoHistory = (timeRange: string = '7d') => {
 
   useEffect(() => {
     const fetchHistoricalData = async () => {
-      setIsLoading(true);
       try {
+        setIsLoading(true);
+        
         // Convert timeRange to days
         const days = timeRange === '1d' ? 1 : timeRange === '7d' ? 7 : 30;
         
@@ -175,6 +186,7 @@ export const useCryptoHistory = (timeRange: string = '7d') => {
         setHistoryData(data);
       } catch (error) {
         console.error('Error fetching historical data:', error);
+        setHistoryData([]);
       } finally {
         setIsLoading(false);
       }

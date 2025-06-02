@@ -34,23 +34,33 @@ const ChartRenderer: React.FC<ChartRendererProps> = memo(({
 
   // Memoize chart config to prevent unnecessary recalculations
   const chartConfig = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(CRYPTO_COLORS)
-        .filter(([key]) => selectedCryptos.includes(key))
-        .map(([key, color]) => [
-          key, 
-          { 
-            label: key === 'aocripto' ? 'AOcripto' : key.charAt(0).toUpperCase() + key.slice(1), 
-            theme: { light: color, dark: color } 
-          }
-        ])
-    );
+    try {
+      return Object.fromEntries(
+        Object.entries(CRYPTO_COLORS)
+          .filter(([key]) => selectedCryptos.includes(key))
+          .map(([key, color]) => [
+            key, 
+            { 
+              label: key === 'aocripto' ? 'AOcripto' : key.charAt(0).toUpperCase() + key.slice(1), 
+              theme: { light: color, dark: color } 
+            }
+          ])
+      );
+    } catch (error) {
+      console.error('Error creating chart config:', error);
+      return {};
+    }
   }, [selectedCryptos]);
 
   // Memoize candlestick data processing
   const candleData = useMemo(() => {
-    if (chartType !== 'candle') return [];
-    return processCandlestickData(historyData, activeCrypto);
+    try {
+      if (chartType !== 'candle') return [];
+      return processCandlestickData(historyData, activeCrypto);
+    } catch (error) {
+      console.error('Error processing candlestick data:', error);
+      return [];
+    }
   }, [historyData, activeCrypto, chartType]);
 
   // Check if we have data to render
@@ -70,49 +80,71 @@ const ChartRenderer: React.FC<ChartRendererProps> = memo(({
 
   // Memoize chart component rendering
   const chartComponent = useMemo(() => {
-    switch (chartType) {
-      case 'line':
-        return (
-          <LineChartComponent 
-            processedData={processedData} 
-            selectedCryptos={selectedCryptos}
-            isMobile={isMobile}
-          />
-        );
-      
-      case 'bar':
-        return (
-          <BarChartComponent 
-            processedData={processedData} 
-            selectedCryptos={selectedCryptos}
-            isMobile={isMobile}
-          />
-        );
-      
-      case 'candle':
-        return (
-          <CandleChartComponent 
-            candleData={candleData}
-            activeCrypto={activeCrypto}
-            setActiveCrypto={setActiveCrypto}
-            isMobile={isMobile}
-          />
-        );
-      
-      default:
-        return null;
+    try {
+      switch (chartType) {
+        case 'line':
+          return (
+            <LineChartComponent 
+              processedData={processedData} 
+              selectedCryptos={selectedCryptos}
+              isMobile={isMobile}
+            />
+          );
+        
+        case 'bar':
+          return (
+            <BarChartComponent 
+              processedData={processedData} 
+              selectedCryptos={selectedCryptos}
+              isMobile={isMobile}
+            />
+          );
+        
+        case 'candle':
+          return (
+            <CandleChartComponent 
+              candleData={candleData}
+              activeCrypto={activeCrypto}
+              setActiveCrypto={setActiveCrypto}
+              isMobile={isMobile}
+            />
+          );
+        
+        default:
+          return (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              <p>Tipo de gráfico não suportado</p>
+            </div>
+          );
+      }
+    } catch (error) {
+      console.error('Error rendering chart component:', error);
+      return (
+        <div className="flex items-center justify-center h-full text-muted-foreground">
+          <p>Erro ao carregar gráfico</p>
+        </div>
+      );
     }
   }, [chartType, processedData, selectedCryptos, candleData, activeCrypto, setActiveCrypto, isMobile]);
 
-  return (
-    <div className="h-[170px] md:h-[240px]">
-      <ChartContainer config={chartConfig}>
-        <ResponsiveContainer width="100%" height="100%">
-          {chartComponent}
-        </ResponsiveContainer>
-      </ChartContainer>
-    </div>
-  );
+  try {
+    return (
+      <div className="h-[170px] md:h-[240px]">
+        <ChartContainer config={chartConfig}>
+          <ResponsiveContainer width="100%" height="100%">
+            {chartComponent}
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    );
+  } catch (error) {
+    console.error('Error rendering ChartRenderer:', error);
+    return (
+      <div className="h-[170px] md:h-[240px] flex items-center justify-center text-muted-foreground">
+        <p>Erro ao renderizar gráfico</p>
+      </div>
+    );
+  }
 });
 
 ChartRenderer.displayName = 'ChartRenderer';
