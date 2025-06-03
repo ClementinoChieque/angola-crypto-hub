@@ -4,7 +4,8 @@ import {
   Upload, 
   Circle, 
   UserPlus,
-  Users
+  Users,
+  TrendingUp
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,6 +16,7 @@ import UploadProof from '../features/UploadProof';
 import Quantify from '../features/Quantify';
 import InviteUsers from '../features/InviteUsers';
 import MyInvites from '../features/MyInvites';
+import InvestmentPlans from '../features/InvestmentPlans';
 import CryptoRates from '../features/CryptoRates';
 import CryptoChart from '../features/CryptoChart';
 import BalanceStatus from '../features/BalanceStatus';
@@ -28,6 +30,7 @@ const Dashboard: React.FC = () => {
   const menuItems = [
     { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={isMobile ? 16 : 20} /> },
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
+    { id: 'investment', label: 'Plano de Investimento', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
   ];
@@ -80,8 +83,8 @@ const Dashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-2 mb-3">
-              {menuItems.slice(2, 4).map((item) => (
+            <TabsList className="grid grid-cols-3 mb-3">
+              {menuItems.slice(2, 5).map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
@@ -103,6 +106,9 @@ const Dashboard: React.FC = () => {
             
             {/* Quantify Tab */}
             {activeTab === 'quantify' && <Quantify />}
+            
+            {/* Investment Plans Tab */}
+            {activeTab === 'investment' && <InvestmentPlans />}
             
             {/* Invite Tab */}
             {activeTab === 'invite' && <InviteUsers />}
