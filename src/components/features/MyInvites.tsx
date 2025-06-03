@@ -23,10 +23,7 @@ interface Referral {
   status: 'pending' | 'completed' | 'expired';
   created_at: string;
   completed_at?: string;
-  referred_user?: {
-    username?: string;
-    full_name?: string;
-  };
+  referred_user_id?: string;
 }
 
 const MyInvites: React.FC = () => {
@@ -48,21 +45,16 @@ const MyInvites: React.FC = () => {
       
       const { data: referralsData, error } = await supabase
         .from('referrals')
-        .select(`
-          *,
-          profiles:referred_user_id (
-            username,
-            full_name
-          )
-        `)
+        .select('*')
         .eq('referrer_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const formattedReferrals = referralsData?.map(referral => ({
+      // Garantir que o status seja do tipo correto
+      const formattedReferrals: Referral[] = referralsData?.map(referral => ({
         ...referral,
-        referred_user: referral.profiles
+        status: referral.status as 'pending' | 'completed' | 'expired'
       })) || [];
 
       setReferrals(formattedReferrals);
@@ -113,12 +105,6 @@ const MyInvites: React.FC = () => {
   };
 
   const getUserDisplayName = (referral: Referral) => {
-    if (referral.referred_user?.full_name) {
-      return referral.referred_user.full_name;
-    }
-    if (referral.referred_user?.username) {
-      return referral.referred_user.username;
-    }
     if (referral.invited_email) {
       return referral.invited_email;
     }
