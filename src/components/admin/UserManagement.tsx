@@ -1,12 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit, Plus } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface User {
@@ -22,82 +21,53 @@ interface User {
 }
 
 const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([
+    {
+      id: '1',
+      email: '244947896752',
+      phone: '+244947896752',
+      created_at: new Date().toISOString(),
+      level: {
+        level_name: 'BitcoinL1',
+        daily_quantifications: 1
+      },
+      role: 'admin'
+    },
+    {
+      id: '2',
+      email: 'user@example.com',
+      phone: '+244999999999',
+      created_at: new Date().toISOString(),
+      level: {
+        level_name: 'BitcoinL2',
+        daily_quantifications: 2
+      },
+      role: 'user'
+    }
+  ]);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
   const levels = ['BitcoinL1', 'BitcoinL2', 'BitcoinL3', 'BitcoinL4', 'BitcoinL5', 'BitcoinL6'];
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      // Buscar usuários da tabela auth via API
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
-
-      if (profilesError) throw profilesError;
-
-      // Buscar níveis de usuários
-      const { data: userLevels, error: levelsError } = await supabase
-        .from('user_levels')
-        .select('*');
-
-      if (levelsError) throw levelsError;
-
-      // Buscar roles de usuários
-      const { data: userRoles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('*');
-
-      if (rolesError) throw rolesError;
-
-      // Combinar dados
-      const combinedUsers = profiles.map(profile => ({
-        id: profile.id,
-        email: profile.username || 'N/A',
-        phone: 'N/A', // Será necessário implementar forma de buscar phone
-        created_at: profile.created_at,
-        level: userLevels.find(level => level.user_id === profile.id),
-        role: userRoles.find(role => role.user_id === profile.id)?.role || 'user'
-      }));
-
-      setUsers(combinedUsers);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      toast({
-        title: "Erro ao carregar usuários",
-        description: "Não foi possível carregar a lista de usuários",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const updateUserLevel = async (userId: string, levelName: string, dailyQuantifications: number) => {
     try {
-      const { error } = await supabase
-        .from('user_levels')
-        .upsert({
-          user_id: userId,
-          level_name: levelName,
-          daily_quantifications: dailyQuantifications,
-          updated_at: new Date().toISOString()
-        });
-
-      if (error) throw error;
+      setUsers(prev => prev.map(user =>
+        user.id === userId
+          ? {
+              ...user,
+              level: {
+                level_name: levelName,
+                daily_quantifications: dailyQuantifications
+              }
+            }
+          : user
+      ));
 
       toast({
         title: "Nível atualizado",
         description: "O nível do usuário foi atualizado com sucesso"
       });
-
-      fetchUsers();
     } catch (error) {
       console.error('Error updating user level:', error);
       toast({
@@ -114,28 +84,12 @@ const UserManagement: React.FC = () => {
     }
 
     try {
-      // Remover role do usuário
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
-
-      if (roleError) throw roleError;
-
-      // Remover nível do usuário
-      const { error: levelError } = await supabase
-        .from('user_levels')
-        .delete()
-        .eq('user_id', userId);
-
-      if (levelError) throw levelError;
+      setUsers(prev => prev.filter(user => user.id !== userId));
 
       toast({
         title: "Usuário removido",
         description: "O usuário foi removido com sucesso"
       });
-
-      fetchUsers();
     } catch (error) {
       console.error('Error removing user:', error);
       toast({
@@ -150,10 +104,6 @@ const UserManagement: React.FC = () => {
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.phone.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  if (loading) {
-    return <div className="text-center py-8">Carregando usuários...</div>;
-  }
 
   return (
     <Card>

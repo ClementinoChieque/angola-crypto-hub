@@ -1,11 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle, XCircle, Clock, FileText, Eye } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface PaymentProof {
@@ -18,57 +17,34 @@ interface PaymentProof {
 }
 
 const PaymentProofs: React.FC = () => {
-  const [proofs, setProofs] = useState<PaymentProof[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [proofs, setProofs] = useState<PaymentProof[]>([
+    {
+      id: '1',
+      image_url: 'https://via.placeholder.com/150',
+      status: 'pending',
+      admin_notes: '',
+      created_at: new Date().toISOString(),
+      user_id: 'user123'
+    }
+  ]);
   const [selectedProof, setSelectedProof] = useState<string | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchPaymentProofs();
-  }, []);
-
-  const fetchPaymentProofs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('payment_proofs')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setProofs(data || []);
-    } catch (error) {
-      console.error('Error fetching payment proofs:', error);
-      toast({
-        title: "Erro ao carregar comprovativos",
-        description: "Não foi possível carregar os comprovativos",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const updateProofStatus = async (proofId: string, status: string, notes?: string) => {
     try {
-      const { error } = await supabase
-        .from('payment_proofs')
-        .update({
-          status,
-          admin_notes: notes,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', proofId);
-
-      if (error) throw error;
+      setProofs(prev => prev.map(proof => 
+        proof.id === proofId 
+          ? { ...proof, status, admin_notes: notes }
+          : proof
+      ));
 
       toast({
         title: "Status atualizado",
         description: `Comprovativo ${status === 'verified' ? 'verificado' : 'rejeitado'}`
       });
 
-      fetchPaymentProofs();
       setSelectedProof(null);
       setAdminNotes('');
     } catch (error) {
@@ -93,10 +69,6 @@ const PaymentProofs: React.FC = () => {
         return <Badge variant="secondary">{status}</Badge>;
     }
   };
-
-  if (loading) {
-    return <div className="text-center py-8">Carregando comprovativos...</div>;
-  }
 
   return (
     <>

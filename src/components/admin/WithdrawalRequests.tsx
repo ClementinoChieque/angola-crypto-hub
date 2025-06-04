@@ -1,11 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle, XCircle, Clock, DollarSign } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface WithdrawalRequest {
@@ -23,76 +22,46 @@ interface WithdrawalRequest {
 }
 
 const WithdrawalRequests: React.FC = () => {
-  const [requests, setRequests] = useState<WithdrawalRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [requests, setRequests] = useState<WithdrawalRequest[]>([
+    {
+      id: '1',
+      amount: 100,
+      currency: 'USDT',
+      withdrawal_method: 'crypto',
+      wallet_address: 'TKzxdSv2FZKQrEqkKVgp5DcwEXBEKMg2Ax',
+      status: 'pending',
+      created_at: new Date().toISOString(),
+      user_id: 'user123'
+    },
+    {
+      id: '2',
+      amount: 50000,
+      currency: 'AKZ',
+      withdrawal_method: 'bank',
+      bank_name: 'Banco BAI',
+      bank_account: '123456789',
+      status: 'approved',
+      created_at: new Date().toISOString(),
+      user_id: 'user456'
+    }
+  ]);
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchWithdrawalRequests();
-    
-    // Configurar real-time para notificações
-    const channel = supabase
-      .channel('withdrawal-requests')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'withdrawal_requests'
-      }, (payload) => {
-        toast({
-          title: "Nova solicitação de saque",
-          description: `Usuário solicitou saque de ${payload.new.amount} ${payload.new.currency}`,
-        });
-        fetchWithdrawalRequests();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const fetchWithdrawalRequests = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('withdrawal_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setRequests(data || []);
-    } catch (error) {
-      console.error('Error fetching withdrawal requests:', error);
-      toast({
-        title: "Erro ao carregar solicitações",
-        description: "Não foi possível carregar as solicitações de saque",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const updateRequestStatus = async (requestId: string, status: string, notes?: string) => {
     try {
-      const { error } = await supabase
-        .from('withdrawal_requests')
-        .update({
-          status,
-          admin_notes: notes,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', requestId);
-
-      if (error) throw error;
+      setRequests(prev => prev.map(request =>
+        request.id === requestId
+          ? { ...request, status, admin_notes: notes }
+          : request
+      ));
 
       toast({
         title: "Status atualizado",
         description: `Solicitação ${status === 'approved' ? 'aprovada' : status === 'rejected' ? 'rejeitada' : 'marcada como completa'}`
       });
 
-      fetchWithdrawalRequests();
       setSelectedRequest(null);
       setAdminNotes('');
     } catch (error) {
@@ -119,10 +88,6 @@ const WithdrawalRequests: React.FC = () => {
         return <Badge variant="secondary">{status}</Badge>;
     }
   };
-
-  if (loading) {
-    return <div className="text-center py-8">Carregando solicitações...</div>;
-  }
 
   return (
     <Card>
