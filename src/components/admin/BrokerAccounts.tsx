@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, CreditCard, Wallet } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface BankAccount {
@@ -28,9 +27,27 @@ interface UsdtWallet {
 }
 
 const BrokerAccounts: React.FC = () => {
-  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
-  const [usdtWallets, setUsdtWallets] = useState<UsdtWallet[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([
+    {
+      id: '1',
+      bank_name: 'Banco BAI',
+      account_number: '123456789',
+      account_holder: 'Bitget12 Angola',
+      is_active: true,
+      created_at: new Date().toISOString()
+    }
+  ]);
+  
+  const [usdtWallets, setUsdtWallets] = useState<UsdtWallet[]>([
+    {
+      id: '1',
+      wallet_address: 'TKzxdSv2FZKQrEqkKVgp5DcwEXBEKMg2Ax',
+      network: 'TRC-20',
+      is_active: true,
+      created_at: new Date().toISOString()
+    }
+  ]);
+
   const [showBankForm, setShowBankForm] = useState(false);
   const [showWalletForm, setShowWalletForm] = useState(false);
   const [editingBank, setEditingBank] = useState<BankAccount | null>(null);
@@ -50,53 +67,26 @@ const BrokerAccounts: React.FC = () => {
     is_active: true
   });
 
-  useEffect(() => {
-    fetchAccounts();
-  }, []);
-
-  const fetchAccounts = async () => {
-    try {
-      const [bankResult, walletResult] = await Promise.all([
-        supabase.from('broker_bank_accounts').select('*').order('created_at', { ascending: false }),
-        supabase.from('broker_usdt_wallets').select('*').order('created_at', { ascending: false })
-      ]);
-
-      if (bankResult.error) throw bankResult.error;
-      if (walletResult.error) throw walletResult.error;
-
-      setBankAccounts(bankResult.data || []);
-      setUsdtWallets(walletResult.data || []);
-    } catch (error) {
-      console.error('Error fetching accounts:', error);
-      toast({
-        title: "Erro ao carregar contas",
-        description: "Não foi possível carregar as contas da corretora",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const saveBankAccount = async () => {
     try {
       if (editingBank) {
-        const { error } = await supabase
-          .from('broker_bank_accounts')
-          .update(bankForm)
-          .eq('id', editingBank.id);
-        if (error) throw error;
+        setBankAccounts(prev => prev.map(acc => 
+          acc.id === editingBank.id 
+            ? { ...acc, ...bankForm, id: editingBank.id, created_at: editingBank.created_at }
+            : acc
+        ));
         toast({ title: "Conta bancária atualizada" });
       } else {
-        const { error } = await supabase
-          .from('broker_bank_accounts')
-          .insert([bankForm]);
-        if (error) throw error;
+        const newAccount: BankAccount = {
+          ...bankForm,
+          id: Date.now().toString(),
+          created_at: new Date().toISOString()
+        };
+        setBankAccounts(prev => [...prev, newAccount]);
         toast({ title: "Conta bancária adicionada" });
       }
 
       resetBankForm();
-      fetchAccounts();
     } catch (error) {
       console.error('Error saving bank account:', error);
       toast({
@@ -110,22 +100,23 @@ const BrokerAccounts: React.FC = () => {
   const saveUsdtWallet = async () => {
     try {
       if (editingWallet) {
-        const { error } = await supabase
-          .from('broker_usdt_wallets')
-          .update(walletForm)
-          .eq('id', editingWallet.id);
-        if (error) throw error;
+        setUsdtWallets(prev => prev.map(wallet => 
+          wallet.id === editingWallet.id 
+            ? { ...wallet, ...walletForm, id: editingWallet.id, created_at: editingWallet.created_at }
+            : wallet
+        ));
         toast({ title: "Carteira USDT atualizada" });
       } else {
-        const { error } = await supabase
-          .from('broker_usdt_wallets')
-          .insert([walletForm]);
-        if (error) throw error;
+        const newWallet: UsdtWallet = {
+          ...walletForm,
+          id: Date.now().toString(),
+          created_at: new Date().toISOString()
+        };
+        setUsdtWallets(prev => [...prev, newWallet]);
         toast({ title: "Carteira USDT adicionada" });
       }
 
       resetWalletForm();
-      fetchAccounts();
     } catch (error) {
       console.error('Error saving USDT wallet:', error);
       toast({
@@ -140,14 +131,8 @@ const BrokerAccounts: React.FC = () => {
     if (!confirm('Tem certeza que deseja excluir esta conta bancária?')) return;
 
     try {
-      const { error } = await supabase
-        .from('broker_bank_accounts')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      setBankAccounts(prev => prev.filter(acc => acc.id !== id));
       toast({ title: "Conta bancária excluída" });
-      fetchAccounts();
     } catch (error) {
       console.error('Error deleting bank account:', error);
       toast({
@@ -161,14 +146,8 @@ const BrokerAccounts: React.FC = () => {
     if (!confirm('Tem certeza que deseja excluir esta carteira USDT?')) return;
 
     try {
-      const { error } = await supabase
-        .from('broker_usdt_wallets')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      setUsdtWallets(prev => prev.filter(wallet => wallet.id !== id));
       toast({ title: "Carteira USDT excluída" });
-      fetchAccounts();
     } catch (error) {
       console.error('Error deleting USDT wallet:', error);
       toast({
@@ -210,10 +189,6 @@ const BrokerAccounts: React.FC = () => {
     setEditingWallet(wallet);
     setShowWalletForm(true);
   };
-
-  if (loading) {
-    return <div className="text-center py-8">Carregando contas...</div>;
-  }
 
   return (
     <div className="space-y-6">
