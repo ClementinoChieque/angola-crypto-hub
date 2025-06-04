@@ -6,20 +6,22 @@ import { useAdminCheck } from '@/hooks/useAdminCheck';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Admin = () => {
   const { isAuthenticated } = useAuth();
   const { isAdmin, loading } = useAdminCheck();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md w-full">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
           <h1 className="text-xl font-bold text-gray-900 mb-2">Acesso Negado</h1>
           <p className="text-gray-600 mb-4">Você precisa estar logado para acessar esta página.</p>
-          <Button onClick={() => navigate('/auth')}>
+          <Button onClick={() => navigate('/auth')} className="w-full sm:w-auto">
             Fazer Login
           </Button>
         </div>
@@ -29,7 +31,7 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Verificando permissões...</p>
@@ -40,12 +42,12 @@ const Admin = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md w-full">
           <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
           <h1 className="text-xl font-bold text-gray-900 mb-2">Acesso Negado</h1>
           <p className="text-gray-600 mb-4">Você não tem permissão para acessar o painel administrativo.</p>
-          <Button onClick={() => navigate('/')} variant="outline">
+          <Button onClick={() => navigate('/')} variant="outline" className="w-full sm:w-auto">
             <ArrowLeft size={16} className="mr-2" />
             Voltar ao Dashboard
           </Button>
@@ -57,13 +59,18 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate('/')}>
-            <ArrowLeft size={16} className="mr-2" />
-            Voltar ao Dashboard
+        <div className="container mx-auto px-2 md:px-4 py-3 flex items-center justify-between">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/')}
+            size={isMobile ? "sm" : "default"}
+            className="flex items-center"
+          >
+            <ArrowLeft size={16} className="mr-1 md:mr-2" />
+            {isMobile ? "Voltar" : "Voltar ao Dashboard"}
           </Button>
-          <div className="text-sm text-gray-500">
-            Painel Administrativo - Bitget12
+          <div className="text-xs md:text-sm text-gray-500 text-right">
+            {isMobile ? "Admin - Bitget12" : "Painel Administrativo - Bitget12"}
           </div>
         </div>
       </div>
