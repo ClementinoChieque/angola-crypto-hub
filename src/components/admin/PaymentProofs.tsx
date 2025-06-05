@@ -36,7 +36,12 @@ const PaymentProofs: React.FC = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Fetched payment proofs:', data);
       setProofs(data || []);
     } catch (error) {
       console.error('Error fetching payment proofs:', error);
