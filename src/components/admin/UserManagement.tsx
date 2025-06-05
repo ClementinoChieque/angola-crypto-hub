@@ -1,188 +1,340 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit, Plus } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Users, Gift, UserCheck, Zap } from 'lucide-react';
 
-interface User {
+interface UserWithReferrals {
   id: string;
-  email: string;
   phone: string;
   created_at: string;
-  level?: {
-    level_name: string;
-    daily_quantifications: number;
-  };
-  role?: string;
+  referral_count: number;
+  quantification_active: boolean;
+}
+
+interface ReferralReward {
+  id: string;
+  referrer_id: string;
+  referred_user_id: string;
+  reward_amount: number;
+  reward_currency: string;
+  status: string;
+  created_at: string;
 }
 
 const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: '1',
-      email: '244947896752',
-      phone: '+244947896752',
-      created_at: new Date().toISOString(),
-      level: {
-        level_name: 'BitcoinL1',
-        daily_quantifications: 1
-      },
-      role: 'admin'
-    },
-    {
-      id: '2',
-      email: 'user@example.com',
-      phone: '+244999999999',
-      created_at: new Date().toISOString(),
-      level: {
-        level_name: 'BitcoinL2',
-        daily_quantifications: 2
-      },
-      role: 'user'
-    }
-  ]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState<UserWithReferrals[]>([]);
+  const [referralRewards, setReferralRewards] = useState<ReferralReward[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [rewardAmount, setRewardAmount] = useState('10');
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const levels = ['BitcoinL1', 'BitcoinL2', 'BitcoinL3', 'BitcoinL4', 'BitcoinL5', 'BitcoinL6'];
+  useEffect(() => {
+    fetchUsers();
+    fetchReferralRewards();
+  }, []);
 
-  const updateUserLevel = async (userId: string, levelName: string, dailyQuantifications: number) => {
+  const fetchUsers = async () => {
     try {
-      setUsers(prev => prev.map(user =>
-        user.id === userId
-          ? {
-              ...user,
-              level: {
-                level_name: levelName,
-                daily_quantifications: dailyQuantifications
-              }
-            }
-          : user
-      ));
+      // Fetch users from auth.users (via auth admin)
+      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      
+      if (authError) throw authError;
+
+      // Get referral counts and quantification status for each user
+      const usersWithData = await Promise.all(
+        authUsers.users.map(async (user) => {
+          // Count referrals
+          const { data: referrals } = await supabase
+            .from('referrals')
+            .select('id')
+            .eq('referrer_id', user.id);
+
+          // Check quantification status
+          const { data: quantification } = await supabase
+            .from('user_quantifications')
+            .select('is_active')
+            .eq('user_id', user.id)
+            .single();
+
+          return {
+            id: user.id,
+            phone: user.phone || 'N/A',
+            created_at: user.created_at,
+            referral_count: referrals?.length || 0,
+            quantification_active: quantification?.is_active || false
+          };
+        })
+      );
+
+      setUsers(usersWithData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast({
+        title: "Erro ao carregar usuários",
+        description: "Não foi possível carregar a lista de usuários",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchReferralRewards = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('referral_rewards')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setReferralRewards(data || []);
+    } catch (error) {
+      console.error('Error fetching referral rewards:', error);
+    }
+  };
+
+  const addReferralReward = async (userId: string) => {
+    try {
+      const amount = parseFloat(rewardAmount);
+      if (isNaN(amount) || amount <= 0) {
+        toast({
+          title: "Valor inválido",
+          description: "Por favor, insira um valor válido para a recompensa",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('referral_rewards')
+        .insert({
+          referrer_id: userId,
+          referred_user_id: userId, // Placeholder - adjust as needed
+          reward_amount: amount,
+          reward_currency: 'USDT',
+          status: 'completed'
+        });
+
+      if (error) throw error;
 
       toast({
-        title: "Nível atualizado",
-        description: "O nível do usuário foi atualizado com sucesso"
+        title: "Recompensa adicionada",
+        description: `Recompensa de ${amount} USDT adicionada com sucesso`
       });
+
+      await fetchReferralRewards();
+      setSelectedUser(null);
     } catch (error) {
-      console.error('Error updating user level:', error);
+      console.error('Error adding referral reward:', error);
       toast({
-        title: "Erro ao atualizar nível",
-        description: "Não foi possível atualizar o nível do usuário",
+        title: "Erro ao adicionar recompensa",
+        description: "Não foi possível adicionar a recompensa",
         variant: "destructive"
       });
     }
   };
 
-  const removeUser = async (userId: string) => {
-    if (!confirm('Tem certeza que deseja remover este usuário?')) {
-      return;
-    }
-
+  const toggleQuantification = async (userId: string, currentStatus: boolean) => {
     try {
-      setUsers(prev => prev.filter(user => user.id !== userId));
+      const { data: existing, error: fetchError } = await supabase
+        .from('user_quantifications')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
+      }
+
+      if (existing) {
+        const { error } = await supabase
+          .from('user_quantifications')
+          .update({
+            is_active: !currentStatus,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', userId);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('user_quantifications')
+          .insert({
+            user_id: userId,
+            is_active: !currentStatus,
+            daily_limit: 1,
+            used_today: 0,
+            last_reset_date: new Date().toISOString().split('T')[0]
+          });
+
+        if (error) throw error;
+      }
 
       toast({
-        title: "Usuário removido",
-        description: "O usuário foi removido com sucesso"
+        title: `Quantificação ${!currentStatus ? 'ativada' : 'desativada'}`,
+        description: `A quantificação foi ${!currentStatus ? 'ativada' : 'desativada'} para o usuário`
       });
+
+      await fetchUsers();
     } catch (error) {
-      console.error('Error removing user:', error);
+      console.error('Error toggling quantification:', error);
       toast({
-        title: "Erro ao remover usuário",
-        description: "Não foi possível remover o usuário",
+        title: "Erro ao alterar quantificação",
+        description: "Não foi possível alterar o status da quantificação",
         variant: "destructive"
       });
     }
   };
 
-  const filteredUsers = users.filter(user =>
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.phone.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users size={24} />
+            Gestão de Usuários
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Carregando usuários...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Gestão de Usuários</CardTitle>
-        <div className="flex gap-4">
-          <Input
-            placeholder="Buscar por email ou telefone..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-md"
-          />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {filteredUsers.map((user) => (
-            <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
-              <div className="flex-1">
-                <div className="font-medium">{user.email}</div>
-                <div className="text-sm text-gray-500">{user.phone}</div>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge variant={user.role === 'admin' ? 'destructive' : 'secondary'}>
-                    {user.role === 'admin' ? 'Admin' : 'Usuário'}
-                  </Badge>
-                  {user.level && (
-                    <Badge variant="outline">
-                      {user.level.level_name} - {user.level.daily_quantifications} quantificações/dia
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users size={24} />
+            Gestão de Usuários
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {users.map((user) => (
+              <div key={user.id} className="border rounded-lg p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <div className="font-medium">{user.phone}</div>
+                    <div className="text-sm text-gray-500">
+                      Registrado: {new Date(user.created_at).toLocaleDateString()}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Convites: {user.referral_count}
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <Badge variant={user.quantification_active ? 'default' : 'secondary'}>
+                      <Zap size={14} className="mr-1" />
+                      {user.quantification_active ? 'Quantificação Ativa' : 'Quantificação Inativa'}
                     </Badge>
-                  )}
+                  </div>
                 </div>
+
+                <div className="flex gap-2 mt-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSelectedUser(user.id)}
+                  >
+                    <Gift size={16} className="mr-1" />
+                    Adicionar Recompensa
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={user.quantification_active ? "destructive" : "default"}
+                    onClick={() => toggleQuantification(user.id, user.quantification_active)}
+                  >
+                    <Zap size={16} className="mr-1" />
+                    {user.quantification_active ? 'Desativar' : 'Ativar'} Quantificação
+                  </Button>
+                </div>
+
+                {selectedUser === user.id && (
+                  <div className="mt-4 p-4 border-t">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="reward_amount">Valor da Recompensa (USDT)</Label>
+                        <Input
+                          id="reward_amount"
+                          type="number"
+                          value={rewardAmount}
+                          onChange={(e) => setRewardAmount(e.target.value)}
+                          placeholder="10.00"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        size="sm"
+                        onClick={() => addReferralReward(user.id)}
+                      >
+                        Confirmar Recompensa
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelectedUser(null)}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
-              
-              <div className="flex items-center gap-2">
-                <Select
-                  defaultValue={user.level?.level_name || 'BitcoinL1'}
-                  onValueChange={(levelName) => {
-                    const dailyQuantifications = levels.indexOf(levelName) + 1;
-                    updateUserLevel(user.id, levelName, dailyQuantifications);
-                  }}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {levels.map((level) => (
-                      <SelectItem key={level} value={level}>
-                        {level}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                
-                <Input
-                  type="number"
-                  placeholder="Quantificações"
-                  defaultValue={user.level?.daily_quantifications || 1}
-                  className="w-24"
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    if (value > 0) {
-                      updateUserLevel(user.id, user.level?.level_name || 'BitcoinL1', value);
-                    }
-                  }}
-                />
-                
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => removeUser(user.id)}
-                >
-                  <Trash2 size={16} />
-                </Button>
+            ))}
+
+            {users.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                Nenhum usuário encontrado
               </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {referralRewards.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Gift size={24} />
+              Recompensas de Convites
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {referralRewards.map((reward) => (
+                <div key={reward.id} className="flex justify-between items-center p-3 border rounded">
+                  <div>
+                    <div className="font-medium">
+                      {reward.reward_amount} {reward.reward_currency}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {new Date(reward.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <Badge variant={reward.status === 'completed' ? 'default' : 'secondary'}>
+                    {reward.status === 'completed' ? 'Concluído' : 'Pendente'}
+                  </Badge>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 };
 

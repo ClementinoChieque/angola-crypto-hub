@@ -12,6 +12,7 @@ interface BankAccountFormProps {
   onSave: () => void;
   onCancel: () => void;
   editing: BankAccount | null;
+  loading?: boolean;
 }
 
 const BankAccountFormComponent: React.FC<BankAccountFormProps> = ({
@@ -19,7 +20,8 @@ const BankAccountFormComponent: React.FC<BankAccountFormProps> = ({
   setForm,
   onSave,
   onCancel,
-  editing
+  editing,
+  loading = false
 }) => {
   return (
     <div className="border rounded-lg p-4 mb-4 bg-gray-50">
@@ -33,6 +35,7 @@ const BankAccountFormComponent: React.FC<BankAccountFormProps> = ({
             id="bank_name"
             value={form.bank_name}
             onChange={(e) => setForm({ ...form, bank_name: e.target.value })}
+            disabled={loading}
           />
         </div>
         <div>
@@ -41,6 +44,7 @@ const BankAccountFormComponent: React.FC<BankAccountFormProps> = ({
             id="account_holder"
             value={form.account_holder}
             onChange={(e) => setForm({ ...form, account_holder: e.target.value })}
+            disabled={loading}
           />
         </div>
         <div>
@@ -49,6 +53,7 @@ const BankAccountFormComponent: React.FC<BankAccountFormProps> = ({
             id="account_number"
             value={form.account_number}
             onChange={(e) => setForm({ ...form, account_number: e.target.value })}
+            disabled={loading}
           />
         </div>
         <div className="flex items-center space-x-2 pt-6">
@@ -56,15 +61,16 @@ const BankAccountFormComponent: React.FC<BankAccountFormProps> = ({
             id="is_active"
             checked={form.is_active}
             onCheckedChange={(checked) => setForm({ ...form, is_active: checked })}
+            disabled={loading}
           />
           <Label htmlFor="is_active">Conta Ativa</Label>
         </div>
       </div>
       <div className="flex gap-2 mt-4">
-        <Button onClick={onSave}>
-          {editing ? 'Atualizar' : 'Adicionar'}
+        <Button onClick={onSave} disabled={loading}>
+          {loading ? 'Salvando...' : (editing ? 'Atualizar' : 'Adicionar')}
         </Button>
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel} disabled={loading}>
           Cancelar
         </Button>
       </div>

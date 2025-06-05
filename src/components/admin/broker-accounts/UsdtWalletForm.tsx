@@ -12,6 +12,7 @@ interface UsdtWalletFormProps {
   onSave: () => void;
   onCancel: () => void;
   editing: UsdtWallet | null;
+  loading?: boolean;
 }
 
 const UsdtWalletFormComponent: React.FC<UsdtWalletFormProps> = ({
@@ -19,7 +20,8 @@ const UsdtWalletFormComponent: React.FC<UsdtWalletFormProps> = ({
   setForm,
   onSave,
   onCancel,
-  editing
+  editing,
+  loading = false
 }) => {
   return (
     <div className="border rounded-lg p-4 mb-4 bg-gray-50">
@@ -34,6 +36,7 @@ const UsdtWalletFormComponent: React.FC<UsdtWalletFormProps> = ({
             value={form.wallet_address}
             onChange={(e) => setForm({ ...form, wallet_address: e.target.value })}
             placeholder="TRC-20 wallet address"
+            disabled={loading}
           />
         </div>
         <div>
@@ -42,6 +45,7 @@ const UsdtWalletFormComponent: React.FC<UsdtWalletFormProps> = ({
             id="network"
             value={form.network}
             onChange={(e) => setForm({ ...form, network: e.target.value })}
+            disabled={loading}
           />
         </div>
         <div className="flex items-center space-x-2 pt-6">
@@ -49,15 +53,16 @@ const UsdtWalletFormComponent: React.FC<UsdtWalletFormProps> = ({
             id="wallet_active"
             checked={form.is_active}
             onCheckedChange={(checked) => setForm({ ...form, is_active: checked })}
+            disabled={loading}
           />
           <Label htmlFor="wallet_active">Carteira Ativa</Label>
         </div>
       </div>
       <div className="flex gap-2 mt-4">
-        <Button onClick={onSave}>
-          {editing ? 'Atualizar' : 'Adicionar'}
+        <Button onClick={onSave} disabled={loading}>
+          {loading ? 'Salvando...' : (editing ? 'Atualizar' : 'Adicionar')}
         </Button>
-        <Button variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel} disabled={loading}>
           Cancelar
         </Button>
       </div>

@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { useUser } from '@/context/UserContext';
+import { useAuth } from '@/context/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
 import { useFileUpload } from './useFileUpload';
 import ImagePreview from './ImagePreview';
 import UploadArea from './UploadArea';
@@ -24,10 +25,11 @@ const UploadProofContainer: React.FC = () => {
   
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
-  const { addProofUpload, proofUploads } = useUser();
+  const { user } = useAuth();
+  const [proofUploads, setProofUploads] = useState<string[]>([]);
   const isMobile = useIsMobile();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!previewUrl) {
       toast({
         title: "Nenhum arquivo selecionado",
@@ -36,25 +38,51 @@ const UploadProofContainer: React.FC = () => {
       });
       return;
     }
+
+    if (!user?.id) {
+      toast({
+        title: "Usuário não autenticado",
+        description: "Por favor, faça login para enviar comprovativos",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsUploading(true);
     
-    // Simulate upload delay
-    setTimeout(() => {
-      addProofUpload(previewUrl);
+    try {
+      const { error } = await supabase
+        .from('payment_proofs')
+        .insert({
+          user_id: user.id,
+          image_url: previewUrl,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      setProofUploads(prev => [previewUrl, ...prev]);
       
       toast({
         title: "Comprovativo enviado",
-        description: "Seu comprovativo de pagamento foi enviado com sucesso",
+        description: "Seu comprovativo de pagamento foi enviado com sucesso e está sendo analisado",
       });
       
       setPreviewUrl(null);
-      setIsUploading(false);
       
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-    }, 1500);
+    } catch (error) {
+      console.error('Error uploading proof:', error);
+      toast({
+        title: "Erro ao enviar",
+        description: "Não foi possível enviar o comprovativo. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -98,6 +126,13 @@ const UploadProofContainer: React.FC = () => {
           {isUploading ? "Enviando..." : "Enviar Comprovativo"}
         </Button>
       )}
+
+      <div className="bg-blue-50 p-3 rounded-lg text-sm">
+        <p className="text-blue-800 font-medium mb-1">Importante:</p>
+        <p className="text-blue-700">
+          Após o envio e aprovação do seu comprovativo pelo admin, a função "Quantificar" será ativada automaticamente na sua conta.
+        </p>
+      </div>
 
       <ProofUploadList proofUploads={proofUploads} />
     </div>

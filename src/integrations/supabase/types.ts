@@ -9,6 +9,93 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      broker_bank_accounts: {
+        Row: {
+          account_holder: string
+          account_number: string
+          bank_name: string
+          created_at: string
+          id: string
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          account_holder: string
+          account_number: string
+          bank_name: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          account_holder?: string
+          account_number?: string
+          bank_name?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      broker_usdt_wallets: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          network: string
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          network?: string
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          network?: string
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      payment_proofs: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          id: string
+          image_url: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -57,6 +144,42 @@ export type Database = {
           id?: string
           is_active?: boolean
           user_id?: string
+        }
+        Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          id: string
+          referred_user_id: string
+          referrer_id: string
+          reward_amount: number
+          reward_currency: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          referred_user_id: string
+          referrer_id: string
+          reward_amount: number
+          reward_currency?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          referred_user_id?: string
+          referrer_id?: string
+          reward_amount?: number
+          reward_currency?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -133,6 +256,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_quantifications: {
+        Row: {
+          created_at: string
+          daily_limit: number
+          id: string
+          is_active: boolean
+          last_reset_date: string
+          updated_at: string
+          used_today: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_limit?: number
+          id?: string
+          is_active?: boolean
+          last_reset_date?: string
+          updated_at?: string
+          used_today?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_limit?: number
+          id?: string
+          is_active?: boolean
+          last_reset_date?: string
+          updated_at?: string
+          used_today?: number
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

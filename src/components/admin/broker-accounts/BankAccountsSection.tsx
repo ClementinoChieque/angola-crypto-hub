@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { BankAccount, BankAccountForm } from './types';
 import BankAccountFormComponent from './BankAccountForm';
 import BankAccountsList from './BankAccountsList';
@@ -19,6 +20,7 @@ const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
 }) => {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<BankAccount | null>(null);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const [form, setForm] = useState<BankAccountForm>({
@@ -28,25 +30,71 @@ const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
     is_active: true
   });
 
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const fetchAccounts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('broker_bank_accounts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      const formattedAccounts = data?.map(account => ({
+        id: account.id,
+        bank_name: account.bank_name,
+        account_number: account.account_number,
+        account_holder: account.account_holder,
+        is_active: account.is_active,
+        created_at: account.created_at
+      })) || [];
+
+      onAccountsChange(formattedAccounts);
+    } catch (error) {
+      console.error('Error fetching bank accounts:', error);
+      toast({
+        title: "Erro ao carregar contas",
+        description: "Não foi possível carregar as contas bancárias",
+        variant: "destructive"
+      });
+    }
+  };
+
   const saveAccount = async () => {
+    setLoading(true);
     try {
       if (editing) {
-        const updatedAccounts = accounts.map(acc => 
-          acc.id === editing.id 
-            ? { ...acc, ...form, id: editing.id, created_at: editing.created_at }
-            : acc
-        );
-        onAccountsChange(updatedAccounts);
+        const { error } = await supabase
+          .from('broker_bank_accounts')
+          .update({
+            bank_name: form.bank_name,
+            account_number: form.account_number,
+            account_holder: form.account_holder,
+            is_active: form.is_active,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editing.id);
+
+        if (error) throw error;
         toast({ title: "Conta bancária atualizada" });
       } else {
-        const newAccount: BankAccount = {
-          ...form,
-          id: Date.now().toString(),
-          created_at: new Date().toISOString()
-        };
-        onAccountsChange([...accounts, newAccount]);
+        const { error } = await supabase
+          .from('broker_bank_accounts')
+          .insert({
+            bank_name: form.bank_name,
+            account_number: form.account_number,
+            account_holder: form.account_holder,
+            is_active: form.is_active
+          });
+
+        if (error) throw error;
         toast({ title: "Conta bancária adicionada" });
       }
+      
+      await fetchAccounts();
       resetForm();
     } catch (error) {
       console.error('Error saving bank account:', error);
@@ -55,6 +103,8 @@ const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
         description: "Não foi possível salvar a conta bancária",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,8 +112,15 @@ const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
     if (!confirm('Tem certeza que deseja excluir esta conta bancária?')) return;
 
     try {
-      onAccountsChange(accounts.filter(acc => acc.id !== id));
+      const { error } = await supabase
+        .from('broker_bank_accounts')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      
       toast({ title: "Conta bancária excluída" });
+      await fetchAccounts();
     } catch (error) {
       console.error('Error deleting bank account:', error);
       toast({
@@ -112,6 +169,7 @@ const BankAccountsSection: React.FC<BankAccountsSectionProps> = ({
             onSave={saveAccount}
             onCancel={resetForm}
             editing={editing}
+            loading={loading}
           />
         )}
         <BankAccountsList
