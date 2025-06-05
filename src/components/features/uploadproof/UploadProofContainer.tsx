@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -9,6 +9,12 @@ import { useFileUpload } from './useFileUpload';
 import ImagePreview from './ImagePreview';
 import UploadArea from './UploadArea';
 import ProofUploadList from './ProofUploadList';
+
+interface ProofUpload {
+  imageUrl: string;
+  timestamp: Date;
+  verified: boolean;
+}
 
 const UploadProofContainer: React.FC = () => {
   const {
@@ -26,8 +32,39 @@ const UploadProofContainer: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const [proofUploads, setProofUploads] = useState<string[]>([]);
+  const [proofUploads, setProofUploads] = useState<ProofUpload[]>([]);
   const isMobile = useIsMobile();
+
+  // Load user's payment proofs from database
+  useEffect(() => {
+    if (user?.id) {
+      loadPaymentProofs();
+    }
+  }, [user]);
+
+  const loadPaymentProofs = async () => {
+    if (!user?.id) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('payment_proofs')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const proofs: ProofUpload[] = data.map(proof => ({
+        imageUrl: proof.image_url,
+        timestamp: new Date(proof.created_at),
+        verified: proof.status === 'approved'
+      }));
+
+      setProofUploads(proofs);
+    } catch (error) {
+      console.error('Error loading payment proofs:', error);
+    }
+  };
 
   const handleSubmit = async () => {
     if (!previewUrl) {
@@ -61,7 +98,13 @@ const UploadProofContainer: React.FC = () => {
 
       if (error) throw error;
 
-      setProofUploads(prev => [previewUrl, ...prev]);
+      // Add to local state
+      const newProof: ProofUpload = {
+        imageUrl: previewUrl,
+        timestamp: new Date(),
+        verified: false
+      };
+      setProofUploads(prev => [newProof, ...prev]);
       
       toast({
         title: "Comprovativo enviado",
