@@ -1,40 +1,43 @@
 
 import { useState, useEffect } from 'react';
-import { useToast } from '@/components/ui/use-toast';
-import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { Referral } from './types';
 
 export const useReferrals = () => {
-  const { toast } = useToast();
-  const { user } = useAuth();
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const fetchReferrals = async () => {
+    if (!user?.id) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      setLoading(true);
+      console.log('Fetching referrals for user:', user.id);
       
-      const { data: referralsData, error } = await supabase
+      const { data, error } = await supabase
         .from('referrals')
         .select('*')
-        .eq('referrer_id', user?.id)
+        .eq('referrer_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error fetching referrals:', error);
+        throw error;
+      }
 
-      // Garantir que o status seja do tipo correto
-      const formattedReferrals: Referral[] = referralsData?.map(referral => ({
-        ...referral,
-        status: referral.status as 'pending' | 'completed' | 'expired'
-      })) || [];
-
-      setReferrals(formattedReferrals);
+      console.log('Fetched referrals:', data);
+      setReferrals(data || []);
     } catch (error) {
       console.error('Error fetching referrals:', error);
       toast({
         title: "Erro ao carregar convites",
-        description: "Não foi possível carregar a lista de convites",
+        description: "Não foi possível carregar seus convites. Tente novamente.",
         variant: "destructive"
       });
     } finally {
@@ -43,14 +46,8 @@ export const useReferrals = () => {
   };
 
   useEffect(() => {
-    if (user?.id) {
-      fetchReferrals();
-    }
+    fetchReferrals();
   }, [user]);
 
-  return {
-    referrals,
-    loading,
-    fetchReferrals
-  };
+  return { referrals, loading, fetchReferrals };
 };
