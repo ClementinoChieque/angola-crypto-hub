@@ -32,7 +32,8 @@ export const useReferrals = () => {
       }
 
       console.log('Fetched referrals:', data);
-      setReferrals(data || []);
+      // Type assertion to ensure compatibility with our Referral interface
+      setReferrals((data as Referral[]) || []);
     } catch (error) {
       console.error('Error fetching referrals:', error);
       toast({
