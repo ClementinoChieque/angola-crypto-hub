@@ -7,20 +7,21 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { CreditCard } from 'lucide-react';
+import type { BankAccountFormData } from '../types';
 
 const BankAccountForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const [bankForm, setBankForm] = useState({
+  const [formData, setFormData] = useState<BankAccountFormData>({
     bank_name: '',
     account_number: '',
     account_holder: ''
   });
 
-  const handleBankAccountSubmit = async () => {
-    if (!bankForm.bank_name || !bankForm.account_number || !bankForm.account_holder) {
+  const handleSubmit = async () => {
+    if (!formData.bank_name || !formData.account_number || !formData.account_holder) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os campos",
@@ -32,12 +33,12 @@ const BankAccountForm: React.FC = () => {
     setSubmitting(true);
     try {
       const { error } = await supabase
-        .from('user_bank_accounts' as any)
+        .from('user_bank_accounts')
         .insert({
           user_id: user?.id,
-          bank_name: bankForm.bank_name,
-          account_number: bankForm.account_number,
-          account_holder: bankForm.account_holder,
+          bank_name: formData.bank_name,
+          account_number: formData.account_number,
+          account_holder: formData.account_holder,
           currency: 'AKZ'
         });
 
@@ -48,7 +49,7 @@ const BankAccountForm: React.FC = () => {
         description: "Sua conta bancária foi adicionada com sucesso"
       });
 
-      setBankForm({ bank_name: '', account_number: '', account_holder: '' });
+      setFormData({ bank_name: '', account_number: '', account_holder: '' });
     } catch (error) {
       console.error('Error adding bank account:', error);
       toast({
@@ -72,8 +73,8 @@ const BankAccountForm: React.FC = () => {
         <Label htmlFor="bank_name">Nome do Banco</Label>
         <Input
           id="bank_name"
-          value={bankForm.bank_name}
-          onChange={(e) => setBankForm({ ...bankForm, bank_name: e.target.value })}
+          value={formData.bank_name}
+          onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
           placeholder="Ex: Banco BAI"
           disabled={submitting}
         />
@@ -83,8 +84,8 @@ const BankAccountForm: React.FC = () => {
         <Label htmlFor="account_holder">Nome Completo (Titular da Conta)</Label>
         <Input
           id="account_holder"
-          value={bankForm.account_holder}
-          onChange={(e) => setBankForm({ ...bankForm, account_holder: e.target.value })}
+          value={formData.account_holder}
+          onChange={(e) => setFormData({ ...formData, account_holder: e.target.value })}
           placeholder="Seu nome completo"
           disabled={submitting}
         />
@@ -94,15 +95,15 @@ const BankAccountForm: React.FC = () => {
         <Label htmlFor="account_number">Número da Conta</Label>
         <Input
           id="account_number"
-          value={bankForm.account_number}
-          onChange={(e) => setBankForm({ ...bankForm, account_number: e.target.value })}
+          value={formData.account_number}
+          onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
           placeholder="Número da sua conta bancária"
           disabled={submitting}
         />
       </div>
       
       <Button 
-        onClick={handleBankAccountSubmit}
+        onClick={handleSubmit}
         disabled={submitting}
         className="w-full"
       >

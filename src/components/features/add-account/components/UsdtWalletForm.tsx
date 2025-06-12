@@ -7,19 +7,20 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Wallet } from 'lucide-react';
+import type { UsdtWalletFormData } from '../types';
 
 const UsdtWalletForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const [usdtForm, setUsdtForm] = useState({
+  const [formData, setFormData] = useState<UsdtWalletFormData>({
     wallet_address: '',
     network: 'TRC-20'
   });
 
-  const handleUsdtWalletSubmit = async () => {
-    if (!usdtForm.wallet_address) {
+  const handleSubmit = async () => {
+    if (!formData.wallet_address) {
       toast({
         title: "Campo obrigatório",
         description: "Por favor, insira o endereço da carteira",
@@ -31,11 +32,11 @@ const UsdtWalletForm: React.FC = () => {
     setSubmitting(true);
     try {
       const { error } = await supabase
-        .from('user_usdt_wallets' as any)
+        .from('user_usdt_wallets')
         .insert({
           user_id: user?.id,
-          wallet_address: usdtForm.wallet_address,
-          network: usdtForm.network
+          wallet_address: formData.wallet_address,
+          network: formData.network
         });
 
       if (error) throw error;
@@ -45,7 +46,7 @@ const UsdtWalletForm: React.FC = () => {
         description: "Sua carteira USDT foi adicionada com sucesso"
       });
 
-      setUsdtForm({ wallet_address: '', network: 'TRC-20' });
+      setFormData({ wallet_address: '', network: 'TRC-20' });
     } catch (error) {
       console.error('Error adding USDT wallet:', error);
       toast({
@@ -69,8 +70,8 @@ const UsdtWalletForm: React.FC = () => {
         <Label htmlFor="wallet_address">Endereço da Carteira</Label>
         <Input
           id="wallet_address"
-          value={usdtForm.wallet_address}
-          onChange={(e) => setUsdtForm({ ...usdtForm, wallet_address: e.target.value })}
+          value={formData.wallet_address}
+          onChange={(e) => setFormData({ ...formData, wallet_address: e.target.value })}
           placeholder="Endereço da sua carteira USDT"
           disabled={submitting}
         />
@@ -80,14 +81,14 @@ const UsdtWalletForm: React.FC = () => {
         <Label htmlFor="network">Rede</Label>
         <Input
           id="network"
-          value={usdtForm.network}
-          onChange={(e) => setUsdtForm({ ...usdtForm, network: e.target.value })}
+          value={formData.network}
+          onChange={(e) => setFormData({ ...formData, network: e.target.value })}
           disabled={submitting}
         />
       </div>
       
       <Button 
-        onClick={handleUsdtWalletSubmit}
+        onClick={handleSubmit}
         disabled={submitting}
         className="w-full"
       >

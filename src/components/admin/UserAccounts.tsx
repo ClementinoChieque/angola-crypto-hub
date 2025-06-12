@@ -1,27 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CreditCard, Wallet } from 'lucide-react';
-
-interface UserBankAccount {
-  id: string;
-  user_id: string;
-  bank_name: string;
-  account_number: string;
-  account_holder: string;
-  currency: string;
-  created_at: string;
-}
-
-interface UserUsdtWallet {
-  id: string;
-  user_id: string;
-  wallet_address: string;
-  network: string;
-  created_at: string;
-}
+import type { UserBankAccount, UserUsdtWallet } from '../features/add-account/types';
 
 const UserAccounts: React.FC = () => {
   const [bankAccounts, setBankAccounts] = useState<UserBankAccount[]>([]);
