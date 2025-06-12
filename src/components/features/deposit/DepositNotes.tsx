@@ -6,9 +6,11 @@ const DepositNotes: React.FC = () => {
     <div className="mt-6 text-sm text-muted-foreground">
       <p>Observações:</p>
       <ul className="list-disc pl-5 mt-2">
+        <li>Antes de confirmar o seu depósito, verifique cuidasomente o valor.</li>
         <li>Após o depósito, faça o upload do comprovativo.</li>
-        <li>O saldo será habilitado após confirmação pelo administrador.</li>
-        
+        <li>O saldo será habilitado em 1 hora.</li>
+       
+
       </ul>
     </div>
   );
