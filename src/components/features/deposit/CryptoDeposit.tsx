@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useCryptoRates } from '@/utils/cryptoRates';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface CryptoDepositProps {
   amount: string;
@@ -11,9 +13,19 @@ interface CryptoDepositProps {
   onDeposit: () => void;
 }
 
+interface UsdtWallet {
+  id: string;
+  wallet_address: string;
+  network: string;
+  is_active: boolean;
+}
+
 const CryptoDeposit: React.FC<CryptoDepositProps> = ({ amount, setAmount, onDeposit }) => {
   const { rates, isLoading } = useCryptoRates();
   const [aocAmount, setAocAmount] = useState<string>('');
+  const [activeWallet, setActiveWallet] = useState<UsdtWallet | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   // Calculate AOcripto equivalent when USDT amount changes
   useEffect(() => {
@@ -26,16 +38,69 @@ const CryptoDeposit: React.FC<CryptoDepositProps> = ({ amount, setAmount, onDepo
     }
   }, [amount, rates.usdtToAoc]);
 
+  // Fetch active USDT wallet from database
+  useEffect(() => {
+    const fetchActiveWallet = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('broker_usdt_wallets')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error fetching USDT wallet:', error);
+          toast({
+            title: "Erro ao carregar carteira",
+            description: "Não foi possível carregar a carteira USDT",
+            variant: "destructive"
+          });
+        } else if (data) {
+          setActiveWallet(data);
+        }
+      } catch (error) {
+        console.error('Error fetching USDT wallet:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActiveWallet();
+  }, [toast]);
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="text-center py-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-crypto-blue mx-auto"></div>
+          <p className="text-sm text-muted-foreground mt-2">Carregando carteira...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="bg-muted p-4 rounded-md text-center">
-        <p className="text-sm mb-1">Endereço da carteira (TRC-20)</p>
-        <p className="font-mono bg-white p-2 rounded border select-all">
-          TRB9Vux9dMacKFBuxsuLwD4PQGxgiFT8tU
+        <p className="text-sm mb-1">
+          Endereço da carteira ({activeWallet?.network || 'TRC-20'})
         </p>
-        <p className="text-xs text-muted-foreground mt-2">
-          Envie apenas USDT pela rede TRC-20
-        </p>
+        {activeWallet ? (
+          <>
+            <p className="font-mono bg-white p-2 rounded border select-all break-all">
+              {activeWallet.wallet_address}
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Envie apenas USDT pela rede {activeWallet.network}
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-red-500">
+            Nenhuma carteira USDT ativa disponível no momento
+          </p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -58,8 +123,9 @@ const CryptoDeposit: React.FC<CryptoDepositProps> = ({ amount, setAmount, onDepo
       <Button 
         onClick={onDeposit}
         className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
+        disabled={!activeWallet}
       >
-        Confirmar Depósito
+        {activeWallet ? 'Confirmar Depósito' : 'Carteira Indisponível'}
       </Button>
     </div>
   );
