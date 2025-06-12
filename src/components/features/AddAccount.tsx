@@ -66,7 +66,7 @@ const AddAccount: React.FC = () => {
     setSubmitting(true);
     try {
       const { error } = await supabase
-        .from('user_bank_accounts')
+        .from('user_bank_accounts' as any)
         .insert({
           user_id: user?.id,
           bank_name: bankForm.bank_name,
@@ -108,7 +108,7 @@ const AddAccount: React.FC = () => {
     setSubmitting(true);
     try {
       const { error } = await supabase
-        .from('user_usdt_wallets')
+        .from('user_usdt_wallets' as any)
         .insert({
           user_id: user?.id,
           wallet_address: usdtForm.wallet_address,

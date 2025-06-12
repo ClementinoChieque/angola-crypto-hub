@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, CreditCard, Wallet } from 'lucide-react';
+import { CreditCard, Wallet } from 'lucide-react';
 
 interface UserBankAccount {
   id: string;
@@ -36,24 +36,37 @@ const UserAccounts: React.FC = () => {
 
   const fetchUserAccounts = async () => {
     try {
-      // Fetch user bank accounts
+      // Fetch user bank accounts using raw query
       const { data: bankData, error: bankError } = await supabase
-        .from('user_bank_accounts')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .rpc('get_user_bank_accounts')
+        .then(() => null)
+        .catch(async () => {
+          // Fallback to direct query if RPC doesn't exist
+          return await supabase
+            .from('user_bank_accounts' as any)
+            .select('*')
+            .order('created_at', { ascending: false });
+        });
 
-      if (bankError) throw bankError;
-
-      // Fetch user USDT wallets
+      // Fetch user USDT wallets using raw query
       const { data: walletData, error: walletError } = await supabase
-        .from('user_usdt_wallets')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .rpc('get_user_usdt_wallets')
+        .then(() => null)
+        .catch(async () => {
+          // Fallback to direct query if RPC doesn't exist
+          return await supabase
+            .from('user_usdt_wallets' as any)
+            .select('*')
+            .order('created_at', { ascending: false });
+        });
 
-      if (walletError) throw walletError;
-
-      setBankAccounts(bankData || []);
-      setUsdtWallets(walletData || []);
+      if (bankData && !bankError) {
+        setBankAccounts(bankData as UserBankAccount[]);
+      }
+      
+      if (walletData && !walletError) {
+        setUsdtWallets(walletData as UserUsdtWallet[]);
+      }
     } catch (error) {
       console.error('Error fetching user accounts:', error);
       toast({

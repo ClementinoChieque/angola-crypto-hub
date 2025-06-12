@@ -257,6 +257,36 @@ export type Database = {
           },
         ]
       }
+      user_bank_accounts: {
+        Row: {
+          account_holder: string
+          account_number: string
+          bank_name: string
+          created_at: string
+          currency: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          account_holder: string
+          account_number: string
+          bank_name: string
+          created_at?: string
+          currency?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          account_holder?: string
+          account_number?: string
+          bank_name?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_quantifications: {
         Row: {
           created_at: string
@@ -287,6 +317,30 @@ export type Database = {
           updated_at?: string
           used_today?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_usdt_wallets: {
+        Row: {
+          created_at: string
+          id: string
+          network: string
+          user_id: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          network?: string
+          user_id: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          network?: string
+          user_id?: string
+          wallet_address?: string
         }
         Relationships: []
       }
