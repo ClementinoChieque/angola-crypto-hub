@@ -8,7 +8,7 @@ const DepositNotes: React.FC = () => {
       <ul className="list-disc pl-5 mt-2">
         <li>Após o depósito, faça o upload do comprovativo.</li>
         <li>O saldo será habilitado após confirmação pelo administrador.</li>
-        <li>Depósitos em banco são convertidos para AKZ.</li>
+        
       </ul>
     </div>
   );
