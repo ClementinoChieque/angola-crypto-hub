@@ -5,7 +5,8 @@ import {
   Circle, 
   UserPlus,
   Users,
-  TrendingUp
+  TrendingUp,
+  Plus
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,6 +21,7 @@ import InvestmentPlans from '../features/InvestmentPlans';
 import CryptoRates from '../features/CryptoRates';
 import CryptoChart from '../features/CryptoChart';
 import BalanceStatus from '../features/BalanceStatus';
+import AddAccount from '../features/AddAccount';
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('upload');
@@ -31,6 +33,7 @@ const Dashboard: React.FC = () => {
     { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={isMobile ? 16 : 20} /> },
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
     { id: 'investment', label: 'Plano de Investimento', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
+    { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
   ];
@@ -83,8 +86,20 @@ const Dashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-3 mb-3">
-              {menuItems.slice(2, 5).map((item) => (
+            <TabsList className="grid grid-cols-2 mb-3">
+              {menuItems.slice(2, 4).map((item) => (
+                <TabsTrigger
+                  key={item.id}
+                  value={item.id}
+                  className="flex flex-col items-center py-1.5 text-xs"
+                >
+                  {item.icon}
+                  <span className="mt-1 text-center">{item.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <TabsList className="grid grid-cols-2 mb-3">
+              {menuItems.slice(4, 6).map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
@@ -109,6 +124,9 @@ const Dashboard: React.FC = () => {
             
             {/* Investment Plans Tab */}
             {activeTab === 'investment' && <InvestmentPlans />}
+            
+            {/* Add Account Tab */}
+            {activeTab === 'add-account' && <AddAccount />}
             
             {/* Invite Tab */}
             {activeTab === 'invite' && <InviteUsers />}

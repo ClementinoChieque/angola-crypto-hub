@@ -101,6 +101,12 @@ const BankAccountForm: React.FC = () => {
           disabled={submitting}
         />
       </div>
+
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+        <p className="text-yellow-800 text-sm">
+          <strong>Observação:</strong> Só pode adicionar conta bancária que usou no depósito.
+        </p>
+      </div>
       
       <Button 
         onClick={handleSubmit}
