@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -36,33 +35,28 @@ const UserAccounts: React.FC = () => {
 
   const fetchUserAccounts = async () => {
     try {
-      // Fetch user bank accounts using direct query
-      const bankQuery = supabase
-        .from('user_bank_accounts' as any)
+      // Fetch user bank accounts
+      const { data: bankData, error: bankError } = await supabase
+        .from('user_bank_accounts')
         .select('*')
         .order('created_at', { ascending: false });
 
-      // Fetch user USDT wallets using direct query
-      const walletQuery = supabase
-        .from('user_usdt_wallets' as any)
+      // Fetch user USDT wallets
+      const { data: walletData, error: walletError } = await supabase
+        .from('user_usdt_wallets')
         .select('*')
         .order('created_at', { ascending: false });
 
-      const [bankResult, walletResult] = await Promise.all([
-        bankQuery,
-        walletQuery
-      ]);
-
-      if (bankResult.error) {
-        console.error('Error fetching bank accounts:', bankResult.error);
-      } else if (bankResult.data) {
-        setBankAccounts(bankResult.data as UserBankAccount[]);
+      if (bankError) {
+        console.error('Error fetching bank accounts:', bankError);
+      } else if (bankData) {
+        setBankAccounts(bankData);
       }
       
-      if (walletResult.error) {
-        console.error('Error fetching USDT wallets:', walletResult.error);
-      } else if (walletResult.data) {
-        setUsdtWallets(walletResult.data as UserUsdtWallet[]);
+      if (walletError) {
+        console.error('Error fetching USDT wallets:', walletError);
+      } else if (walletData) {
+        setUsdtWallets(walletData);
       }
     } catch (error) {
       console.error('Error fetching user accounts:', error);
