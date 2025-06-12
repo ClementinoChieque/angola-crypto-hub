@@ -24,7 +24,8 @@ const DepositOptionsContainer: React.FC = () => {
       return;
     }
 
-    setDepositMethod(method);
+    // Convert our local DepositMethod to the expected type for UserContext
+    setDepositMethod(method as any);
     
     toast({
       title: "Depósito iniciado",
