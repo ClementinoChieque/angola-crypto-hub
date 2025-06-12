@@ -12,8 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-type DepositMethod = 'USDT' | 'BAI' | 'BFA' | 'BIC' | 'ATL';
+import { DepositMethod } from './types';
 
 interface BankDepositProps {
   amount: string;
@@ -28,7 +27,7 @@ interface BankOption {
 }
 
 const BankDeposit: React.FC<BankDepositProps> = ({ amount, setAmount, onDeposit }) => {
-  const [selectedBank, setSelectedBank] = useState<DepositMethod>('BAE');
+  const [selectedBank, setSelectedBank] = useState<DepositMethod>('BAI');
   
   const bankOptions: BankOption[] = [
     { value: 'BAI', label: 'Banco Angolano de Investimentos', accountNumber: '123456789' },

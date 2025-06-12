@@ -6,8 +6,7 @@ import CryptoDeposit from './CryptoDeposit';
 import BankDeposit from './BankDeposit';
 import DepositNotes from './DepositNotes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-type DepositMethod = 'USDT' | 'BAE' | 'BFA' | 'BIC' | 'ATL';
+import { DepositMethod } from './types';
 
 const DepositOptionsContainer: React.FC = () => {
   const [amount, setAmount] = useState('');
