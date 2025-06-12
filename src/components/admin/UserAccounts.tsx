@@ -36,35 +36,27 @@ const UserAccounts: React.FC = () => {
 
   const fetchUserAccounts = async () => {
     try {
-      // Fetch user bank accounts using raw query
+      // Fetch user bank accounts
       const { data: bankData, error: bankError } = await supabase
-        .rpc('get_user_bank_accounts')
-        .then(() => null)
-        .catch(async () => {
-          // Fallback to direct query if RPC doesn't exist
-          return await supabase
-            .from('user_bank_accounts' as any)
-            .select('*')
-            .order('created_at', { ascending: false });
-        });
+        .from('user_bank_accounts')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      // Fetch user USDT wallets using raw query
+      // Fetch user USDT wallets
       const { data: walletData, error: walletError } = await supabase
-        .rpc('get_user_usdt_wallets')
-        .then(() => null)
-        .catch(async () => {
-          // Fallback to direct query if RPC doesn't exist
-          return await supabase
-            .from('user_usdt_wallets' as any)
-            .select('*')
-            .order('created_at', { ascending: false });
-        });
+        .from('user_usdt_wallets')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      if (bankData && !bankError) {
+      if (bankError) {
+        console.error('Error fetching bank accounts:', bankError);
+      } else if (bankData) {
         setBankAccounts(bankData as UserBankAccount[]);
       }
       
-      if (walletData && !walletError) {
+      if (walletError) {
+        console.error('Error fetching USDT wallets:', walletError);
+      } else if (walletData) {
         setUsdtWallets(walletData as UserUsdtWallet[]);
       }
     } catch (error) {
