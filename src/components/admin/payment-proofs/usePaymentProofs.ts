@@ -59,7 +59,7 @@ export const usePaymentProofs = () => {
       await fetchPaymentProofs();
       toast({
         title: "Status atualizado",
-        description: `Comprovativo ${status === 'verified' ? 'verificado' : 'rejeitado'}`
+        description: `Comprovativo ${status === 'verified' ? 'aprovado' : 'rejeitado'}`
       });
 
       return true;
@@ -68,6 +68,33 @@ export const usePaymentProofs = () => {
       toast({
         title: "Erro ao atualizar status",
         description: "Não foi possível atualizar o status do comprovativo",
+        variant: "destructive"
+      });
+      return false;
+    }
+  };
+
+  const deleteProof = async (proofId: string) => {
+    try {
+      const { error } = await supabase
+        .from('payment_proofs')
+        .delete()
+        .eq('id', proofId);
+
+      if (error) throw error;
+
+      await fetchPaymentProofs();
+      toast({
+        title: "Comprovativo eliminado",
+        description: "O comprovativo foi eliminado com sucesso"
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting proof:', error);
+      toast({
+        title: "Erro ao eliminar comprovativo",
+        description: "Não foi possível eliminar o comprovativo",
         variant: "destructive"
       });
       return false;
@@ -135,6 +162,7 @@ export const usePaymentProofs = () => {
     proofs,
     loading,
     updateProofStatus,
+    deleteProof,
     fetchPaymentProofs
   };
 };

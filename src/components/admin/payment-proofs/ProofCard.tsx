@@ -2,17 +2,18 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle, XCircle, Eye, Zap } from 'lucide-react';
+import { CheckCircle, XCircle, Eye, Zap, Trash2 } from 'lucide-react';
 import { PaymentProof } from './types';
 import StatusBadge from './StatusBadge';
 
 interface ProofCardProps {
   proof: PaymentProof;
   onStatusUpdate: (proofId: string, status: string, notes?: string) => Promise<boolean>;
+  onDelete: (proofId: string) => Promise<boolean>;
   onImageView: (imageUrl: string) => void;
 }
 
-const ProofCard: React.FC<ProofCardProps> = ({ proof, onStatusUpdate, onImageView }) => {
+const ProofCard: React.FC<ProofCardProps> = ({ proof, onStatusUpdate, onDelete, onImageView }) => {
   const [selectedProof, setSelectedProof] = useState<string | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
 
@@ -21,6 +22,12 @@ const ProofCard: React.FC<ProofCardProps> = ({ proof, onStatusUpdate, onImageVie
     if (success) {
       setSelectedProof(null);
       setAdminNotes('');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Tem certeza que deseja eliminar este comprovativo?')) {
+      await onDelete(proof.id);
     }
   };
 
@@ -45,14 +52,24 @@ const ProofCard: React.FC<ProofCardProps> = ({ proof, onStatusUpdate, onImageVie
         </div>
         <div className="flex flex-col items-end gap-2">
           <StatusBadge status={proof.status} />
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onImageView(proof.image_url)}
-          >
-            <Eye size={16} className="mr-1" />
-            Ver Imagem
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onImageView(proof.image_url)}
+            >
+              <Eye size={16} className="mr-1" />
+              Ver Imagem
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={handleDelete}
+            >
+              <Trash2 size={16} className="mr-1" />
+              Eliminar
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -78,7 +95,7 @@ const ProofCard: React.FC<ProofCardProps> = ({ proof, onStatusUpdate, onImageVie
           >
             <CheckCircle size={16} className="mr-1" />
             <Zap size={14} className="mr-1" />
-            Verificar + Ativar
+            Aprovar + Ativar
           </Button>
           <Button
             size="sm"
@@ -107,7 +124,7 @@ const ProofCard: React.FC<ProofCardProps> = ({ proof, onStatusUpdate, onImageVie
             >
               <CheckCircle size={16} className="mr-1" />
               <Zap size={14} className="mr-1" />
-              Verificar + Ativar
+              Aprovar + Ativar
             </Button>
             <Button
               size="sm"

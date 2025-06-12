@@ -7,7 +7,7 @@ import ProofCard from './payment-proofs/ProofCard';
 import ImageViewer from './payment-proofs/ImageViewer';
 
 const PaymentProofs: React.FC = () => {
-  const { proofs, loading, updateProofStatus } = usePaymentProofs();
+  const { proofs, loading, updateProofStatus, deleteProof } = usePaymentProofs();
   const [viewingImage, setViewingImage] = useState<string | null>(null);
 
   if (loading) {
@@ -45,6 +45,7 @@ const PaymentProofs: React.FC = () => {
                 key={proof.id}
                 proof={proof}
                 onStatusUpdate={updateProofStatus}
+                onDelete={deleteProof}
                 onImageView={setViewingImage}
               />
             ))}

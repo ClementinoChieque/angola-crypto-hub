@@ -12,7 +12,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     case 'pending':
       return <Badge variant="secondary"><Clock size={14} className="mr-1" />Pendente</Badge>;
     case 'verified':
-      return <Badge variant="default"><CheckCircle size={14} className="mr-1" />Verificado</Badge>;
+      return <Badge variant="default"><CheckCircle size={14} className="mr-1" />Aprovado</Badge>;
     case 'rejected':
       return <Badge variant="destructive"><XCircle size={14} className="mr-1" />Rejeitado</Badge>;
     default:
