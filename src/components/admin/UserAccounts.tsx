@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { CreditCard, Wallet } from 'lucide-react';
+import { CreditCard, Wallet, Trash2 } from 'lucide-react';
 import type { UserBankAccount, UserUsdtWallet } from '../features/add-account/types';
 
 interface UserBankAccountWithPhone extends UserBankAccount {
@@ -19,6 +20,7 @@ const UserAccounts: React.FC = () => {
   const [bankAccounts, setBankAccounts] = useState<UserBankAccountWithPhone[]>([]);
   const [usdtWallets, setUsdtWallets] = useState<UserUsdtWalletWithPhone[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -93,6 +95,74 @@ const UserAccounts: React.FC = () => {
     }
   };
 
+  const deleteBankAccount = async (accountId: string) => {
+    setDeletingId(accountId);
+    try {
+      const { error } = await supabase
+        .from('user_bank_accounts')
+        .delete()
+        .eq('id', accountId);
+
+      if (error) {
+        console.error('Error deleting bank account:', error);
+        toast({
+          title: "Erro ao eliminar conta",
+          description: "Não foi possível eliminar a conta bancária",
+          variant: "destructive"
+        });
+      } else {
+        setBankAccounts(prev => prev.filter(account => account.id !== accountId));
+        toast({
+          title: "Conta eliminada",
+          description: "A conta bancária foi eliminada com sucesso",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting bank account:', error);
+      toast({
+        title: "Erro ao eliminar conta",
+        description: "Não foi possível eliminar a conta bancária",
+        variant: "destructive"
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const deleteUsdtWallet = async (walletId: string) => {
+    setDeletingId(walletId);
+    try {
+      const { error } = await supabase
+        .from('user_usdt_wallets')
+        .delete()
+        .eq('id', walletId);
+
+      if (error) {
+        console.error('Error deleting USDT wallet:', error);
+        toast({
+          title: "Erro ao eliminar carteira",
+          description: "Não foi possível eliminar a carteira USDT",
+          variant: "destructive"
+        });
+      } else {
+        setUsdtWallets(prev => prev.filter(wallet => wallet.id !== walletId));
+        toast({
+          title: "Carteira eliminada",
+          description: "A carteira USDT foi eliminada com sucesso",
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting USDT wallet:', error);
+      toast({
+        title: "Erro ao eliminar carteira",
+        description: "Não foi possível eliminar a carteira USDT",
+        variant: "destructive"
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -137,7 +207,21 @@ const UserAccounts: React.FC = () => {
                         Adicionado: {new Date(account.created_at).toLocaleDateString()}
                       </div>
                     </div>
-                    <Badge variant="default">{account.currency}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="default">{account.currency}</Badge>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deleteBankAccount(account.id)}
+                        disabled={deletingId === account.id}
+                      >
+                        {deletingId === account.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                        ) : (
+                          <Trash2 size={16} />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -178,7 +262,21 @@ const UserAccounts: React.FC = () => {
                         Adicionado: {new Date(wallet.created_at).toLocaleDateString()}
                       </div>
                     </div>
-                    <Badge variant="default">USDT</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="default">USDT</Badge>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => deleteUsdtWallet(wallet.id)}
+                        disabled={deletingId === wallet.id}
+                      >
+                        {deletingId === wallet.id ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                        ) : (
+                          <Trash2 size={16} />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
