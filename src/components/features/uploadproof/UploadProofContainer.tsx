@@ -57,7 +57,7 @@ const UploadProofContainer: React.FC = () => {
       const proofs: ProofUpload[] = data.map(proof => ({
         imageUrl: proof.image_url,
         timestamp: new Date(proof.created_at),
-        verified: proof.status === 'approved'
+        verified: proof.status === 'verified'
       }));
 
       setProofUploads(proofs);
