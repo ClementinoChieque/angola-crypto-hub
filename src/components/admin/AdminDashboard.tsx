@@ -8,7 +8,8 @@ import {
   Settings, 
   CreditCard, 
   Wallet,
-  AlertCircle
+  AlertCircle,
+  UserCheck
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -18,6 +19,7 @@ import WithdrawalRequests from './WithdrawalRequests';
 import PaymentProofs from './PaymentProofs';
 import BrokerAccounts from './BrokerAccounts';
 import AdminSettings from './AdminSettings';
+import UserAccounts from './UserAccounts';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('users');
@@ -25,6 +27,7 @@ const AdminDashboard: React.FC = () => {
 
   const menuItems = [
     { id: 'users', label: 'Gestão de Usuários', shortLabel: 'Usuários', icon: <Users size={20} /> },
+    { id: 'user-accounts', label: 'Contas Users', shortLabel: 'Contas Users', icon: <UserCheck size={20} /> },
     { id: 'withdrawals', label: 'Solicitações de Saque', shortLabel: 'Saques', icon: <CreditCard size={20} /> },
     { id: 'proofs', label: 'Comprovativos', shortLabel: 'Comprovativos', icon: <FileText size={20} /> },
     { id: 'accounts', label: 'Contas da Corretora', shortLabel: 'Contas', icon: <Wallet size={20} /> },
@@ -57,7 +60,7 @@ const AdminDashboard: React.FC = () => {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        {/* Mobile layout - 2 rows */}
+        {/* Mobile layout - 3 rows */}
         {isMobile ? (
           <div className="space-y-2 mb-6">
             <TabsList className="grid grid-cols-2 h-auto p-1 w-full">
@@ -72,8 +75,20 @@ const AdminDashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-3 h-auto p-1 w-full">
-              {menuItems.slice(2).map((item) => (
+            <TabsList className="grid grid-cols-2 h-auto p-1 w-full">
+              {menuItems.slice(2, 4).map((item) => (
+                <TabsTrigger
+                  key={item.id}
+                  value={item.id}
+                  className="flex flex-col items-center gap-1 py-2 text-xs font-medium min-h-[60px]"
+                >
+                  {item.icon}
+                  <span className="text-center leading-tight">{item.shortLabel}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <TabsList className="grid grid-cols-2 h-auto p-1 w-full">
+              {menuItems.slice(4, 6).map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
@@ -87,7 +102,7 @@ const AdminDashboard: React.FC = () => {
           </div>
         ) : (
           /* Desktop layout */
-          <TabsList className="grid grid-cols-5 mb-6 h-auto p-1">
+          <TabsList className="grid grid-cols-6 mb-6 h-auto p-1">
             {menuItems.map((item) => (
               <TabsTrigger
                 key={item.id}
@@ -104,6 +119,12 @@ const AdminDashboard: React.FC = () => {
         <TabsContent value="users" className="mt-0">
           <ErrorBoundary tabName="Gestão de Usuários">
             <UserManagement />
+          </ErrorBoundary>
+        </TabsContent>
+        
+        <TabsContent value="user-accounts" className="mt-0">
+          <ErrorBoundary tabName="Contas Users">
+            <UserAccounts />
           </ErrorBoundary>
         </TabsContent>
         
