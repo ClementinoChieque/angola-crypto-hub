@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, Gift, UserCheck, Zap } from 'lucide-react';
+import { Users, Gift, UserCheck, Zap, Trash2 } from 'lucide-react';
 
 interface UserWithReferrals {
   id: string;
@@ -33,6 +33,7 @@ const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [rewardAmount, setRewardAmount] = useState('10');
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -229,6 +230,95 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  const deleteUser = async (userId: string) => {
+    if (!confirm('Tem certeza que deseja eliminar este usuário? Esta ação não pode ser desfeita.')) {
+      return;
+    }
+
+    setDeletingUserId(userId);
+    try {
+      // Delete user-related data in the correct order (children first, then parent)
+      
+      // Delete referral rewards
+      await supabase
+        .from('referral_rewards')
+        .delete()
+        .or(`referrer_id.eq.${userId},referred_user_id.eq.${userId}`);
+
+      // Delete user quantifications
+      await supabase
+        .from('user_quantifications')
+        .delete()
+        .eq('user_id', userId);
+
+      // Delete user bank accounts
+      await supabase
+        .from('user_bank_accounts')
+        .delete()
+        .eq('user_id', userId);
+
+      // Delete user USDT wallets
+      await supabase
+        .from('user_usdt_wallets')
+        .delete()
+        .eq('user_id', userId);
+
+      // Delete referrals where user is referrer
+      await supabase
+        .from('referrals')
+        .delete()
+        .eq('referrer_id', userId);
+
+      // Delete referrals where user is referred
+      await supabase
+        .from('referrals')
+        .delete()
+        .eq('referred_user_id', userId);
+
+      // Delete payment proofs
+      await supabase
+        .from('payment_proofs')
+        .delete()
+        .eq('user_id', userId);
+
+      // Delete transactions
+      await supabase
+        .from('transactions')
+        .delete()
+        .eq('user_id', userId);
+
+      // Delete referral codes
+      await supabase
+        .from('referral_codes')
+        .delete()
+        .eq('user_id', userId);
+
+      // Delete profile
+      await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+
+      toast({
+        title: "Usuário eliminado",
+        description: "O usuário e todos os seus dados foram eliminados com sucesso"
+      });
+
+      // Refresh the users list
+      await fetchUsers();
+      await fetchReferralRewards();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        title: "Erro ao eliminar usuário",
+        description: "Não foi possível eliminar o usuário",
+        variant: "destructive"
+      });
+    } finally {
+      setDeletingUserId(null);
+    }
+  };
+
   if (loading) {
     return (
       <Card>
@@ -295,6 +385,15 @@ const UserManagement: React.FC = () => {
                   >
                     <Zap size={16} className="mr-1" />
                     {user.quantification_active ? 'Desativar' : 'Ativar'} Quantificação
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => deleteUser(user.id)}
+                    disabled={deletingUserId === user.id}
+                  >
+                    <Trash2 size={16} className="mr-1" />
+                    {deletingUserId === user.id ? 'Eliminando...' : 'Eliminar Usuário'}
                   </Button>
                 </div>
 
