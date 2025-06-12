@@ -7,15 +7,40 @@ import { supabase } from '@/integrations/supabase/client';
 import { CreditCard, Wallet } from 'lucide-react';
 import type { UserBankAccount, UserUsdtWallet } from '../features/add-account/types';
 
+interface UserBankAccountWithPhone extends UserBankAccount {
+  user_phone?: string;
+}
+
+interface UserUsdtWalletWithPhone extends UserUsdtWallet {
+  user_phone?: string;
+}
+
 const UserAccounts: React.FC = () => {
-  const [bankAccounts, setBankAccounts] = useState<UserBankAccount[]>([]);
-  const [usdtWallets, setUsdtWallets] = useState<UserUsdtWallet[]>([]);
+  const [bankAccounts, setBankAccounts] = useState<UserBankAccountWithPhone[]>([]);
+  const [usdtWallets, setUsdtWallets] = useState<UserUsdtWalletWithPhone[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchUserAccounts();
   }, []);
+
+  const getUserPhone = async (userId: string): Promise<string> => {
+    try {
+      // Try to get phone from auth.users using the admin API
+      const { data, error } = await supabase.auth.admin.getUserById(userId);
+      
+      if (error || !data.user?.phone) {
+        // Fallback to showing shortened ID if we can't get phone
+        return `User ${userId.slice(0, 8)}...`;
+      }
+      
+      return data.user.phone;
+    } catch (error) {
+      console.error('Error fetching user phone:', error);
+      return `User ${userId.slice(0, 8)}...`;
+    }
+  };
 
   const fetchUserAccounts = async () => {
     try {
@@ -34,13 +59,27 @@ const UserAccounts: React.FC = () => {
       if (bankError) {
         console.error('Error fetching bank accounts:', bankError);
       } else if (bankData) {
-        setBankAccounts(bankData);
+        // Get phone numbers for bank accounts
+        const bankAccountsWithPhone = await Promise.all(
+          bankData.map(async (account) => ({
+            ...account,
+            user_phone: await getUserPhone(account.user_id)
+          }))
+        );
+        setBankAccounts(bankAccountsWithPhone);
       }
       
       if (walletError) {
         console.error('Error fetching USDT wallets:', walletError);
       } else if (walletData) {
-        setUsdtWallets(walletData);
+        // Get phone numbers for USDT wallets
+        const usdtWalletsWithPhone = await Promise.all(
+          walletData.map(async (wallet) => ({
+            ...wallet,
+            user_phone: await getUserPhone(wallet.user_id)
+          }))
+        );
+        setUsdtWallets(usdtWalletsWithPhone);
       }
     } catch (error) {
       console.error('Error fetching user accounts:', error);
@@ -92,7 +131,7 @@ const UserAccounts: React.FC = () => {
                         Conta: {account.account_number}
                       </div>
                       <div className="text-xs text-gray-500">
-                        ID do Usuário: {account.user_id.slice(0, 8)}...
+                        Usuário: {account.user_phone}
                       </div>
                       <div className="text-xs text-gray-500">
                         Adicionado: {new Date(account.created_at).toLocaleDateString()}
@@ -133,7 +172,7 @@ const UserAccounts: React.FC = () => {
                         Rede: {wallet.network}
                       </div>
                       <div className="text-xs text-gray-500">
-                        ID do Usuário: {wallet.user_id.slice(0, 8)}...
+                        Usuário: {wallet.user_phone}
                       </div>
                       <div className="text-xs text-gray-500">
                         Adicionado: {new Date(wallet.created_at).toLocaleDateString()}
