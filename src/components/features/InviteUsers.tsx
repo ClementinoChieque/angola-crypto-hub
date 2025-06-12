@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,7 +76,7 @@ const InviteUsers: React.FC = () => {
     }
   };
 
-  const referralLink = `https://crypto-hub.com/referral?code=${referralCode}`;
+  const referralLink = `https://bitget12.com/referral?code=${referralCode}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralLink).then(() => {
