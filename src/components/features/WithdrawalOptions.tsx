@@ -78,7 +78,7 @@ const WithdrawalOptions: React.FC = () => {
             </div>
             
             <p className="text-xs text-muted-foreground">
-               | Mínimo: 10 USDT
+               Saque| Mínimo: 10 USDT
             </p>
           </div>
         </TabsContent>
@@ -98,7 +98,7 @@ const WithdrawalOptions: React.FC = () => {
             </div>
             
             <p className="text-xs text-muted-foreground">
-              | Mínimo: 5,000 AKZ
+              Saque|Mínimo: 5,000 AKZ
             </p>
           </div>
         </TabsContent>
