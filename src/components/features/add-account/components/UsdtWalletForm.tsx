@@ -26,9 +26,10 @@ const networks = [
 
 interface UsdtWalletFormProps {
   onSuccess?: () => void;
+  hasExistingWallet?: boolean;
 }
 
-const UsdtWalletForm: React.FC<UsdtWalletFormProps> = ({ onSuccess }) => {
+const UsdtWalletForm: React.FC<UsdtWalletFormProps> = ({ onSuccess, hasExistingWallet }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -59,9 +60,38 @@ const UsdtWalletForm: React.FC<UsdtWalletFormProps> = ({ onSuccess }) => {
       return;
     }
 
+    if (hasExistingWallet) {
+      toast({
+        title: "Carteira já existe",
+        description: "Você já possui uma carteira USDT cadastrada",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Check if user already has a USDT wallet
+      const { data: existingWallets, error: checkError } = await supabase
+        .from('user_usdt_wallets')
+        .select('id')
+        .eq('user_id', user.id);
+
+      if (checkError) {
+        throw checkError;
+      }
+
+      if (existingWallets && existingWallets.length > 0) {
+        toast({
+          title: "Carteira já existe",
+          description: "Você já possui uma carteira USDT cadastrada",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const { error } = await supabase
         .from('user_usdt_wallets')
         .insert([
@@ -94,6 +124,17 @@ const UsdtWalletForm: React.FC<UsdtWalletFormProps> = ({ onSuccess }) => {
       setIsSubmitting(false);
     }
   };
+
+  if (hasExistingWallet) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Você já possui uma carteira USDT cadastrada.</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Não é possível adicionar mais carteiras USDT.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

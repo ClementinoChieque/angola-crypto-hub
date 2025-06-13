@@ -28,6 +28,9 @@ const AddAccountContainer: React.FC = () => {
     refetch();
   };
 
+  const hasExistingBankAccount = bankAccounts.length > 0;
+  const hasExistingUsdtWallet = usdtWallets.length > 0;
+
   return (
     <div className="space-y-6">
       <Card>
@@ -45,11 +48,17 @@ const AddAccountContainer: React.FC = () => {
             </TabsList>
             
             <TabsContent value="akz" className="mt-4">
-              <BankAccountForm onSuccess={handleAccountAdded} />
+              <BankAccountForm 
+                onSuccess={handleAccountAdded} 
+                hasExistingAccount={hasExistingBankAccount}
+              />
             </TabsContent>
             
             <TabsContent value="usdt" className="mt-4">
-              <UsdtWalletForm onSuccess={handleAccountAdded} />
+              <UsdtWalletForm 
+                onSuccess={handleAccountAdded} 
+                hasExistingWallet={hasExistingUsdtWallet}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>

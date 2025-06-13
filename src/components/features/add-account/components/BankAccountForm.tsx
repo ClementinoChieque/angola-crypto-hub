@@ -23,20 +23,16 @@ const angolaBanks = [
   'BAI - Banco Angolano de Investimentos',
   'BFA - Banco de Fomento Angola',
   'BIC - Banco BIC',
-  'BPC - Banco de Poupança e Crédito',
-  'BDA - Banco de Desenvolvimento de Angola',
-  'Banco Económico',
   'Banco Millennium Atlântico',
-  'Banco Sol',
-  'Banco Prestígio',
   'Banco Keve'
 ];
 
 interface BankAccountFormProps {
   onSuccess?: () => void;
+  hasExistingAccount?: boolean;
 }
 
-const BankAccountForm: React.FC<BankAccountFormProps> = ({ onSuccess }) => {
+const BankAccountForm: React.FC<BankAccountFormProps> = ({ onSuccess, hasExistingAccount }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -64,9 +60,38 @@ const BankAccountForm: React.FC<BankAccountFormProps> = ({ onSuccess }) => {
       return;
     }
 
+    if (hasExistingAccount) {
+      toast({
+        title: "Conta já existe",
+        description: "Você já possui uma conta bancária cadastrada",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Check if user already has a bank account
+      const { data: existingAccounts, error: checkError } = await supabase
+        .from('user_bank_accounts')
+        .select('id')
+        .eq('user_id', user.id);
+
+      if (checkError) {
+        throw checkError;
+      }
+
+      if (existingAccounts && existingAccounts.length > 0) {
+        toast({
+          title: "Conta já existe",
+          description: "Você já possui uma conta bancária cadastrada",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const { error } = await supabase
         .from('user_bank_accounts')
         .insert([
@@ -101,6 +126,17 @@ const BankAccountForm: React.FC<BankAccountFormProps> = ({ onSuccess }) => {
       setIsSubmitting(false);
     }
   };
+
+  if (hasExistingAccount) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Você já possui uma conta bancária cadastrada.</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          Não é possível adicionar mais contas bancárias.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
