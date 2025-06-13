@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { africanCountries, europeanCountries } from '@/constants/countryCodes';
+import { countryCodes } from '@/constants/countryCodes';
 import { ControllerRenderProps } from "react-hook-form";
 
 interface OptimizedCountrySelectProps {
@@ -15,12 +15,11 @@ const OptimizedCountrySelect: React.FC<OptimizedCountrySelectProps> = ({ field }
   // Filtrar países baseado na busca
   const filteredCountries = useMemo(() => {
     if (!searchTerm) {
-      // Mostrar apenas os primeiros 10 países africanos por padrão
-      return africanCountries.slice(0, 10);
+      // Mostrar todos os países por padrão
+      return countryCodes;
     }
     
-    const allCountries = [...africanCountries, ...europeanCountries];
-    return allCountries.filter(country => 
+    return countryCodes.filter(country => 
       country.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
       country.code.includes(searchTerm)
     );
@@ -48,11 +47,6 @@ const OptimizedCountrySelect: React.FC<OptimizedCountrySelectProps> = ({ field }
               {country.country} ({country.code})
             </SelectItem>
           ))}
-          {!searchTerm && filteredCountries.length > 0 && (
-            <div className="text-muted-foreground text-xs px-8 py-1.5 pointer-events-none">
-              Digite para buscar mais países...
-            </div>
-          )}
         </SelectContent>
       </Select>
       <FormMessage />
