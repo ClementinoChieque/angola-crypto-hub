@@ -98,7 +98,7 @@ const WithdrawalOptions: React.FC = () => {
             </div>
             
             <p className="text-xs text-muted-foreground">
-              Saque|Mínimo: 5,000 AKZ
+              Saque| Mínimo: 5,000 AKZ
             </p>
           </div>
         </TabsContent>
