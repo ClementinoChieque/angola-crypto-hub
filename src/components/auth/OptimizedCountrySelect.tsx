@@ -48,10 +48,10 @@ const OptimizedCountrySelect: React.FC<OptimizedCountrySelectProps> = ({ field }
               {country.country} ({country.code})
             </SelectItem>
           ))}
-          {!searchTerm && (
-            <SelectItem value="" disabled className="text-muted-foreground text-xs">
+          {!searchTerm && filteredCountries.length > 0 && (
+            <div className="text-muted-foreground text-xs px-8 py-1.5 pointer-events-none">
               Digite para buscar mais países...
-            </SelectItem>
+            </div>
           )}
         </SelectContent>
       </Select>
