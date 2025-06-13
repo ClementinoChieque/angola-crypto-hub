@@ -30,7 +30,7 @@ const africanCountries: CountryCode[] = [
   { code: '+243', country: 'República Democrática do Congo' },
 ];
 
-// Países europeus
+// Países europeus (expandido com mais 10 países)
 const europeanCountries: CountryCode[] = [
   { code: '+351', country: 'Portugal' },
   { code: '+34', country: 'Espanha' },
@@ -52,6 +52,17 @@ const europeanCountries: CountryCode[] = [
   { code: '+386', country: 'Eslovênia' },
   { code: '+372', country: 'Estônia' },
   { code: '+371', country: 'Letônia' },
+  // Novos 10 países europeus adicionados
+  { code: '+370', country: 'Lituânia' },
+  { code: '+45', country: 'Dinamarca' },
+  { code: '+46', country: 'Suécia' },
+  { code: '+47', country: 'Noruega' },
+  { code: '+358', country: 'Finlândia' },
+  { code: '+354', country: 'Islândia' },
+  { code: '+353', country: 'Irlanda' },
+  { code: '+30', country: 'Grécia' },
+  { code: '+378', country: 'San Marino' },
+  { code: '+377', country: 'Mônaco' },
 ];
 
 // Lista completa ordenada por prioridade (países africanos primeiro)
