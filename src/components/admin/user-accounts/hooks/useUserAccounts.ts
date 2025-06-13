@@ -10,23 +10,6 @@ export const useUserAccounts = () => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const getUserPhone = async (userId: string): Promise<string> => {
-    try {
-      // Try to get phone from auth.users using the admin API
-      const { data, error } = await supabase.auth.admin.getUserById(userId);
-      
-      if (error || !data.user?.phone) {
-        // Fallback to showing shortened ID if we can't get phone
-        return `User ${userId.slice(0, 8)}...`;
-      }
-      
-      return data.user.phone;
-    } catch (error) {
-      console.error('Error fetching user phone:', error);
-      return `User ${userId.slice(0, 8)}...`;
-    }
-  };
-
   const fetchUserAccounts = async () => {
     try {
       // Fetch user bank accounts
@@ -44,26 +27,22 @@ export const useUserAccounts = () => {
       if (bankError) {
         console.error('Error fetching bank accounts:', bankError);
       } else if (bankData) {
-        // Get phone numbers for bank accounts
-        const bankAccountsWithPhone = await Promise.all(
-          bankData.map(async (account) => ({
-            ...account,
-            user_phone: await getUserPhone(account.user_id)
-          }))
-        );
+        // Add user_phone as shortened user ID since we can't access phone numbers
+        const bankAccountsWithPhone = bankData.map(account => ({
+          ...account,
+          user_phone: `User ${account.user_id.slice(0, 8)}...`
+        }));
         setBankAccounts(bankAccountsWithPhone);
       }
       
       if (walletError) {
         console.error('Error fetching USDT wallets:', walletError);
       } else if (walletData) {
-        // Get phone numbers for USDT wallets
-        const usdtWalletsWithPhone = await Promise.all(
-          walletData.map(async (wallet) => ({
-            ...wallet,
-            user_phone: await getUserPhone(wallet.user_id)
-          }))
-        );
+        // Add user_phone as shortened user ID since we can't access phone numbers
+        const usdtWalletsWithPhone = walletData.map(wallet => ({
+          ...wallet,
+          user_phone: `User ${wallet.user_id.slice(0, 8)}...`
+        }));
         setUsdtWallets(usdtWalletsWithPhone);
       }
     } catch (error) {
