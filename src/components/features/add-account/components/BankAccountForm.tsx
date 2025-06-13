@@ -129,9 +129,11 @@ const BankAccountForm: React.FC<BankAccountFormProps> = ({ onSuccess, hasExistin
 
   if (hasExistingAccount) {
     return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">Você já possui uma conta bancária cadastrada.</p>
-        <p className="text-sm text-muted-foreground mt-1">
+      <div className="text-center py-6 sm:py-8 px-4">
+        <p className="text-muted-foreground text-sm sm:text-base">
+          Você já possui uma conta bancária cadastrada.
+        </p>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           Não é possível adicionar mais contas bancárias.
         </p>
       </div>
@@ -141,49 +143,51 @@ const BankAccountForm: React.FC<BankAccountFormProps> = ({ onSuccess, hasExistin
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <Label htmlFor="bank_name">Banco</Label>
+        <Label htmlFor="bank_name" className="text-sm font-medium">Banco</Label>
         <Select onValueChange={(value) => setValue('bank_name', value)} value={selectedBank}>
-          <SelectTrigger>
+          <SelectTrigger className="mt-1">
             <SelectValue placeholder="Selecione o banco" />
           </SelectTrigger>
           <SelectContent>
             {angolaBanks.map((bank) => (
-              <SelectItem key={bank} value={bank}>
+              <SelectItem key={bank} value={bank} className="text-sm">
                 {bank}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {errors.bank_name && (
-          <p className="text-sm text-red-500 mt-1">{errors.bank_name.message}</p>
+          <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.bank_name.message}</p>
         )}
       </div>
 
       <div>
-        <Label htmlFor="account_number">Número da Conta</Label>
+        <Label htmlFor="account_number" className="text-sm font-medium">Número da Conta</Label>
         <Input
           id="account_number"
           {...register('account_number')}
           placeholder="Digite o número da conta"
+          className="mt-1"
         />
         {errors.account_number && (
-          <p className="text-sm text-red-500 mt-1">{errors.account_number.message}</p>
+          <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.account_number.message}</p>
         )}
       </div>
 
       <div>
-        <Label htmlFor="account_holder">Nome do Titular</Label>
+        <Label htmlFor="account_holder" className="text-sm font-medium">Nome do Titular</Label>
         <Input
           id="account_holder"
           {...register('account_holder')}
           placeholder="Digite o nome do titular da conta"
+          className="mt-1"
         />
         {errors.account_holder && (
-          <p className="text-sm text-red-500 mt-1">{errors.account_holder.message}</p>
+          <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.account_holder.message}</p>
         )}
       </div>
 
-      <Button type="submit" disabled={isSubmitting} className="w-full">
+      <Button type="submit" disabled={isSubmitting} className="w-full mt-6">
         {isSubmitting ? 'Adicionando...' : 'Adicionar Conta Bancária'}
       </Button>
     </form>

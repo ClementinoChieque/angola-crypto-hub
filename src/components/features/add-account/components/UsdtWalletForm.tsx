@@ -127,9 +127,11 @@ const UsdtWalletForm: React.FC<UsdtWalletFormProps> = ({ onSuccess, hasExistingW
 
   if (hasExistingWallet) {
     return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">Você já possui uma carteira USDT cadastrada.</p>
-        <p className="text-sm text-muted-foreground mt-1">
+      <div className="text-center py-6 sm:py-8 px-4">
+        <p className="text-muted-foreground text-sm sm:text-base">
+          Você já possui uma carteira USDT cadastrada.
+        </p>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           Não é possível adicionar mais carteiras USDT.
         </p>
       </div>
@@ -139,38 +141,38 @@ const UsdtWalletForm: React.FC<UsdtWalletFormProps> = ({ onSuccess, hasExistingW
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <Label htmlFor="network">Rede</Label>
+        <Label htmlFor="network" className="text-sm font-medium">Rede</Label>
         <Select onValueChange={(value) => setValue('network', value)} value={selectedNetwork}>
-          <SelectTrigger>
+          <SelectTrigger className="mt-1">
             <SelectValue placeholder="Selecione a rede" />
           </SelectTrigger>
           <SelectContent>
             {networks.map((network) => (
-              <SelectItem key={network} value={network}>
+              <SelectItem key={network} value={network} className="text-sm">
                 {network}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         {errors.network && (
-          <p className="text-sm text-red-500 mt-1">{errors.network.message}</p>
+          <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.network.message}</p>
         )}
       </div>
 
       <div>
-        <Label htmlFor="wallet_address">Endereço da Carteira</Label>
+        <Label htmlFor="wallet_address" className="text-sm font-medium">Endereço da Carteira</Label>
         <Input
           id="wallet_address"
           {...register('wallet_address')}
           placeholder="Digite o endereço da carteira USDT"
-          className="font-mono text-sm"
+          className="font-mono text-xs sm:text-sm mt-1"
         />
         {errors.wallet_address && (
-          <p className="text-sm text-red-500 mt-1">{errors.wallet_address.message}</p>
+          <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.wallet_address.message}</p>
         )}
       </div>
 
-      <Button type="submit" disabled={isSubmitting} className="w-full">
+      <Button type="submit" disabled={isSubmitting} className="w-full mt-6">
         {isSubmitting ? 'Adicionando...' : 'Adicionar Carteira USDT'}
       </Button>
     </form>
