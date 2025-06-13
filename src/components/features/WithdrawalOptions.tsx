@@ -13,9 +13,6 @@ type WithdrawalMethod = 'USDT' | 'AO';
 const WithdrawalOptions: React.FC = () => {
   const [amount, setAmount] = useState('');
   const [withdrawalTab, setWithdrawalTab] = useState<WithdrawalMethod>('USDT');
-  const [walletAddress, setWalletAddress] = useState('');
-  const [bankAccount, setBankAccount] = useState('');
-  const [bankName, setBankName] = useState('');
   const { toast } = useToast();
   const { balance, setWithdrawalMethod } = useUser();
 
@@ -40,24 +37,6 @@ const WithdrawalOptions: React.FC = () => {
       return;
     }
 
-    if (withdrawalTab === 'USDT' && !walletAddress) {
-      toast({
-        title: "Endereço inválido",
-        description: "Por favor, insira um endereço de carteira válido",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (withdrawalTab === 'AO' && (!bankAccount || !bankName)) {
-      toast({
-        title: "Dados bancários incompletos",
-        description: "Por favor, preencha todos os dados bancários",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setWithdrawalMethod(withdrawalTab);
 
     toast({
@@ -67,9 +46,6 @@ const WithdrawalOptions: React.FC = () => {
 
     // Reset form
     setAmount('');
-    setWalletAddress('');
-    setBankAccount('');
-    setBankName('');
   };
 
   return (
@@ -91,17 +67,6 @@ const WithdrawalOptions: React.FC = () => {
         <TabsContent value="USDT">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="wallet">Endereço da Carteira (TRC-20)</Label>
-              <Input
-                id="wallet"
-                type="text"
-                placeholder="TR..."
-                value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
               <Label htmlFor="amount-usdt">Valor (USDT)</Label>
               <Input
                 id="amount-usdt"
@@ -121,28 +86,6 @@ const WithdrawalOptions: React.FC = () => {
         {/* AO Withdrawal */}
         <TabsContent value="AO">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="bank-name">Nome do Banco</Label>
-              <Input
-                id="bank-name"
-                type="text"
-                placeholder="Ex: BAE, BFA, BIC..."
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="bank-account">Número da Conta</Label>
-              <Input
-                id="bank-account"
-                type="text"
-                placeholder="Número da conta bancária"
-                value={bankAccount}
-                onChange={(e) => setBankAccount(e.target.value)}
-              />
-            </div>
-            
             <div className="space-y-2">
               <Label htmlFor="amount-ao">Valor (AKZ)</Label>
               <Input
