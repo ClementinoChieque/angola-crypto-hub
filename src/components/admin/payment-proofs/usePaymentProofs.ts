@@ -2,14 +2,14 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { PaymentProof } from './types';
+import type { PaymentProof } from './types';
 
 export const usePaymentProofs = () => {
   const [proofs, setProofs] = useState<PaymentProof[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchPaymentProofs = async () => {
+  const fetchProofs = async () => {
     try {
       const { data, error } = await supabase
         .from('payment_proofs')
@@ -17,17 +17,16 @@ export const usePaymentProofs = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Error fetching payment proofs:', error);
         throw error;
       }
 
-      console.log('Fetched payment proofs:', data);
       setProofs(data || []);
     } catch (error) {
-      console.error('Error fetching payment proofs:', error);
+      console.error('Error loading payment proofs:', error);
       toast({
         title: "Erro ao carregar comprovativos",
-        description: "Não foi possível carregar os comprovativos",
+        description: "Não foi possível carregar os comprovativos de pagamento",
         variant: "destructive"
       });
     } finally {
@@ -35,34 +34,35 @@ export const usePaymentProofs = () => {
     }
   };
 
-  const updateProofStatus = async (proofId: string, status: string, notes?: string) => {
+  const updateProofStatus = async (proofId: string, status: 'verified' | 'rejected', adminNotes?: string) => {
     try {
+      console.log('Updating proof status:', { proofId, status, adminNotes });
+      
       const { error } = await supabase
         .from('payment_proofs')
-        .update({
-          status,
-          admin_notes: notes,
+        .update({ 
+          status, 
+          admin_notes: adminNotes,
           updated_at: new Date().toISOString()
         })
         .eq('id', proofId);
 
-      if (error) throw error;
-
-      // Se aprovado, ativar quantificação para o usuário
-      if (status === 'verified') {
-        const proof = proofs.find(p => p.id === proofId);
-        if (proof) {
-          await activateUserQuantification(proof.user_id);
-        }
+      if (error) {
+        console.error('Error updating proof status:', error);
+        throw error;
       }
 
-      await fetchPaymentProofs();
-      toast({
-        title: "Status atualizado",
-        description: `Comprovativo ${status === 'verified' ? 'aprovado' : 'rejeitado'}`
-      });
+      // Update local state
+      setProofs(prev => prev.map(proof => 
+        proof.id === proofId 
+          ? { ...proof, status, admin_notes: adminNotes, updated_at: new Date().toISOString() }
+          : proof
+      ));
 
-      return true;
+      toast({
+        title: status === 'verified' ? "Comprovativo aprovado" : "Comprovativo rejeitado",
+        description: `O comprovativo foi ${status === 'verified' ? 'aprovado' : 'rejeitado'} com sucesso`,
+      });
     } catch (error) {
       console.error('Error updating proof status:', error);
       toast({
@@ -70,92 +70,43 @@ export const usePaymentProofs = () => {
         description: "Não foi possível atualizar o status do comprovativo",
         variant: "destructive"
       });
-      return false;
     }
   };
 
   const deleteProof = async (proofId: string) => {
     try {
+      console.log('Attempting to delete payment proof:', proofId);
+      
       const { error } = await supabase
         .from('payment_proofs')
         .delete()
         .eq('id', proofId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting payment proof:', error);
+        throw error;
+      }
 
-      await fetchPaymentProofs();
+      // Update local state
+      setProofs(prev => prev.filter(proof => proof.id !== proofId));
+      
+      console.log('Payment proof deleted successfully');
       toast({
         title: "Comprovativo eliminado",
-        description: "O comprovativo foi eliminado com sucesso"
+        description: "O comprovativo foi eliminado com sucesso",
       });
-
-      return true;
     } catch (error) {
-      console.error('Error deleting proof:', error);
+      console.error('Error deleting payment proof:', error);
       toast({
         title: "Erro ao eliminar comprovativo",
         description: "Não foi possível eliminar o comprovativo",
-        variant: "destructive"
-      });
-      return false;
-    }
-  };
-
-  const activateUserQuantification = async (userId: string) => {
-    try {
-      // Verificar se já existe um registro de quantificação para o usuário
-      const { data: existing, error: fetchError } = await supabase
-        .from('user_quantifications')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (fetchError && fetchError.code !== 'PGRST116') {
-        throw fetchError;
-      }
-
-      if (existing) {
-        // Atualizar registro existente
-        const { error } = await supabase
-          .from('user_quantifications')
-          .update({
-            is_active: true,
-            updated_at: new Date().toISOString()
-          })
-          .eq('user_id', userId);
-
-        if (error) throw error;
-      } else {
-        // Criar novo registro
-        const { error } = await supabase
-          .from('user_quantifications')
-          .insert({
-            user_id: userId,
-            is_active: true,
-            daily_limit: 1,
-            used_today: 0,
-            last_reset_date: new Date().toISOString().split('T')[0]
-          });
-
-        if (error) throw error;
-      }
-
-      toast({
-        title: "Quantificação ativada",
-        description: "A quantificação foi ativada para o usuário"
-      });
-    } catch (error) {
-      console.error('Error activating user quantification:', error);
-      toast({
-        title: "Erro ao ativar quantificação",
-        description: "Não foi possível ativar a quantificação para o usuário",
         variant: "destructive"
       });
     }
   };
 
   useEffect(() => {
-    fetchPaymentProofs();
+    fetchProofs();
   }, []);
 
   return {
@@ -163,6 +114,6 @@ export const usePaymentProofs = () => {
     loading,
     updateProofStatus,
     deleteProof,
-    fetchPaymentProofs
+    refetch: fetchProofs
   };
 };

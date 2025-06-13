@@ -10,6 +10,8 @@ export const useDeleteAccount = () => {
   const deleteBankAccount = async (accountId: string, onSuccess: (accountId: string) => void) => {
     setDeletingId(accountId);
     try {
+      console.log('Attempting to delete bank account:', accountId);
+      
       const { error } = await supabase
         .from('user_bank_accounts')
         .delete()
@@ -23,6 +25,7 @@ export const useDeleteAccount = () => {
           variant: "destructive"
         });
       } else {
+        console.log('Bank account deleted successfully');
         onSuccess(accountId);
         toast({
           title: "Conta eliminada",
@@ -44,6 +47,8 @@ export const useDeleteAccount = () => {
   const deleteUsdtWallet = async (walletId: string, onSuccess: (walletId: string) => void) => {
     setDeletingId(walletId);
     try {
+      console.log('Attempting to delete USDT wallet:', walletId);
+      
       const { error } = await supabase
         .from('user_usdt_wallets')
         .delete()
@@ -57,6 +62,7 @@ export const useDeleteAccount = () => {
           variant: "destructive"
         });
       } else {
+        console.log('USDT wallet deleted successfully');
         onSuccess(walletId);
         toast({
           title: "Carteira eliminada",
