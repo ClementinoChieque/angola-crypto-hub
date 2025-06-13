@@ -34,7 +34,7 @@ export const usePaymentProofs = () => {
     }
   };
 
-  const updateProofStatus = async (proofId: string, status: 'verified' | 'rejected', adminNotes?: string) => {
+  const updateProofStatus = async (proofId: string, status: 'verified' | 'rejected', adminNotes?: string): Promise<boolean> => {
     try {
       console.log('Updating proof status:', { proofId, status, adminNotes });
       
@@ -63,6 +63,8 @@ export const usePaymentProofs = () => {
         title: status === 'verified' ? "Comprovativo aprovado" : "Comprovativo rejeitado",
         description: `O comprovativo foi ${status === 'verified' ? 'aprovado' : 'rejeitado'} com sucesso`,
       });
+
+      return true;
     } catch (error) {
       console.error('Error updating proof status:', error);
       toast({
@@ -70,10 +72,11 @@ export const usePaymentProofs = () => {
         description: "Não foi possível atualizar o status do comprovativo",
         variant: "destructive"
       });
+      return false;
     }
   };
 
-  const deleteProof = async (proofId: string) => {
+  const deleteProof = async (proofId: string): Promise<boolean> => {
     try {
       console.log('Attempting to delete payment proof:', proofId);
       
@@ -95,6 +98,8 @@ export const usePaymentProofs = () => {
         title: "Comprovativo eliminado",
         description: "O comprovativo foi eliminado com sucesso",
       });
+
+      return true;
     } catch (error) {
       console.error('Error deleting payment proof:', error);
       toast({
@@ -102,6 +107,7 @@ export const usePaymentProofs = () => {
         description: "Não foi possível eliminar o comprovativo",
         variant: "destructive"
       });
+      return false;
     }
   };
 
