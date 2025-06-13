@@ -1,121 +1,156 @@
 
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { CreditCard } from 'lucide-react';
-import type { BankAccountFormData } from '../types';
 
-const BankAccountForm: React.FC = () => {
-  const [submitting, setSubmitting] = useState(false);
+const bankAccountSchema = z.object({
+  bank_name: z.string().min(1, 'Selecione um banco'),
+  account_number: z.string().min(5, 'Número da conta deve ter pelo menos 5 dígitos'),
+  account_holder: z.string().min(2, 'Nome do titular é obrigatório'),
+});
+
+type BankAccountFormData = z.infer<typeof bankAccountSchema>;
+
+const angolaBanks = [
+  'BAI - Banco Angolano de Investimentos',
+  'BFA - Banco de Fomento Angola',
+  'BIC - Banco BIC',
+  'BPC - Banco de Poupança e Crédito',
+  'BDA - Banco de Desenvolvimento de Angola',
+  'Banco Económico',
+  'Banco Millennium Atlântico',
+  'Banco Sol',
+  'Banco Prestígio',
+  'Banco Keve'
+];
+
+interface BankAccountFormProps {
+  onSuccess?: () => void;
+}
+
+const BankAccountForm: React.FC<BankAccountFormProps> = ({ onSuccess }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const [formData, setFormData] = useState<BankAccountFormData>({
-    bank_name: '',
-    account_number: '',
-    account_holder: ''
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors }
+  } = useForm<BankAccountFormData>({
+    resolver: zodResolver(bankAccountSchema)
   });
 
-  const handleSubmit = async () => {
-    if (!formData.bank_name || !formData.account_number || !formData.account_holder) {
+  const selectedBank = watch('bank_name');
+
+  const onSubmit = async (data: BankAccountFormData) => {
+    if (!user?.id) {
       toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos",
+        title: "Erro de autenticação",
+        description: "Você precisa estar logado para adicionar uma conta bancária",
         variant: "destructive"
       });
       return;
     }
 
-    setSubmitting(true);
+    setIsSubmitting(true);
+
     try {
       const { error } = await supabase
         .from('user_bank_accounts')
-        .insert({
-          user_id: user?.id,
-          bank_name: formData.bank_name,
-          account_number: formData.account_number,
-          account_holder: formData.account_holder,
-          currency: 'AKZ'
-        });
+        .insert([
+          {
+            user_id: user.id,
+            bank_name: data.bank_name,
+            account_number: data.account_number,
+            account_holder: data.account_holder,
+            currency: 'AKZ'
+          }
+        ]);
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       toast({
         title: "Conta bancária adicionada",
-        description: "Sua conta bancária foi adicionada com sucesso"
+        description: "Sua conta bancária foi adicionada com sucesso!"
       });
 
-      setFormData({ bank_name: '', account_number: '', account_holder: '' });
+      reset();
+      onSuccess?.();
     } catch (error) {
       console.error('Error adding bank account:', error);
       toast({
         title: "Erro ao adicionar conta",
-        description: "Não foi possível adicionar a conta bancária",
+        description: "Não foi possível adicionar sua conta bancária. Tente novamente.",
         variant: "destructive"
       });
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <CreditCard size={20} />
-        <h3 className="font-medium">Adicionar Conta Bancária (AKZ)</h3>
-      </div>
-      
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <Label htmlFor="bank_name">Nome do Banco</Label>
-        <Input
-          id="bank_name"
-          value={formData.bank_name}
-          onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
-          placeholder="Ex: Banco BAI"
-          disabled={submitting}
-        />
+        <Label htmlFor="bank_name">Banco</Label>
+        <Select onValueChange={(value) => setValue('bank_name', value)} value={selectedBank}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o banco" />
+          </SelectTrigger>
+          <SelectContent>
+            {angolaBanks.map((bank) => (
+              <SelectItem key={bank} value={bank}>
+                {bank}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.bank_name && (
+          <p className="text-sm text-red-500 mt-1">{errors.bank_name.message}</p>
+        )}
       </div>
-      
-      <div>
-        <Label htmlFor="account_holder">Nome Completo (Titular da Conta)</Label>
-        <Input
-          id="account_holder"
-          value={formData.account_holder}
-          onChange={(e) => setFormData({ ...formData, account_holder: e.target.value })}
-          placeholder="Seu nome completo"
-          disabled={submitting}
-        />
-      </div>
-      
+
       <div>
         <Label htmlFor="account_number">Número da Conta</Label>
         <Input
           id="account_number"
-          value={formData.account_number}
-          onChange={(e) => setFormData({ ...formData, account_number: e.target.value })}
-          placeholder="Número da sua conta bancária"
-          disabled={submitting}
+          {...register('account_number')}
+          placeholder="Digite o número da conta"
         />
+        {errors.account_number && (
+          <p className="text-sm text-red-500 mt-1">{errors.account_number.message}</p>
+        )}
       </div>
 
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-        <p className="text-yellow-800 text-sm">
-          <strong>Observação:</strong> Só pode adicionar conta bancária que usou no depósito.
-        </p>
+      <div>
+        <Label htmlFor="account_holder">Nome do Titular</Label>
+        <Input
+          id="account_holder"
+          {...register('account_holder')}
+          placeholder="Digite o nome do titular da conta"
+        />
+        {errors.account_holder && (
+          <p className="text-sm text-red-500 mt-1">{errors.account_holder.message}</p>
+        )}
       </div>
-      
-      <Button 
-        onClick={handleSubmit}
-        disabled={submitting}
-        className="w-full"
-      >
-        {submitting ? "Adicionando..." : "Adicionar Conta Bancária"}
+
+      <Button type="submit" disabled={isSubmitting} className="w-full">
+        {isSubmitting ? 'Adicionando...' : 'Adicionar Conta Bancária'}
       </Button>
-    </div>
+    </form>
   );
 };
 
