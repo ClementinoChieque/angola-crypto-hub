@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { registerSchema, RegisterFormData } from '@/schemas/authSchemas';
-import CountrySelect from './CountrySelect';
+import OptimizedCountrySelect from './OptimizedCountrySelect';
 
 interface RegisterFormProps {
   onSubmit: (values: RegisterFormData) => Promise<void>;
@@ -31,7 +30,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
         <FormField
           control={form.control}
           name="countryCode"
-          render={({ field }) => <CountrySelect field={field} />}
+          render={({ field }) => <OptimizedCountrySelect field={field} />}
         />
         
         <FormField

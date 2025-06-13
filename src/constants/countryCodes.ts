@@ -1,14 +1,13 @@
 
 import { CountryCode } from '@/types/auth';
 
-export const countryCodes: CountryCode[] = [
-  // Países Africanos originais
+// Países africanos prioritários (mais usados primeiro)
+const africanCountries: CountryCode[] = [
   { code: '+244', country: 'Angola' },
   { code: '+258', country: 'Moçambique' },
   { code: '+238', country: 'Cabo Verde' },
-  { code: '+264', country: 'Namibia' },
   { code: '+27', country: 'Africa do Sul' },
-  // Novos países Africanos
+  { code: '+264', country: 'Namibia' },
   { code: '+234', country: 'Nigéria' },
   { code: '+233', country: 'Gana' },
   { code: '+254', country: 'Quênia' },
@@ -29,7 +28,10 @@ export const countryCodes: CountryCode[] = [
   { code: '+248', country: 'Seicheles' },
   { code: '+241', country: 'Gabão' },
   { code: '+243', country: 'República Democrática do Congo' },
-  // Países Europeus
+];
+
+// Países europeus
+const europeanCountries: CountryCode[] = [
   { code: '+351', country: 'Portugal' },
   { code: '+34', country: 'Espanha' },
   { code: '+33', country: 'França' },
@@ -51,3 +53,12 @@ export const countryCodes: CountryCode[] = [
   { code: '+372', country: 'Estônia' },
   { code: '+371', country: 'Letônia' },
 ];
+
+// Lista completa ordenada por prioridade (países africanos primeiro)
+export const countryCodes: CountryCode[] = [
+  ...africanCountries,
+  ...europeanCountries,
+];
+
+// Exportar grupos separados para uso em outros componentes se necessário
+export { africanCountries, europeanCountries };
