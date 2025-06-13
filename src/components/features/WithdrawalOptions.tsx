@@ -78,7 +78,7 @@ const WithdrawalOptions: React.FC = () => {
             </div>
             
             <p className="text-xs text-muted-foreground">
-              Taxa de saque: 1 USDT | Mínimo: 10 USDT
+               | Mínimo: 10 USDT
             </p>
           </div>
         </TabsContent>
@@ -98,7 +98,7 @@ const WithdrawalOptions: React.FC = () => {
             </div>
             
             <p className="text-xs text-muted-foreground">
-              Taxa de saque: 200 AKZ | Mínimo: 5,000 AKZ
+              | Mínimo: 5,000 AKZ
             </p>
           </div>
         </TabsContent>
@@ -115,9 +115,9 @@ const WithdrawalOptions: React.FC = () => {
       <div className="mt-6 text-sm text-muted-foreground">
         <p>Observações:</p>
         <ul className="list-disc pl-5 mt-2">
-          <li>Saques são processados em até 24 horas úteis.</li>
+          <li>Saques são processados em até 72 horas úteis.</li>
           <li>Certifique-se de inserir as informações corretas.</li>
-          <li>Saques em AKZ serão convertidos pela taxa atual.</li>
+          
         </ul>
       </div>
     </div>
