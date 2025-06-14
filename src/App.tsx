@@ -10,19 +10,21 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
-// Create the query client
-const queryClient = new QueryClient();
+// Create the query client with default options to prevent duplicates
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <UserProvider>
-          {/* Toast notifications */}
-          <Toaster />
-          <Sonner />
-          
-          {/* Router */}
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -30,6 +32,10 @@ const App = () => {
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            
+            {/* Toast notifications - moved inside BrowserRouter */}
+            <Toaster />
+            <Sonner />
           </BrowserRouter>
         </UserProvider>
       </AuthProvider>
