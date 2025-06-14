@@ -150,7 +150,7 @@ const Quantify: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center space-y-4 md:space-y-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-crypto-blue"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
         <p className="text-sm text-muted-foreground">Verificando status...</p>
       </div>
     );
@@ -175,9 +175,11 @@ const Quantify: React.FC = () => {
       <div className="text-center space-y-2">
         <div className="relative">
           {isActive ? (
-            <div className="spinner-circle scale-75 md:scale-100"></div>
+            <div className="relative inline-block">
+              <div className={`${isMobile ? 'h-12 w-12' : 'h-16 w-16'} rounded-full border-4 border-t-green-600 border-r-amber-700 border-b-green-600 border-l-amber-700 animate-spin`}></div>
+            </div>
           ) : (
-            <div className={`${isMobile ? 'h-12 w-12' : 'h-16 w-16'} rounded-full border-2 ${canQuantify ? 'border-dashed border-crypto-blue' : 'border-solid border-gray-300 bg-gray-100'} flex items-center justify-center`}>
+            <div className={`${isMobile ? 'h-12 w-12' : 'h-16 w-16'} rounded-full border-2 ${canQuantify ? 'border-dashed border-green-600' : 'border-solid border-gray-300 bg-gray-100'} flex items-center justify-center`}>
               {canQuantify ? (
                 <span className="text-xs md:text-sm font-medium">Iniciar</span>
               ) : (
@@ -188,14 +190,14 @@ const Quantify: React.FC = () => {
           
           {isActive && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-white font-bold">{timeLeft}s</span>
+              <span className="text-green-800 font-bold">{timeLeft}s</span>
             </div>
           )}
         </div>
 
         {canQuantify && (
           <div className="text-xs md:text-sm text-muted-foreground">
-            <p>Usos restantes hoje: <span className="font-medium text-crypto-blue">{remainingUses}/{dailyLimit}</span></p>
+            <p>Usos restantes hoje: <span className="font-medium text-green-600">{remainingUses}/{dailyLimit}</span></p>
           </div>
         )}
       </div>
@@ -204,7 +206,7 @@ const Quantify: React.FC = () => {
         onClick={startQuantify}
         disabled={isActive || !canQuantify || usedToday >= dailyLimit}
         size={isMobile ? "sm" : "default"}
-        className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50"
+        className="bg-green-600 hover:bg-green-700 disabled:opacity-50"
       >
         {isActive ? "Processando..." : !canQuantify ? "Bloqueado" : usedToday >= dailyLimit ? "Limite Atingido" : "Iniciar Quantificação"}
       </Button>
