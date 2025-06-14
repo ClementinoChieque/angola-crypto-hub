@@ -80,6 +80,13 @@ export const usePaymentProofs = () => {
     try {
       console.log('Attempting to delete payment proof:', proofId);
       
+      // Get the proof before deletion to preserve user quantification if needed
+      const { data: proof } = await supabase
+        .from('payment_proofs')
+        .select('user_id')
+        .eq('id', proofId)
+        .single();
+
       const { error } = await supabase
         .from('payment_proofs')
         .delete()
@@ -91,7 +98,7 @@ export const usePaymentProofs = () => {
       }
 
       // Update local state
-      setProofs(prev => prev.filter(proof => proof.id !== proofId));
+      setProofs(prev => prev.filter(p => p.id !== proofId));
       
       console.log('Payment proof deleted successfully');
       toast({
