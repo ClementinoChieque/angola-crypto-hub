@@ -34,6 +34,12 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+    
+    /* Custom crypto variables */
+    --crypto-primary: 195 91% 44%;
+    --crypto-secondary: 47 100% 50%;
+    --crypto-accent: 263 70% 50%;
+    --bitcoin-color: 45 100% 51%;
   }
 
   .dark {
@@ -75,13 +81,141 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    position: relative;
+    overflow-x: hidden;
   }
+  
+  /* Bitcoin Background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, 
+      rgba(30, 174, 219, 0.03) 0%, 
+      rgba(255, 193, 7, 0.03) 50%, 
+      rgba(155, 135, 245, 0.03) 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  
+  /* Bitcoin floating symbols */
+  .bitcoin-bg::after {
+    content: '₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿ ₿';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 2rem;
+    color: rgba(255, 193, 7, 0.08);
+    z-index: -1;
+    animation: floatBitcoins 25s linear infinite;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding: 2rem;
+    line-height: 4;
+    letter-spacing: 2rem;
+    pointer-events: none;
+  }
+}
+
+/* Custom animations */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes floatBitcoins {
+  0% { 
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% { 
+    opacity: 1;
+  }
+  90% { 
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(30, 174, 219, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(30, 174, 219, 0.5), 0 0 40px rgba(255, 193, 7, 0.3); }
 }
 
 /* Custom classes for our app */
 @layer components {
   .crypto-gradient {
-    @apply bg-gradient-to-r from-crypto-blue to-crypto-green;
+    @apply bg-gradient-to-r from-crypto-blue via-yellow-400 to-crypto-purple;
+  }
+  
+  .crypto-gradient-text {
+    @apply bg-gradient-to-r from-crypto-blue via-yellow-500 to-crypto-purple bg-clip-text text-transparent;
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .glass-card-dark {
+    background: rgba(34, 42, 69, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .crypto-button {
+    @apply relative overflow-hidden bg-gradient-to-r from-crypto-blue to-crypto-light-blue text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+  }
+  
+  .crypto-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .crypto-button:hover::before {
+    left: 100%;
   }
   
   .spinner-circle {
@@ -89,14 +223,45 @@
   }
   
   .menu-item {
-    @apply flex items-center gap-2 p-3 rounded-md hover:bg-muted transition-colors cursor-pointer;
+    @apply flex items-center gap-3 p-4 rounded-xl hover:bg-gradient-to-r hover:from-crypto-blue/10 hover:to-crypto-purple/10 transition-all duration-300 cursor-pointer group;
   }
 
   .menu-item-active {
-    @apply bg-primary/10 text-primary font-medium;
+    @apply bg-gradient-to-r from-crypto-blue/20 to-crypto-purple/20 text-primary font-semibold shadow-lg;
   }
   
   .card-shadow {
-    @apply shadow-lg hover:shadow-xl transition-shadow duration-300;
+    @apply shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1;
+  }
+  
+  .professional-card {
+    @apply glass-card rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border border-white/20;
+  }
+  
+  .hero-section {
+    @apply relative min-h-screen flex items-center justify-center;
+    background: linear-gradient(135deg, 
+      rgba(30, 174, 219, 0.1) 0%, 
+      rgba(255, 193, 7, 0.1) 50%, 
+      rgba(155, 135, 245, 0.1) 100%);
+  }
+  
+  .animated-entrance {
+    animation: slideInUp 0.8s ease-out forwards;
+  }
+  
+  .animated-fade {
+    animation: fadeInScale 0.6s ease-out forwards;
+  }
+  
+  .glow-effect {
+    animation: glowPulse 3s ease-in-out infinite;
   }
 }
+
+/* Animation delays for staggered effects */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
