@@ -11,42 +11,42 @@ export const useUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      // Get unique users from referrals table and payment_proofs table
+      console.log("Iniciando fetchUsers...");
+      // Busca usuários nas tabelas permitidas
       const { data: referralUsers, error: referralError } = await supabase
         .from('referrals')
         .select('referrer_id, created_at')
-        .order('created_at', { ascending: false });
-
-      const { data: proofUsers, error: proofError } = await supabase
-        .from('payment_proofs')
-        .select('user_id, created_at')
-        .order('created_at', { ascending: false });
-
-      // Get users that have quantification records (to maintain them even if proofs are deleted)
-      const { data: quantificationUsers, error: quantificationError } = await supabase
-        .from('user_quantifications')
-        .select('user_id, created_at')
         .order('created_at', { ascending: false });
 
       if (referralError && referralError.code !== 'PGRST116') {
         console.error('Error fetching referral users:', referralError);
       }
 
+      const { data: proofUsers, error: proofError } = await supabase
+        .from('payment_proofs')
+        .select('user_id, created_at')
+        .order('created_at', { ascending: false });
+
       if (proofError && proofError.code !== 'PGRST116') {
         console.error('Error fetching proof users:', proofError);
       }
+
+      const { data: quantificationUsers, error: quantificationError } = await supabase
+        .from('user_quantifications')
+        .select('user_id, created_at')
+        .order('created_at', { ascending: false });
 
       if (quantificationError && quantificationError.code !== 'PGRST116') {
         console.error('Error fetching quantification users:', quantificationError);
       }
 
-      // Combine and deduplicate user IDs from all sources
+      // Combina ids únicos
       const allUserIds = new Set<string>();
-      
+
       if (referralUsers) {
         referralUsers.forEach(ref => allUserIds.add(ref.referrer_id));
       }
-      
+
       if (proofUsers) {
         proofUsers.forEach(proof => allUserIds.add(proof.user_id));
       }
@@ -55,7 +55,7 @@ export const useUsers = () => {
         quantificationUsers.forEach(quant => allUserIds.add(quant.user_id));
       }
 
-      // Get user data for each unique user ID
+      // Busca dados do usuário das tabelas permitidas (NUNCA de users!)
       const usersWithData = await Promise.all(
         Array.from(allUserIds).map(async (userId) => {
           // Count referrals
@@ -69,16 +69,16 @@ export const useUsers = () => {
             .from('user_quantifications')
             .select('is_active, balance, investment_plan_id, daily_limit, plan:investment_plans(*)')
             .eq('user_id', userId)
-            .single();
+            .maybeSingle();
 
-          // Get user creation date from the first available source
+          // Consolida a data de criação do usuário
           let createdAt = new Date().toISOString();
-          
+
           if (referralUsers) {
             const userReferral = referralUsers.find(ref => ref.referrer_id === userId);
             if (userReferral) createdAt = userReferral.created_at;
           }
-          
+
           if (proofUsers) {
             const userProof = proofUsers.find(proof => proof.user_id === userId);
             if (userProof) createdAt = userProof.created_at;
@@ -89,9 +89,11 @@ export const useUsers = () => {
             if (userQuant) createdAt = userQuant.created_at;
           }
 
+          // NUNCA TENTE BUSCAR DE 'users', use apenas o placeholder abaixo!
+          // Caso queira o nome, consulte a tabela "profiles" aqui no futuro
           return {
             id: userId,
-            phone: `Usuário ${userId.slice(0, 8)}...`, // Placeholder since we can't access auth.users
+            phone: `Usuário ${userId.slice(0, 8)}...`, // Placeholder, não existe acesso a users
             created_at: createdAt,
             referral_count: referrals?.length || 0,
             quantification_active: quantification?.is_active || false,
@@ -104,11 +106,12 @@ export const useUsers = () => {
       );
 
       setUsers(usersWithData);
-    } catch (error) {
+      console.log("usersWithData retornados:", usersWithData.map(u => u.id));
+    } catch (error: any) {
       console.error('Error fetching users:', error);
       toast({
         title: "Erro ao carregar usuários",
-        description: "Não foi possível carregar a lista de usuários",
+        description: error?.message || "Não foi possível carregar a lista de usuários",
         variant: "destructive"
       });
     } finally {
