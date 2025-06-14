@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useUser } from '@/context/UserContext';
@@ -10,16 +11,18 @@ const BalanceStatus: React.FC = () => {
   const { balance } = useUser();
   const [exchangeRate, setExchangeRate] = useState(1350); // 1 USDT = 1350,00 AKZ
   const [usdtEquivalent, setUsdtEquivalent] = useState(0);
+  const [akzEquivalent, setAkzEquivalent] = useState(0);
   const [isActionOpen, setIsActionOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('deposit');
   
   useEffect(() => {
-    // Calculate USDT equivalent
+    // Calcule a conversão bidirecional conforme a moeda atual
     if (balance.currency === 'AKZ') {
-      setUsdtEquivalent(balance.amount / exchangeRate);
+      setUsdtEquivalent(balance.amount / exchangeRate); // AKZ → USDT
+      setAkzEquivalent(balance.amount); // já está em AKZ
     } else {
-      // If balance is already in USDT, just set it directly
-      setUsdtEquivalent(balance.amount);
+      setAkzEquivalent(balance.amount * exchangeRate); // USDT → AKZ
+      setUsdtEquivalent(balance.amount); // já está em USDT
     }
   }, [balance, exchangeRate]);
 
@@ -49,7 +52,10 @@ const BalanceStatus: React.FC = () => {
               <div>
                 <p className="text-2xl font-bold">{balance.amount.toLocaleString()} {balance.currency}</p>
                 <p className="text-sm text-muted-foreground">
-                  ≈ {usdtEquivalent.toFixed(2)} {balance.currency === 'AKZ' ? 'USDT' : 'AKZ'}
+                  {balance.currency === 'AKZ'
+                    ? <>≈ {usdtEquivalent.toFixed(2)} USDT</>
+                    : <>≈ {akzEquivalent.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AKZ</>
+                  }
                 </p>
               </div>
               
@@ -106,3 +112,4 @@ const BalanceStatus: React.FC = () => {
 };
 
 export default BalanceStatus;
+
