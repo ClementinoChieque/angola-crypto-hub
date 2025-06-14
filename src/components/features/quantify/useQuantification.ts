@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -73,7 +74,7 @@ export const useQuantification = () => {
   }, [user]);
   
   const completeQuantification = useCallback(async () => {
-    const earningPerQuantification = dailyLimit > 0 ? Number(dailyEarning) / dailyLimit : 0;
+    const earningPerQuantification = Number(dailyEarning);
     const newResult = `Ganhos: +${earningPerQuantification.toFixed(2)} ${planCurrency}`;
     setResults(prev => [newResult, ...prev].slice(0, 5));
     
@@ -102,7 +103,7 @@ export const useQuantification = () => {
       title: "Quantificação concluída",
       description: `Você ganhou ${earningPerQuantification.toFixed(2)} ${planCurrency}.`,
     });
-  }, [dailyEarning, planCurrency, user, balance, updateBalance, usedToday, toast, dailyLimit]);
+  }, [dailyEarning, planCurrency, user, balance, updateBalance, usedToday, toast]);
 
   useEffect(() => {
     if (user?.id) {
