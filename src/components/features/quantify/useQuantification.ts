@@ -73,12 +73,15 @@ export const useQuantification = () => {
   }, [user]);
   
   const completeQuantification = useCallback(async () => {
-    const earningPerQuantification = Number(dailyEarning);
+    // Garante que cada quantificação dá dailyEarning / dailyLimit com duas casas decimais
+    const earningPerQuantification = dailyLimit > 0
+      ? Number((Number(dailyEarning) / dailyLimit).toFixed(2))
+      : 0;
     const newResult = `Ganhos: +${earningPerQuantification.toFixed(2)} ${planCurrency}`;
     setResults(prev => [newResult, ...prev].slice(0, 5));
     
     if (user?.id) {
-      const newBalance = balance.amount + earningPerQuantification;
+      const newBalance = Number((balance.amount + earningPerQuantification).toFixed(2));
       await updateBalance(newBalance);
 
       const newUsedToday = usedToday + 1;
@@ -102,7 +105,7 @@ export const useQuantification = () => {
       title: "Quantificação concluída",
       description: `Você ganhou ${earningPerQuantification.toFixed(2)} ${planCurrency}.`,
     });
-  }, [dailyEarning, planCurrency, user, balance, updateBalance, usedToday, toast]);
+  }, [dailyEarning, dailyLimit, planCurrency, user, balance, updateBalance, usedToday, toast]);
 
   useEffect(() => {
     if (user?.id) {
