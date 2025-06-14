@@ -56,6 +56,13 @@ const Index = () => {
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida
           </p>
+          <Button 
+            size="lg" 
+            onClick={() => navigate('/auth')}
+            className="px-8 py-4 text-lg"
+          >
+            Cadastrar
+          </Button>
         </div>
       </main>
     </div>
