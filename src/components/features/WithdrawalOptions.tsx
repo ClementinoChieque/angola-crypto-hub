@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,9 +12,20 @@ type WithdrawalMethod = 'USDT' | 'AO';
 
 const WithdrawalOptions: React.FC = () => {
   const [amount, setAmount] = useState('');
-  const [withdrawalTab, setWithdrawalTab] = useState<WithdrawalMethod>('USDT');
   const { toast } = useToast();
   const { balance, setWithdrawalMethod } = useUser();
+
+  // Define as opções permitidas
+  const balanceCurrency = balance.currency; // 'AKZ' ou 'USDT'
+  // Só exibe o tab da moeda que o usuário tem saldo
+  const allowedMethod: WithdrawalMethod = balanceCurrency === 'USDT' ? 'USDT' : 'AO';
+
+  const [withdrawalTab, setWithdrawalTab] = useState<WithdrawalMethod>(allowedMethod);
+
+  // Garante que o tab nunca seja de uma moeda diferente do saldo
+  useEffect(() => {
+    setWithdrawalTab(allowedMethod);
+  }, [balanceCurrency]);
 
   // Função para buscar o mínimo de saque dependendo da moeda
   const getMinimumWithdrawal = () => {
@@ -75,50 +86,58 @@ const WithdrawalOptions: React.FC = () => {
         <p className="font-bold text-xl">{balance.amount.toLocaleString()} {balance.currency}</p>
       </div>
       
-      <Tabs value={withdrawalTab} onValueChange={(v) => setWithdrawalTab(v as WithdrawalMethod)} className="w-full">
+      <Tabs value={withdrawalTab} onValueChange={() => {}} className="w-full">
         <TabsList className="grid grid-cols-2 mb-4">
-          <TabsTrigger value="USDT">USDT</TabsTrigger>
-          <TabsTrigger value="AO">Kwanza (AKZ)</TabsTrigger>
+          <TabsTrigger value="USDT" disabled={balanceCurrency !== 'USDT'}>
+            USDT
+          </TabsTrigger>
+          <TabsTrigger value="AO" disabled={balanceCurrency !== 'AKZ'}>
+            Kwanza (AKZ)
+          </TabsTrigger>
         </TabsList>
         
         {/* USDT Withdrawal */}
         <TabsContent value="USDT">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount-usdt">Valor (USDT)</Label>
-              <Input
-                id="amount-usdt"
-                type="number"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
+          {balanceCurrency === 'USDT' && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="amount-usdt">Valor (USDT)</Label>
+                <Input
+                  id="amount-usdt"
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </div>
+              
+              <p className="text-xs text-muted-foreground">
+                Saque | Mínimo: 10 USDT
+              </p>
             </div>
-            
-            <p className="text-xs text-muted-foreground">
-               Saque | Mínimo: 10 USDT
-            </p>
-          </div>
+          )}
         </TabsContent>
         
         {/* AO Withdrawal */}
         <TabsContent value="AO">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount-ao">Valor (AKZ)</Label>
-              <Input
-                id="amount-ao"
-                type="number"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
+          {balanceCurrency === 'AKZ' && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="amount-ao">Valor (AKZ)</Label>
+                <Input
+                  id="amount-ao"
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                />
+              </div>
+              
+              <p className="text-xs text-muted-foreground">
+                Saque | Mínimo: 5.000 AKZ
+              </p>
             </div>
-            
-            <p className="text-xs text-muted-foreground">
-              Saque | Mínimo: 5.000 AKZ
-            </p>
-          </div>
+          )}
         </TabsContent>
       </Tabs>
       
@@ -142,4 +161,3 @@ const WithdrawalOptions: React.FC = () => {
 };
 
 export default WithdrawalOptions;
-
