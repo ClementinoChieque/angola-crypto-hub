@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -98,7 +97,7 @@ const Quantify: React.FC = () => {
   };
 
   const completeQuantification = async () => {
-    const earningPerQuantification = dailyLimit > 0 ? Number(dailyEarning) / dailyLimit : 0;
+    const earningPerQuantification = Number(dailyEarning);
     const newResult = `Ganhos: +${earningPerQuantification.toFixed(2)} ${planCurrency}`;
     setResults(prev => [newResult, ...prev].slice(0, 5));
     
