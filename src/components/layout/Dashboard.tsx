@@ -41,8 +41,8 @@ const Dashboard: React.FC = () => {
   return (
     <div className="container mx-auto py-2 md:py-6 max-w-4xl px-2 md:px-4">
       {/* Welcome Header */}
-      <div className="mb-6 md:mb-8 animated-entrance">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 crypto-gradient-text">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-primary">
           Bem-vindo, {user?.phoneNumber}
         </h1>
         <p className="text-muted-foreground">
@@ -51,16 +51,16 @@ const Dashboard: React.FC = () => {
       </div>
       
       {/* Balance Status Component */}
-      <div className="animated-fade delay-100">
+      <div className="mb-6">
         <BalanceStatus />
       </div>
       
       {/* Top section with crypto rates and chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-12">
-        <div className="animated-fade delay-200">
+        <div>
           <CryptoRates />
         </div>
-        <div className="animated-fade delay-300">
+        <div>
           <CryptoChart />
         </div>
       </div>
@@ -68,18 +68,21 @@ const Dashboard: React.FC = () => {
       {/* Clear separation between chart section and menu section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8 md:mt-16">
         {/* Menu sidebar on desktop, tabs on mobile */}
-        <div className="hidden md:block relative z-20 animated-fade delay-400">
-          <Card className="professional-card h-full">
+        <div className="hidden md:block">
+          <Card className="p-6">
             <div className="flex flex-col space-y-2">
-              <h3 className="font-semibold text-lg mb-4 crypto-gradient-text">Menu Principal</h3>
-              {menuItems.map((item, index) => (
+              <h3 className="font-semibold text-lg mb-4 text-primary">Menu Principal</h3>
+              {menuItems.map((item) => (
                 <button
                   key={item.id}
-                  className={`menu-item ${activeTab === item.id ? 'menu-item-active' : ''}`}
+                  className={`flex items-center gap-3 p-4 rounded-xl transition-all duration-300 cursor-pointer ${
+                    activeTab === item.id 
+                      ? 'bg-primary/10 text-primary font-semibold' 
+                      : 'hover:bg-gray-50'
+                  }`}
                   onClick={() => setActiveTab(item.id)}
-                  style={{ animationDelay: `${0.1 * (index + 1)}s` }}
                 >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-r from-crypto-blue/20 to-crypto-purple/20 group-hover:from-crypto-blue/30 group-hover:to-crypto-purple/30 transition-all duration-300">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100">
                     {item.icon}
                   </div>
                   <span className="flex-1 text-left">{item.label}</span>
@@ -90,38 +93,38 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Mobile tabs */}
-        <div className="md:hidden animated-fade delay-400">
+        <div className="md:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-2 mb-3 glass-card border border-white/20">
+            <TabsList className="grid grid-cols-2 mb-3">
               {menuItems.slice(0, 2).map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
-                  className="flex flex-col items-center py-2 text-xs data-[state=active]:bg-gradient-to-r data-[state=active]:from-crypto-blue/20 data-[state=active]:to-crypto-purple/20"
+                  className="flex flex-col items-center py-2 text-xs"
                 >
                   {item.icon}
                   <span className="mt-1">{item.label}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-2 mb-3 glass-card border border-white/20">
+            <TabsList className="grid grid-cols-2 mb-3">
               {menuItems.slice(2, 4).map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
-                  className="flex flex-col items-center py-2 text-xs data-[state=active]:bg-gradient-to-r data-[state=active]:from-crypto-blue/20 data-[state=active]:to-crypto-purple/20"
+                  className="flex flex-col items-center py-2 text-xs"
                 >
                   {item.icon}
                   <span className="mt-1 text-center">{item.label}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-2 mb-3 glass-card border border-white/20">
+            <TabsList className="grid grid-cols-2 mb-3">
               {menuItems.slice(4, 6).map((item) => (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
-                  className="flex flex-col items-center py-2 text-xs data-[state=active]:bg-gradient-to-r data-[state=active]:from-crypto-blue/20 data-[state=active]:to-crypto-purple/20"
+                  className="flex flex-col items-center py-2 text-xs"
                 >
                   {item.icon}
                   <span className="mt-1 text-center">{item.label}</span>
@@ -132,8 +135,8 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Content area - Span 2 columns on desktop */}
-        <div className="md:col-span-2 relative z-10 animated-fade delay-500">
-          <Card className="professional-card">
+        <div className="md:col-span-2">
+          <Card className="p-6">
             {/* Upload Tab */}
             {activeTab === 'upload' && <UploadProof />}
             

@@ -66,22 +66,6 @@ export default {
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
-        },
-        crypto: {
-          'blue': '#1EAEDB',
-          'light-blue': '#33C3F0',
-          'green': '#F2FCE2',
-          'dark': '#1A1F2C',
-          'gray': '#8E9196',
-          'purple': '#9b87f5',
-          'light-gray': '#F1F0FB',
-          'red': '#ea384c',
-          'gold': '#FFD700',
-          'bitcoin': '#F7931A',
-          'ethereum': '#627EEA',
-          'success': '#10B981',
-          'warning': '#F59E0B',
-          'danger': '#EF4444',
         }
       },
       borderRadius: {
@@ -97,53 +81,11 @@ export default {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' }
-        },
-        'spin-slow': {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' }
-        },
-        'fade-in': {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' }
-        },
-        'slide-up': {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' }
-        },
-        'scale-in': {
-          '0%': { opacity: '0', transform: 'scale(0.9)' },
-          '100%': { opacity: '1', transform: 'scale(1)' }
-        },
-        'glow': {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(30, 174, 219, 0.5)' },
-          '50%': { boxShadow: '0 0 30px rgba(30, 174, 219, 0.8), 0 0 40px rgba(255, 193, 7, 0.4)' }
-        },
-        'float': {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' }
-        },
-        'gradient-shift': {
-          '0%, 100%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'spin-slow': 'spin-slow 3s linear infinite',
-        'fade-in': 'fade-in 0.5s ease-out',
-        'slide-up': 'slide-up 0.6s ease-out',
-        'scale-in': 'scale-in 0.4s ease-out',
-        'glow': 'glow 2s ease-in-out infinite',
-        'float': 'float 3s ease-in-out infinite',
-        'gradient-shift': 'gradient-shift 8s ease infinite'
-      },
-      backgroundImage: {
-        'crypto-gradient': 'linear-gradient(135deg, #1EAEDB 0%, #FFD700 50%, #9b87f5 100%)',
-        'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-      },
-      backdropBlur: {
-        xs: '2px',
+        'accordion-up': 'accordion-up 0.2s ease-out'
       }
     }
   },
