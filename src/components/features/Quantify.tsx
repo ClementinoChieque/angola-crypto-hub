@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -205,7 +204,7 @@ const Quantify: React.FC = () => {
         onClick={startQuantify}
         disabled={isActive || !canQuantify || usedToday >= dailyLimit}
         size={isMobile ? "sm" : "default"}
-        className="bg-crypto-blue hover:bg-crypto-light-blue disabled:opacity-50"
+        className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50"
       >
         {isActive ? "Processando..." : !canQuantify ? "Bloqueado" : usedToday >= dailyLimit ? "Limite Atingido" : "Iniciar Quantificação"}
       </Button>

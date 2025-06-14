@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -106,7 +105,7 @@ const WithdrawalOptions: React.FC = () => {
       
       <Button 
         onClick={handleWithdrawal}
-        className="w-full mt-6 bg-crypto-blue hover:bg-crypto-light-blue"
+        className="w-full mt-6 bg-blue-500 hover:bg-blue-600"
       >
         <ArrowDown size={16} className="mr-2" />
         Solicitar Saque

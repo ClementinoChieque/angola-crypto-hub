@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -122,7 +121,7 @@ const CryptoDeposit: React.FC<CryptoDepositProps> = ({ amount, setAmount, onDepo
       
       <Button 
         onClick={onDeposit}
-        className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
+        className="w-full bg-blue-500 hover:bg-blue-600"
         disabled={!activeWallet}
       >
         {activeWallet ? 'Confirmar Depósito' : 'Carteira Indisponível'}
