@@ -24,7 +24,7 @@ const InviteUsers: React.FC = () => {
   }, [user]);
 
   const generateReferralCode = () => {
-    return "ANGOLACRYPTO" + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    return "CRYPT" + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
   };
 
   const initializeReferralCode = async () => {
