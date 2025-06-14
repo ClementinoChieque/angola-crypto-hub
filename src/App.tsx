@@ -10,12 +10,13 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
-// Create the query client with default options to prevent duplicates
+// Create a single query client instance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
@@ -26,14 +27,14 @@ const App = () => {
       <AuthProvider>
         <UserProvider>
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            
-            {/* Toast notifications - moved inside BrowserRouter */}
+            <div className="min-h-screen">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
             <Toaster />
             <Sonner />
           </BrowserRouter>
