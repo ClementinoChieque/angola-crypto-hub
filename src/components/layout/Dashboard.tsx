@@ -39,24 +39,36 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto py-2 md:py-6 max-w-4xl px-2 md:px-4">
+    <div 
+      className="container mx-auto py-2 md:py-6 max-w-4xl px-2 md:px-4 min-h-screen"
+      style={{
+        backgroundImage: 'url(/lovable-uploads/3352bf6f-ec1d-45fb-a521-b4904af5ef15.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Overlay for better readability */}
+      <div className="absolute inset-0 bg-black/40 -z-10"></div>
+      
       {/* Welcome Header */}
-      <div className="mb-6 md:mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-primary">
+      <div className="mb-6 md:mb-8 relative z-10">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-white drop-shadow-lg">
           Bem-vindo, {user?.phoneNumber}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-white/90 drop-shadow-md">
           Gerencie seus investimentos e maximize seus lucros
         </p>
       </div>
       
       {/* Balance Status Component */}
-      <div className="mb-6">
+      <div className="mb-6 relative z-10">
         <BalanceStatus />
       </div>
       
       {/* Top section with crypto rates and chart */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-12 relative z-10">
         <div>
           <CryptoRates />
         </div>
@@ -66,10 +78,10 @@ const Dashboard: React.FC = () => {
       </div>
       
       {/* Clear separation between chart section and menu section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8 md:mt-16">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8 md:mt-16 relative z-10">
         {/* Menu sidebar on desktop, tabs on mobile */}
         <div className="hidden md:block">
-          <Card className="p-6">
+          <Card className="p-6 bg-white/95 backdrop-blur-sm">
             <div className="flex flex-col space-y-2">
               <h3 className="font-semibold text-lg mb-4 text-primary">Menu Principal</h3>
               {menuItems.map((item) => (
@@ -95,7 +107,7 @@ const Dashboard: React.FC = () => {
         {/* Mobile tabs */}
         <div className="md:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-2 mb-3">
+            <TabsList className="grid grid-cols-2 mb-3 bg-white/95 backdrop-blur-sm">
               {menuItems.slice(0, 2).map((item) => (
                 <TabsTrigger
                   key={item.id}
@@ -107,7 +119,7 @@ const Dashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-2 mb-3">
+            <TabsList className="grid grid-cols-2 mb-3 bg-white/95 backdrop-blur-sm">
               {menuItems.slice(2, 4).map((item) => (
                 <TabsTrigger
                   key={item.id}
@@ -119,7 +131,7 @@ const Dashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-2 mb-3">
+            <TabsList className="grid grid-cols-2 mb-3 bg-white/95 backdrop-blur-sm">
               {menuItems.slice(4, 6).map((item) => (
                 <TabsTrigger
                   key={item.id}
@@ -136,7 +148,7 @@ const Dashboard: React.FC = () => {
         
         {/* Content area - Span 2 columns on desktop */}
         <div className="md:col-span-2">
-          <Card className="p-6">
+          <Card className="p-6 bg-white/95 backdrop-blur-sm">
             {/* Upload Tab */}
             {activeTab === 'upload' && <UploadProof />}
             
