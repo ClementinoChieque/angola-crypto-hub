@@ -131,15 +131,15 @@ const CryptoRates: React.FC = () => {
               );
             })}
             
-            {/* AOcripto */}
+            {/* AOcripto info atualizado conforme solicitado */}
             <div className="bg-muted p-3 rounded">
               <div className="flex justify-between items-center mb-1">
                 <p className="text-sm font-medium">AOcripto</p>
-                <p className="font-medium">1 USDT = {rates.usdtToAoc.toLocaleString()} AOcripto</p>
+                <p className="font-medium">1 USDT = 1.350,00 AOcripto</p>
               </div>
               <div className="flex justify-between text-xs text-muted-foreground">
-                <p>1 AOcripto = {(1/rates.usdtToAoc).toFixed(6)} USDT</p>
-                <p>{rates.usdtToAoc} AOcripto = {rates.aocToAkz} AKZ</p>
+                <p>1 AOcripto = 0.000690 USDT</p>
+                <p>1350 AOcripto = 1350 AKZ</p>
               </div>
             </div>
           </div>
