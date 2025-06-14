@@ -77,13 +77,3 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
-
-@layer components {
-  .glass-card {
-    @apply bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm;
-  }
-  
-  .glass-card-dark {
-    @apply bg-gray-900/80 backdrop-blur-sm border border-gray-700 shadow-sm;
-  }
-}

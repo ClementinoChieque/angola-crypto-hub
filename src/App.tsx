@@ -27,14 +27,12 @@ const App = () => {
       <AuthProvider>
         <UserProvider>
           <BrowserRouter>
-            <div className="min-h-screen">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
             <Toaster />
             <Sonner />
           </BrowserRouter>
