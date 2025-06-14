@@ -22,6 +22,8 @@ import CryptoRates from '../features/CryptoRates';
 import CryptoChart from '../features/CryptoChart';
 import BalanceStatus from '../features/BalanceStatus';
 import AddAccount from '../features/AddAccount';
+import DepositOptions from '../features/DepositOptions';
+import WithdrawalOptions from '../features/WithdrawalOptions';
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('upload');
@@ -32,6 +34,8 @@ const Dashboard: React.FC = () => {
   const menuItems = [
     { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={isMobile ? 16 : 20} /> },
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
+    { id: 'deposit', label: 'Depositar', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
+    { id: 'withdraw', label: 'Sacar', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
     { id: 'investment', label: 'Plano de Investimento', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
@@ -143,6 +147,18 @@ const Dashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
+            <TabsList className="grid grid-cols-2 mb-3 bg-white/90 backdrop-blur-sm">
+              {menuItems.slice(6, 8).map((item) => (
+                <TabsTrigger
+                  key={item.id}
+                  value={item.id}
+                  className="flex flex-col items-center py-2 text-xs"
+                >
+                  {item.icon}
+                  <span className="mt-1 text-center">{item.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
           </Tabs>
         </div>
         
@@ -154,6 +170,12 @@ const Dashboard: React.FC = () => {
             
             {/* Quantify Tab */}
             {activeTab === 'quantify' && <Quantify />}
+            
+            {/* Deposit Tab */}
+            {activeTab === 'deposit' && <DepositOptions />}
+            
+            {/* Withdraw Tab */}
+            {activeTab === 'withdraw' && <WithdrawalOptions />}
             
             {/* Investment Plans Tab */}
             {activeTab === 'investment' && <InvestmentPlans />}
