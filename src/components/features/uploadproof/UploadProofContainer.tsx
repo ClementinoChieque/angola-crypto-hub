@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -162,7 +161,7 @@ const UploadProofContainer: React.FC = () => {
       {previewUrl && (
         <Button 
           onClick={handleSubmit}
-          className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
+          className="w-full bg-blue-500 hover:bg-blue-600"
           disabled={isUploading}
           size={isMobile ? "sm" : "default"}
         >
