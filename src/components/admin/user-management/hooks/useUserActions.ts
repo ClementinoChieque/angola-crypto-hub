@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -6,6 +5,60 @@ import { useToast } from '@/hooks/use-toast';
 export const useUserActions = () => {
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  const updateUserInvestment = async (userId: string, planId: string | null, balance: number, dailyLimit: number) => {
+    try {
+      const { data: existing, error: fetchError } = await supabase
+        .from('user_quantifications')
+        .select('id')
+        .eq('user_id', userId)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
+      }
+      
+      const dataToUpdate = {
+        investment_plan_id: planId,
+        balance: balance,
+        daily_limit: dailyLimit,
+        updated_at: new Date().toISOString()
+      };
+
+      if (existing) {
+        const { error } = await supabase
+          .from('user_quantifications')
+          .update(dataToUpdate)
+          .eq('user_id', userId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('user_quantifications')
+          .insert({
+            ...dataToUpdate,
+            user_id: userId,
+            is_active: false,
+            used_today: 0,
+            last_reset_date: new Date().toISOString().split('T')[0]
+          });
+        if (error) throw error;
+      }
+
+      toast({
+        title: "Investimento do usuário atualizado",
+        description: "O nível de investimento e saldo foram atualizados com sucesso."
+      });
+      return true;
+    } catch (error) {
+      console.error('Error updating user investment:', error);
+      toast({
+        title: "Erro ao atualizar investimento",
+        description: "Não foi possível atualizar o investimento do usuário.",
+        variant: "destructive"
+      });
+      return false;
+    }
+  };
 
   const toggleQuantification = async (userId: string, currentStatus: boolean) => {
     try {
@@ -148,5 +201,5 @@ export const useUserActions = () => {
     }
   };
 
-  return { toggleQuantification, deleteUser, deletingUserId };
+  return { toggleQuantification, deleteUser, deletingUserId, updateUserInvestment };
 };

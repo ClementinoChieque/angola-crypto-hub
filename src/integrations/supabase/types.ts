@@ -66,6 +66,39 @@ export type Database = {
         }
         Relationships: []
       }
+      investment_plans: {
+        Row: {
+          created_at: string
+          currency: string
+          daily_earning: number
+          id: string
+          investment: number
+          level_name: string
+          monthly_earning: number
+          yearly_earning: number
+        }
+        Insert: {
+          created_at?: string
+          currency: string
+          daily_earning: number
+          id?: string
+          investment: number
+          level_name: string
+          monthly_earning: number
+          yearly_earning: number
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          daily_earning?: number
+          id?: string
+          investment?: number
+          level_name?: string
+          monthly_earning?: number
+          yearly_earning?: number
+        }
+        Relationships: []
+      }
       payment_proofs: {
         Row: {
           admin_notes: string | null
@@ -289,9 +322,11 @@ export type Database = {
       }
       user_quantifications: {
         Row: {
+          balance: number
           created_at: string
           daily_limit: number
           id: string
+          investment_plan_id: string | null
           is_active: boolean
           last_reset_date: string
           updated_at: string
@@ -299,9 +334,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          balance?: number
           created_at?: string
           daily_limit?: number
           id?: string
+          investment_plan_id?: string | null
           is_active?: boolean
           last_reset_date?: string
           updated_at?: string
@@ -309,16 +346,26 @@ export type Database = {
           user_id: string
         }
         Update: {
+          balance?: number
           created_at?: string
           daily_limit?: number
           id?: string
+          investment_plan_id?: string | null
           is_active?: boolean
           last_reset_date?: string
           updated_at?: string
           used_today?: number
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_investment_plan"
+            columns: ["investment_plan_id"]
+            isOneToOne: false
+            referencedRelation: "investment_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_usdt_wallets: {
         Row: {

@@ -1,18 +1,46 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUsers } from './user-management/hooks/useUsers';
 import { useReferralRewards } from './user-management/hooks/useReferralRewards';
 import { useUserActions } from './user-management/hooks/useUserActions';
 import UsersList from './user-management/components/UsersList';
 import ReferralRewardsList from './user-management/components/ReferralRewardsList';
+import { useInvestmentPlans } from './user-management/hooks/useInvestmentPlans';
+import { UserWithReferrals } from './user-management/types';
 
 const UserManagement: React.FC = () => {
   const [rewardAmount, setRewardAmount] = useState('10');
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserWithReferrals | null>(null);
+  
+  const [investmentPlanId, setInvestmentPlanId] = useState<string | null>(null);
+  const [balance, setBalance] = useState<string>('');
+  const [dailyLimit, setDailyLimit] = useState<string>('');
 
   const { users, loading, refetchUsers } = useUsers();
   const { referralRewards, addReferralReward, refetchReferralRewards } = useReferralRewards();
-  const { toggleQuantification, deleteUser, deletingUserId } = useUserActions();
+  const { toggleQuantification, deleteUser, deletingUserId, updateUserInvestment } = useUserActions();
+  const { plans: investmentPlans, loading: plansLoading } = useInvestmentPlans();
+
+  useEffect(() => {
+    if (selectedUser) {
+      setInvestmentPlanId(selectedUser.investment_plan_id);
+      setBalance(selectedUser.balance.toString());
+      setDailyLimit(selectedUser.daily_limit.toString());
+    } else {
+      setInvestmentPlanId(null);
+      setBalance('');
+      setDailyLimit('');
+    }
+  }, [selectedUser]);
+
+  const handleSelectUser = (userId: string | null) => {
+    if (userId === null) {
+      setSelectedUser(null);
+    } else {
+      const user = users.find(u => u.id === userId);
+      setSelectedUser(user || null);
+    }
+  };
 
   const handleAddReward = async (userId: string) => {
     const amount = parseFloat(rewardAmount);
@@ -37,19 +65,40 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  const handleUpdateInvestment = async (userId: string) => {
+    const success = await updateUserInvestment(
+      userId,
+      investmentPlanId,
+      parseFloat(balance || '0'),
+      parseInt(dailyLimit || '1')
+    );
+    if (success) {
+      await refetchUsers();
+      setSelectedUser(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <UsersList
         users={users}
-        loading={loading}
-        selectedUser={selectedUser}
+        loading={loading || plansLoading}
+        selectedUser={selectedUser?.id || null}
         deletingUserId={deletingUserId}
         rewardAmount={rewardAmount}
-        onSelectUser={setSelectedUser}
+        onSelectUser={handleSelectUser}
         onRewardAmountChange={setRewardAmount}
         onAddReward={handleAddReward}
         onToggleQuantification={handleToggleQuantification}
         onDeleteUser={handleDeleteUser}
+        investmentPlans={investmentPlans}
+        investmentPlanId={investmentPlanId}
+        onInvestmentPlanChange={setInvestmentPlanId}
+        balance={balance}
+        onBalanceChange={setBalance}
+        dailyLimit={dailyLimit}
+        onDailyLimitChange={setDailyLimit}
+        onUpdateInvestment={handleUpdateInvestment}
       />
 
       <ReferralRewardsList referralRewards={referralRewards} />

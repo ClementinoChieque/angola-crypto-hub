@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { UserWithReferrals } from '../types';
+import { UserWithReferrals, InvestmentPlan } from '../types';
 
 export const useUsers = () => {
   const [users, setUsers] = useState<UserWithReferrals[]>([]);
@@ -67,7 +67,7 @@ export const useUsers = () => {
           // Check quantification status
           const { data: quantification } = await supabase
             .from('user_quantifications')
-            .select('is_active')
+            .select('is_active, balance, investment_plan_id, daily_limit, plan:investment_plans(*)')
             .eq('user_id', userId)
             .single();
 
@@ -94,7 +94,11 @@ export const useUsers = () => {
             phone: `Usuário ${userId.slice(0, 8)}...`, // Placeholder since we can't access auth.users
             created_at: createdAt,
             referral_count: referrals?.length || 0,
-            quantification_active: quantification?.is_active || false
+            quantification_active: quantification?.is_active || false,
+            balance: quantification?.balance || 0,
+            investment_plan_id: quantification?.investment_plan_id || null,
+            plan: quantification?.plan || null,
+            daily_limit: quantification?.daily_limit || 1,
           };
         })
       );
