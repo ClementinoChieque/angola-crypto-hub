@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +10,7 @@ export const useReferralRewards = () => {
 
   const fetchReferralRewards = async () => {
     try {
+      // CERTIFIQUE-SE: Não buscarmos nada na tabela "users" aqui
       const { data, error } = await supabase
         .from('referral_rewards')
         .select('*')
@@ -18,6 +20,11 @@ export const useReferralRewards = () => {
       setReferralRewards(data || []);
     } catch (error) {
       console.error('Error fetching referral rewards:', error);
+      toast({
+        title: "Erro ao buscar recompensas",
+        description: error?.message || "Não foi possível buscar as recompensas.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -32,7 +39,9 @@ export const useReferralRewards = () => {
         return false;
       }
 
-      const { error } = await supabase
+      // Não usar 'users' aqui!
+      // Adicionar recompensa
+      const { error: insertError } = await supabase
         .from('referral_rewards')
         .insert({
           referrer_id: userId,
@@ -42,27 +51,30 @@ export const useReferralRewards = () => {
           status: 'completed'
         });
 
-      if (error) throw error;
+      if (insertError) {
+        console.error("Erro ao inserir em referral_rewards:", insertError);
+        throw insertError;
+      }
 
-      // ATUALIZAR O SALDO na user_quantifications
-      // Buscar quantification do usuário
-      const { data: quant, error: fetchError } = await supabase
+      // Buscar quantificação do usuário e atualizar saldo se necessário
+      const { data: quant, error: fetchQuantError } = await supabase
         .from('user_quantifications')
         .select('balance, investment_plan_id, investment_plan:investment_plans(currency)')
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (fetchError) throw fetchError;
+      if (fetchQuantError) {
+        console.error("Erro ao buscar quantificação:", fetchQuantError);
+        throw fetchQuantError;
+      }
 
       let shouldUpdateBalance = false;
 
-      // Verifica se o plano do usuário está na moeda correta
       if (quant && quant.investment_plan) {
         if (quant.investment_plan.currency === currency) {
           shouldUpdateBalance = true;
         }
       } else if (!quant || !quant.investment_plan) {
-        // Usuário sem plano, adiciona saldo apenas se moeda é AKZ (ajuste se desejar outro comportamento)
         shouldUpdateBalance = (currency === 'AKZ');
       }
 
@@ -73,7 +85,10 @@ export const useReferralRewards = () => {
           .update({ balance: newBalance, updated_at: new Date().toISOString() })
           .eq('user_id', userId);
 
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error("Erro ao atualizar saldo:", updateError);
+          throw updateError;
+        }
       }
 
       toast({
@@ -87,7 +102,7 @@ export const useReferralRewards = () => {
       console.error('Error adding referral reward:', error);
       toast({
         title: "Erro ao adicionar recompensa",
-        description: "Não foi possível adicionar a recompensa/saldo",
+        description: error?.message || "Não foi possível adicionar a recompensa/saldo",
         variant: "destructive"
       });
       return false;
