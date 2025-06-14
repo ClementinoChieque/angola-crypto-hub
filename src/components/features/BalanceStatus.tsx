@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useUser } from '@/context/UserContext';
 import { Circle, ArrowUp, ArrowDown } from 'lucide-react';
 import { useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DepositOptions from './DepositOptions';
 import WithdrawalOptions from './WithdrawalOptions';
 
@@ -96,20 +95,8 @@ const BalanceStatus: React.FC = () => {
               </button>
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-2 mb-4">
-                <TabsTrigger value="deposit">Depositar</TabsTrigger>
-                <TabsTrigger value="withdraw">Sacar</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="deposit">
-                <DepositOptions />
-              </TabsContent>
-              
-              <TabsContent value="withdraw">
-                <WithdrawalOptions />
-              </TabsContent>
-            </Tabs>
+            {activeTab === 'deposit' && <DepositOptions />}
+            {activeTab === 'withdraw' && <WithdrawalOptions />}
           </CardContent>
         </Card>
       )}
