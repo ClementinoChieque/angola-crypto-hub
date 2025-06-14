@@ -61,7 +61,7 @@ export const useAuthHandlers = () => {
       const { session } = await signUp({
         phone: formattedPhone,
         password: values.password,
-        username: values.username,
+        username: formattedPhone, // Use phone as username since username field was removed
         fullName: values.fullName
       });
       

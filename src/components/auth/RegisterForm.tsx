@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +19,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
       phoneNumber: '',
       countryCode: '+244',
       password: '',
-      username: '',
       fullName: '',
     },
   });
@@ -62,23 +60,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
                 <Input 
                   type="password"
                   placeholder="Crie uma senha forte"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome de usuário</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Seu nome de usuário único"
                   {...field}
                 />
               </FormControl>
