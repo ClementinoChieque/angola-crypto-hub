@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useUser } from '@/context/UserContext';
@@ -9,7 +8,7 @@ import WithdrawalOptions from './WithdrawalOptions';
 
 const BalanceStatus: React.FC = () => {
   const { balance } = useUser();
-  const [exchangeRate, setExchangeRate] = useState(800); // 1 USDT = 800 AKZ (example rate)
+  const [exchangeRate, setExchangeRate] = useState(1450); // 1 USDT = 1450 AKZ
   const [usdtEquivalent, setUsdtEquivalent] = useState(0);
   const [isActionOpen, setIsActionOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>('deposit');
@@ -73,7 +72,7 @@ const BalanceStatus: React.FC = () => {
             </div>
             
             <div className="flex justify-between text-xs text-muted-foreground mt-3 pt-2 border-t border-gray-100">
-              <span>Taxa de câmbio: 1 USDT = {exchangeRate} AKZ</span>
+              <span>Taxa de câmbio: 1 USDT = {exchangeRate.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AKZ</span>
               <span>Atualizado em: {new Date().toLocaleDateString()}</span>
             </div>
           </div>
