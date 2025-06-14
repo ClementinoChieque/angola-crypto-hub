@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/context/AuthContext';
+import { useUser } from '@/context/UserContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertCircle, Lock } from 'lucide-react';
@@ -13,9 +15,12 @@ const Quantify: React.FC = () => {
   const [canQuantify, setCanQuantify] = useState(false);
   const [usedToday, setUsedToday] = useState(0);
   const [dailyLimit, setDailyLimit] = useState(1);
+  const [dailyEarning, setDailyEarning] = useState(0);
+  const [planCurrency, setPlanCurrency] = useState('AKZ');
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { balance, updateBalance } = useUser();
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -47,7 +52,7 @@ const Quantify: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('user_quantifications')
-        .select('*')
+        .select('*, investment_plan:investment_plans(daily_earning, currency)')
         .eq('user_id', user.id)
         .single();
 
@@ -79,6 +84,8 @@ const Quantify: React.FC = () => {
 
         setCanQuantify(data.is_active);
         setDailyLimit(data.daily_limit);
+        setDailyEarning(data.investment_plan?.daily_earning || 0);
+        setPlanCurrency(data.investment_plan?.currency || 'AKZ');
       } else {
         setCanQuantify(false);
       }
@@ -91,12 +98,16 @@ const Quantify: React.FC = () => {
   };
 
   const completeQuantification = async () => {
-    const randomValue = (Math.random() * 100).toFixed(2);
-    const newResult = `Quantificação: ${randomValue}%`;
+    const earningPerQuantification = dailyLimit > 0 ? Number(dailyEarning) / dailyLimit : 0;
+    const newResult = `Ganhos: +${earningPerQuantification.toFixed(2)} ${planCurrency}`;
     setResults(prev => [newResult, ...prev].slice(0, 5));
     
-    // Update usage count
     if (user?.id) {
+      // Update balance
+      const newBalance = balance.amount + earningPerQuantification;
+      await updateBalance(newBalance);
+
+      // Update usage count
       try {
         const { error } = await supabase
           .from('user_quantifications')
@@ -115,7 +126,7 @@ const Quantify: React.FC = () => {
     
     toast({
       title: "Quantificação concluída",
-      description: `Resultado: ${randomValue}%`,
+      description: `Você ganhou ${earningPerQuantification.toFixed(2)} ${planCurrency}.`,
     });
   };
 
@@ -213,11 +224,11 @@ const Quantify: React.FC = () => {
       
       {results.length > 0 && (
         <div className="w-full mt-3 md:mt-6">
-          <h3 className="text-xs md:text-sm font-medium mb-1 md:mb-2">Últimas Quantificações</h3>
+          <h3 className="text-xs md:text-sm font-medium mb-1 md:mb-2">Últimos Ganhos</h3>
           <div className="bg-muted rounded-md p-2 md:p-4">
             <ul className="space-y-1 md:space-y-2">
               {results.map((result, index) => (
-                <li key={index} className="text-xs md:text-sm">
+                <li key={index} className="text-xs md:text-sm text-green-700 font-medium">
                   {result}
                 </li>
               ))}
