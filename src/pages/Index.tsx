@@ -41,7 +41,7 @@ const Index = () => {
             />
             <span className="font-bold text-2xl text-primary">Bitget12</span>
           </div>
-          <Button onClick={() => navigate('/auth')} variant="default">
+          <Button onClick={() => navigate('/auth?mode=login')} variant="default">
             Entrar
           </Button>
         </div>
@@ -58,7 +58,7 @@ const Index = () => {
           </p>
           <Button 
             size="lg" 
-            onClick={() => navigate('/auth')}
+            onClick={() => navigate('/auth?mode=register')}
             className="px-8 py-4 text-lg"
           >
             Cadastrar
