@@ -10,21 +10,34 @@ export const useReferralRewards = () => {
 
   const fetchReferralRewards = async () => {
     try {
-      // CERTIFIQUE-SE: Não buscarmos nada na tabela "users" aqui
+      // Certifique-se de buscar somente em referral_rewards
       const { data, error } = await supabase
         .from('referral_rewards')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setReferralRewards(data || []);
-    } catch (error) {
-      console.error('Error fetching referral rewards:', error);
+      if (error) {
+        console.error('[ReferralRewards] Erro ao buscar referral_rewards via supabase:', error);
+        throw error;
+      }
+      if (!Array.isArray(data)) {
+        // Protege contra respostas inesperadas da API
+        console.warn('[ReferralRewards] Dados recebidos de referral_rewards não são um array:', data);
+        setReferralRewards([]);
+        return;
+      }
+      // Normaliza e filtra possíveis entradas inválidas
+      setReferralRewards(data.filter((r) => r && r.id && r.reward_amount != null));
+    } catch (err) {
+      console.error('Error fetching referral rewards [catch]:', err);
       toast({
         title: "Erro ao buscar recompensas",
-        description: error?.message || "Não foi possível buscar as recompensas.",
+        description: (typeof err === "object" && err !== null && "message" in err)
+          ? (err as { message?: string }).message ?? String(err)
+          : String(err),
         variant: "destructive"
       });
+      setReferralRewards([]);
     }
   };
 
@@ -39,7 +52,6 @@ export const useReferralRewards = () => {
         return false;
       }
 
-      // Não usar 'users' aqui!
       // Adicionar recompensa
       const { error: insertError } = await supabase
         .from('referral_rewards')
@@ -102,7 +114,9 @@ export const useReferralRewards = () => {
       console.error('Error adding referral reward:', error);
       toast({
         title: "Erro ao adicionar recompensa",
-        description: error?.message || "Não foi possível adicionar a recompensa/saldo",
+        description: (typeof error === "object" && error !== null && "message" in error)
+          ? (error as { message?: string }).message ?? String(error)
+          : String(error),
         variant: "destructive"
       });
       return false;
