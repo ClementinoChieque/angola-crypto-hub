@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,7 +19,6 @@ type UsdtWalletFormData = z.infer<typeof usdtWalletSchema>;
 
 const networks = [
   'TRC-20',
-  'ERC-20',
   'BEP-20',
 ];
 
