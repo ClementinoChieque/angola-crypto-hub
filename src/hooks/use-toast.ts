@@ -1,5 +1,4 @@
 
-// This is a custom hook to manage toast notifications in the application
 import * as React from "react"
 
 import type {
@@ -79,8 +78,6 @@ const reducer = (state: State, action: Action): State => {
     case "DISMISS_TOAST": {
       const { toastId } = action
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
@@ -131,20 +128,28 @@ type Toast = Omit<ToasterToast, "id">
 function toast(props: Toast) {
   const id = genId()
 
+  // Start open as true
+  let open = true
+
+  // Patch: always update open/react state of toast when the close button is used
   const update = (props: ToasterToast) =>
     dispatch({
       type: "UPDATE_TOAST",
       toast: { ...props, id },
     })
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+  
+  const dismiss = () => {
+    open = false
+    dispatch({ type: "DISMISS_TOAST", toastId: id })
+  }
 
   dispatch({
     type: "ADD_TOAST",
     toast: {
       ...props,
-      open: true,
-      onOpenChange: (open) => {
-        if (!open) dismiss()
+      open: open,
+      onOpenChange: (nextOpen: boolean) => {
+        if (!nextOpen) dismiss();
       },
     },
   })
@@ -193,3 +198,4 @@ function addToRemoveQueue(toastId: string) {
 }
 
 export { useToast, toast }
+
