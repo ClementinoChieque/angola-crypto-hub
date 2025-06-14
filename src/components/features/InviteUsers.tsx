@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,25 +33,33 @@ const InviteUsers: React.FC = () => {
       // Verificar se já existe um código para o usuário
       const { data: existingCode } = await supabase
         .from('referral_codes')
-        .select('code')
+        .select('id, code')
         .eq('user_id', user?.id)
         .eq('is_active', true)
         .single();
 
-      if (existingCode) {
+      if (existingCode && existingCode.code.startsWith('CRYPT')) {
         setReferralCode(existingCode.code);
       } else {
-        // Criar novo código
         const newCode = generateReferralCode();
-        const { error } = await supabase
-          .from('referral_codes')
-          .insert({
-            user_id: user?.id,
-            code: newCode,
-            is_active: true
-          });
-
-        if (error) throw error;
+        if (existingCode) {
+          // Atualiza o código existente que está no formato antigo
+          const { error } = await supabase
+            .from('referral_codes')
+            .update({ code: newCode })
+            .eq('id', existingCode.id);
+          if (error) throw error;
+        } else {
+          // Cria um novo código se não existir nenhum
+          const { error } = await supabase
+            .from('referral_codes')
+            .insert({
+              user_id: user?.id,
+              code: newCode,
+              is_active: true
+            });
+          if (error) throw error;
+        }
         setReferralCode(newCode);
       }
     } catch (error) {
