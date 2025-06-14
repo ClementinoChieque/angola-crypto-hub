@@ -42,15 +42,15 @@ const Dashboard: React.FC = () => {
     <div 
       className="container mx-auto py-2 md:py-6 max-w-4xl px-2 md:px-4 min-h-screen"
       style={{
-        backgroundImage: 'url(/lovable-uploads/3352bf6f-ec1d-45fb-a521-b4904af5ef15.png)',
+        backgroundImage: 'url(/lovable-uploads/57b0dbca-3de1-4942-a324-ba05395f79e3.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundAttachment: 'fixed'
       }}
     >
-      {/* Overlay for better readability */}
-      <div className="absolute inset-0 bg-black/40 -z-10"></div>
+      {/* Overlay for better readability with transparency */}
+      <div className="absolute inset-0 bg-black/50 -z-10"></div>
       
       {/* Welcome Header */}
       <div className="mb-6 md:mb-8 relative z-10">
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8 md:mt-16 relative z-10">
         {/* Menu sidebar on desktop, tabs on mobile */}
         <div className="hidden md:block">
-          <Card className="p-6 bg-white/95 backdrop-blur-sm">
+          <Card className="p-6 bg-white/90 backdrop-blur-sm">
             <div className="flex flex-col space-y-2">
               <h3 className="font-semibold text-lg mb-4 text-primary">Menu Principal</h3>
               {menuItems.map((item) => (
@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
         {/* Mobile tabs */}
         <div className="md:hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-2 mb-3 bg-white/95 backdrop-blur-sm">
+            <TabsList className="grid grid-cols-2 mb-3 bg-white/90 backdrop-blur-sm">
               {menuItems.slice(0, 2).map((item) => (
                 <TabsTrigger
                   key={item.id}
@@ -119,7 +119,7 @@ const Dashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-2 mb-3 bg-white/95 backdrop-blur-sm">
+            <TabsList className="grid grid-cols-2 mb-3 bg-white/90 backdrop-blur-sm">
               {menuItems.slice(2, 4).map((item) => (
                 <TabsTrigger
                   key={item.id}
@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsList className="grid grid-cols-2 mb-3 bg-white/95 backdrop-blur-sm">
+            <TabsList className="grid grid-cols-2 mb-3 bg-white/90 backdrop-blur-sm">
               {menuItems.slice(4, 6).map((item) => (
                 <TabsTrigger
                   key={item.id}
@@ -148,7 +148,7 @@ const Dashboard: React.FC = () => {
         
         {/* Content area - Span 2 columns on desktop */}
         <div className="md:col-span-2">
-          <Card className="p-6 bg-white/95 backdrop-blur-sm">
+          <Card className="p-6 bg-white/90 backdrop-blur-sm">
             {/* Upload Tab */}
             {activeTab === 'upload' && <UploadProof />}
             

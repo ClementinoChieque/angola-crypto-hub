@@ -21,15 +21,15 @@ const Index = () => {
       <div 
         className="min-h-screen"
         style={{
-          backgroundImage: 'url(/lovable-uploads/3352bf6f-ec1d-45fb-a521-b4904af5ef15.png)',
+          backgroundImage: 'url(/lovable-uploads/57b0dbca-3de1-4942-a324-ba05395f79e3.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           backgroundAttachment: 'fixed'
         }}
       >
-        {/* Overlay for better readability */}
-        <div className="absolute inset-0 bg-black/30 pointer-events-none"></div>
+        {/* Overlay for better readability with transparency */}
+        <div className="absolute inset-0 bg-black/40 pointer-events-none"></div>
         <div className="relative z-10">
           <Navbar />
           <div className="container mx-auto px-4 py-8">
