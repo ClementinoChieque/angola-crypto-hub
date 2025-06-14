@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -164,7 +163,7 @@ const BankDeposit: React.FC<BankDepositProps> = ({ amount, setAmount, onDeposit 
       
       <Button 
         onClick={handleDeposit}
-        className="w-full bg-crypto-blue hover:bg-crypto-light-blue"
+        className="w-full bg-blue-500 hover:bg-blue-600"
         disabled={!selectedBankInfo}
       >
         {selectedBankInfo ? 'Confirmar Depósito' : 'Conta Indisponível'}
