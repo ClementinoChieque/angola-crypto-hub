@@ -16,6 +16,13 @@ const WithdrawalOptions: React.FC = () => {
   const { toast } = useToast();
   const { balance, setWithdrawalMethod } = useUser();
 
+  // Função para buscar o mínimo de saque dependendo da moeda
+  const getMinimumWithdrawal = () => {
+    if (withdrawalTab === 'USDT') return 10;
+    if (withdrawalTab === 'AO') return 5000;
+    return 0;
+  };
+
   const handleWithdrawal = () => {
     if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
       toast({
@@ -27,6 +34,17 @@ const WithdrawalOptions: React.FC = () => {
     }
 
     const withdrawalAmount = parseFloat(amount);
+    const minimumWithdrawal = getMinimumWithdrawal();
+
+    // Checagem do valor mínimo de saque
+    if (withdrawalAmount < minimumWithdrawal) {
+      toast({
+        title: "Valor mínimo não atingido",
+        description: `O valor mínimo para saque em ${withdrawalTab === 'USDT' ? 'USDT' : 'AKZ'} é ${minimumWithdrawal.toLocaleString()}${withdrawalTab === 'USDT' ? ' USDT' : ' AKZ'}`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (withdrawalAmount > balance.amount) {
       toast({
@@ -78,7 +96,7 @@ const WithdrawalOptions: React.FC = () => {
             </div>
             
             <p className="text-xs text-muted-foreground">
-               Saque| Mínimo: 10 USDT
+               Saque | Mínimo: 10 USDT
             </p>
           </div>
         </TabsContent>
@@ -98,7 +116,7 @@ const WithdrawalOptions: React.FC = () => {
             </div>
             
             <p className="text-xs text-muted-foreground">
-              Saque| Mínimo: 5,000 AKZ
+              Saque | Mínimo: 5.000 AKZ
             </p>
           </div>
         </TabsContent>
@@ -117,7 +135,6 @@ const WithdrawalOptions: React.FC = () => {
         <ul className="list-disc pl-5 mt-2">
           <li>Saques são processados em até 72 horas úteis.</li>
           <li>Certifique-se de inserir as informações corretas.</li>
-          
         </ul>
       </div>
     </div>
@@ -125,3 +142,4 @@ const WithdrawalOptions: React.FC = () => {
 };
 
 export default WithdrawalOptions;
+
