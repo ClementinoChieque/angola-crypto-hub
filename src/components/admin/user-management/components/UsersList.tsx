@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users } from 'lucide-react';
@@ -21,8 +20,10 @@ interface UsersListProps {
   selectedUser: string | null;
   deletingUserId: string | null;
   rewardAmount: string;
+  rewardCurrency: 'USDT' | 'AKZ'; // NOVO
   onSelectUser: (userId: string | null) => void;
   onRewardAmountChange: (amount: string) => void;
+  onRewardCurrencyChange: (currency: 'USDT' | 'AKZ') => void; // NOVO
   onAddReward: (userId: string) => void;
   onToggleQuantification: (userId: string, currentStatus: boolean) => void;
   onDeleteUser: (userId: string) => void;
@@ -42,8 +43,10 @@ const UsersList: React.FC<UsersListProps> = ({
   selectedUser,
   deletingUserId,
   rewardAmount,
+  rewardCurrency, // NOVO
   onSelectUser,
   onRewardAmountChange,
+  onRewardCurrencyChange, // NOVO
   onAddReward,
   onToggleQuantification,
   onDeleteUser,
@@ -92,8 +95,10 @@ const UsersList: React.FC<UsersListProps> = ({
                 isSelected={selectedUser === user.id}
                 isDeletingUser={deletingUserId === user.id}
                 rewardAmount={rewardAmount}
+                rewardCurrency={rewardCurrency} // passa moeda
                 onSelectUser={() => onSelectUser(selectedUser === user.id ? null : user.id)}
                 onRewardAmountChange={onRewardAmountChange}
+                onRewardCurrencyChange={onRewardCurrencyChange} // novo prop
                 onAddReward={onAddReward}
                 onToggleQuantification={onToggleQuantification}
                 onDeleteUser={onDeleteUser}

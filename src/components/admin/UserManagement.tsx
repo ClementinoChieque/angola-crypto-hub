@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useUsers } from './user-management/hooks/useUsers';
 import { useReferralRewards } from './user-management/hooks/useReferralRewards';
@@ -10,6 +9,7 @@ import { UserWithReferrals } from './user-management/types';
 
 const UserManagement: React.FC = () => {
   const [rewardAmount, setRewardAmount] = useState('10');
+  const [rewardCurrency, setRewardCurrency] = useState<'USDT' | 'AKZ'>('USDT'); // NOVO: estado para moeda
   const [selectedUser, setSelectedUser] = useState<UserWithReferrals | null>(null);
   
   const [investmentPlanId, setInvestmentPlanId] = useState<string | null>(null);
@@ -44,9 +44,12 @@ const UserManagement: React.FC = () => {
 
   const handleAddReward = async (userId: string) => {
     const amount = parseFloat(rewardAmount);
-    const success = await addReferralReward(userId, amount);
+    const success = await addReferralReward(userId, amount, rewardCurrency);
     if (success) {
       setSelectedUser(null);
+      setRewardCurrency('USDT');
+      setRewardAmount('10');
+      await refetchUsers();
     }
   };
 
@@ -86,8 +89,10 @@ const UserManagement: React.FC = () => {
         selectedUser={selectedUser?.id || null}
         deletingUserId={deletingUserId}
         rewardAmount={rewardAmount}
+        rewardCurrency={rewardCurrency} // novo prop
         onSelectUser={handleSelectUser}
         onRewardAmountChange={setRewardAmount}
+        onRewardCurrencyChange={setRewardCurrency} // novo prop
         onAddReward={handleAddReward}
         onToggleQuantification={handleToggleQuantification}
         onDeleteUser={handleDeleteUser}

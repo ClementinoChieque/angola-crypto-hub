@@ -12,8 +12,10 @@ interface UserCardProps {
   isSelected: boolean;
   isDeletingUser: boolean;
   rewardAmount: string;
+  rewardCurrency: 'USDT' | 'AKZ'; // NOVO
   onSelectUser: (userId: string | null) => void;
   onRewardAmountChange: (amount: string) => void;
+  onRewardCurrencyChange: (currency: 'USDT' | 'AKZ') => void; // NOVO
   onAddReward: (userId: string) => void;
   onToggleQuantification: (userId: string, currentStatus: boolean) => void;
   onDeleteUser: (userId: string) => void;
@@ -24,8 +26,10 @@ const UserCard: React.FC<UserCardProps> = ({
   isSelected,
   isDeletingUser,
   rewardAmount,
+  rewardCurrency,
   onSelectUser,
   onRewardAmountChange,
+  onRewardCurrencyChange,
   onAddReward,
   onToggleQuantification,
   onDeleteUser
@@ -82,13 +86,31 @@ const UserCard: React.FC<UserCardProps> = ({
         <div className="mt-4 p-4 border-t">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="reward_amount">Valor da Recompensa (USDT)</Label>
+              <Label htmlFor="reward_amount_usdt">Valor da Recompensa</Label>
+              {/* Novas opções de moeda */}
+              <div className="flex gap-2 mb-2">
+                <button
+                  className={`px-2 py-1 rounded ${rewardCurrency === 'USDT' ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+                  onClick={() => onRewardCurrencyChange('USDT')}
+                  type="button"
+                >
+                  USDT
+                </button>
+                <button
+                  className={`px-2 py-1 rounded ${rewardCurrency === 'AKZ' ? "bg-green-600 text-white" : "bg-gray-200"}`}
+                  onClick={() => onRewardCurrencyChange('AKZ')}
+                  type="button"
+                >
+                  AKZ
+                </button>
+              </div>
               <Input
-                id="reward_amount"
+                id="reward_amount_usdt"
                 type="number"
                 value={rewardAmount}
                 onChange={(e) => onRewardAmountChange(e.target.value)}
-                placeholder="10.00"
+                placeholder={rewardCurrency === 'USDT' ? "10.00 (USDT)" : "10000 (AKZ)"}
+                min={0}
               />
             </div>
           </div>
@@ -97,7 +119,7 @@ const UserCard: React.FC<UserCardProps> = ({
               size="sm"
               onClick={() => onAddReward(user.id)}
             >
-              Confirmar Recompensa
+              Confirmar Recompensa em {rewardCurrency}
             </Button>
             <Button
               size="sm"
