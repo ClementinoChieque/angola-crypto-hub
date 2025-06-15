@@ -78,10 +78,8 @@ const WithdrawalOptions: React.FC = () => {
       return;
     }
 
-    // Define o método de saque, sem endereço de carteira ou dados bancários
     const withdrawal_method = withdrawalTab === 'USDT' ? 'crypto' : 'bank';
 
-    // Descontar saldo imediatamente do usuário
     const novoSaldo = balance.amount - withdrawalAmount;
     await updateBalance(novoSaldo);
 
@@ -92,12 +90,11 @@ const WithdrawalOptions: React.FC = () => {
         amount: withdrawalAmount,
         currency: balanceCurrency,
         withdrawal_method,
-        // Não enviamos wallet_address, bank_name, bank_account
         status: 'pending',
       }
     ]);
 
-    // 2. Registrar transação de saque (withdraw)
+    // 2. Registrar transação de saque (não bloqueante)
     const { error: transactionError } = await supabase.from('transactions').insert([
       {
         user_id: user.id,
@@ -107,8 +104,12 @@ const WithdrawalOptions: React.FC = () => {
         description: 'Solicitação de saque',
       }
     ]);
+    if (transactionError) {
+      console.error("Erro ao registrar na tabela transactions:", transactionError.message);
+    }
 
-    if (withdrawalError || transactionError) {
+    if (withdrawalError) {
+      // reverte saldo e notifica
       await updateBalance(balance.amount);
       toast({
         title: "Erro ao registrar saque",
