@@ -170,6 +170,13 @@ const DepositOptionsContainer: React.FC = () => {
             className="max-w-xs"
           />
 
+          {/* Observações logo abaixo do campo de valor */}
+          <div className="bg-blue-50 text-blue-800 rounded mt-3 mb-2 px-3 py-2 text-sm space-y-1">
+            <div>Após o depósito, faça o upload do comprovativo.</div>
+            <div>Verifique cuidadosamente o valor a depositar.</div>
+            <div>A sua conta será habilitada após confirmação.</div>
+          </div>
+
           {/* Botão azul Confirmar Depósito */}
           <Button 
             className="w-full mt-4 bg-blue-500 hover:bg-blue-600"
