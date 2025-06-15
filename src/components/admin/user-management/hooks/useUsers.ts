@@ -12,7 +12,8 @@ export const useUsers = () => {
   const fetchUsers = async () => {
     try {
       console.log("Iniciando fetchUsers...");
-      // Busca usuários nas tabelas permitidas
+
+      // Buscar IDs distintos de usuários a partir de tabelas públicas
       const { data: referralUsers, error: referralError } = await supabase
         .from('referrals')
         .select('referrer_id, created_at')
@@ -40,60 +41,70 @@ export const useUsers = () => {
         console.error('Error fetching quantification users:', quantificationError);
       }
 
-      // Combina ids únicos
+      // Combina IDs únicos de usuários
       const allUserIds = new Set<string>();
 
       if (referralUsers) {
         referralUsers.forEach(ref => allUserIds.add(ref.referrer_id));
       }
-
       if (proofUsers) {
         proofUsers.forEach(proof => allUserIds.add(proof.user_id));
       }
-
       if (quantificationUsers) {
         quantificationUsers.forEach(quant => allUserIds.add(quant.user_id));
       }
 
-      // Busca dados do usuário das tabelas permitidas (NUNCA de users!)
+      // Busca dados agregados por usuário
       const usersWithData = await Promise.all(
         Array.from(allUserIds).map(async (userId) => {
-          // Count referrals
+          // Busca nome/avatar a partir de 'profiles'
+          let phoneDisplay = `Usuário ${userId.slice(0, 8)}...`;
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('username')
+              .eq('id', userId)
+              .maybeSingle();
+            if (profile?.username) {
+              phoneDisplay = profile.username;
+            }
+          } catch (profileErr) {
+            // Não trave por causa disso, só log
+            console.warn(`Falha ao buscar profile de ${userId}:`, profileErr);
+          }
+
+          // Contagem de convites/recompensas
           const { data: referrals } = await supabase
             .from('referrals')
             .select('id')
             .eq('referrer_id', userId);
 
-          // Check quantification status
+          // Quantificação
           const { data: quantification } = await supabase
             .from('user_quantifications')
             .select('is_active, balance, investment_plan_id, daily_limit, plan:investment_plans(*)')
             .eq('user_id', userId)
             .maybeSingle();
 
-          // Consolida a data de criação do usuário
+          // Consolida data de criação (dando prioridade a referral, depois proof, depois quantificação)
           let createdAt = new Date().toISOString();
 
           if (referralUsers) {
             const userReferral = referralUsers.find(ref => ref.referrer_id === userId);
             if (userReferral) createdAt = userReferral.created_at;
           }
-
           if (proofUsers) {
             const userProof = proofUsers.find(proof => proof.user_id === userId);
             if (userProof) createdAt = userProof.created_at;
           }
-
           if (quantificationUsers) {
             const userQuant = quantificationUsers.find(quant => quant.user_id === userId);
             if (userQuant) createdAt = userQuant.created_at;
           }
 
-          // NUNCA TENTE BUSCAR DE 'users', use apenas o placeholder abaixo!
-          // Caso queira o nome, consulte a tabela "profiles" aqui no futuro
           return {
             id: userId,
-            phone: `Usuário ${userId.slice(0, 8)}...`, // Placeholder, não existe acesso a users
+            phone: phoneDisplay, // Nunca tenta buscar de users!
             created_at: createdAt,
             referral_count: referrals?.length || 0,
             quantification_active: quantification?.is_active || false,
@@ -125,3 +136,4 @@ export const useUsers = () => {
 
   return { users, loading, refetchUsers: fetchUsers };
 };
+
