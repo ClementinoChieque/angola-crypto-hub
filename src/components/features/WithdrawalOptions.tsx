@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,9 @@ type WithdrawalMethod = 'USDT' | 'AO';
 
 const WithdrawalOptions: React.FC = () => {
   const [amount, setAmount] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [bankAccount, setBankAccount] = useState('');
   const { toast } = useToast();
   const { balance, setWithdrawalMethod, updateBalance } = useUser();
   const { user } = useAuth(); // para obter user_id
@@ -78,24 +82,40 @@ const WithdrawalOptions: React.FC = () => {
       return;
     }
 
+    // CAMPOS EXTRAS DO FORMULÁRIO
+    let withdrawal_method = '';
+    let send_wallet_address: string | null = null;
+    let send_bank_name: string | null = null;
+    let send_bank_account: string | null = null;
+
+    if (withdrawalTab === 'USDT') {
+      if (!walletAddress) {
+        toast({
+          title: "Carteira obrigatória",
+          description: "Por favor, informe o endereço da sua carteira USDT.",
+          variant: "destructive",
+        });
+        return;
+      }
+      withdrawal_method = 'crypto';
+      send_wallet_address = walletAddress;
+    } else {
+      if (!bankName || !bankAccount) {
+        toast({
+          title: "Dados bancários obrigatórios",
+          description: "Por favor, informe o nome do banco e número da conta.",
+          variant: "destructive",
+        });
+        return;
+      }
+      withdrawal_method = 'bank';
+      send_bank_name = bankName;
+      send_bank_account = bankAccount;
+    }
+
     // Descontar saldo imediatamente do usuário
     const novoSaldo = balance.amount - withdrawalAmount;
     await updateBalance(novoSaldo);
-
-    // Definir dados adicionais
-    let withdrawal_method = '';
-    let wallet_address = null;
-    let bank_name = null;
-    let bank_account = null;
-
-    if (withdrawalTab === 'USDT') {
-      withdrawal_method = 'crypto';
-      wallet_address = null;
-    } else {
-      withdrawal_method = 'bank';
-      bank_name = null;
-      bank_account = null;
-    }
 
     // 1. Registrar solicitação de saque
     const { error: withdrawalError, data: withdrawalData } = await supabase.from('withdrawal_requests').insert([
@@ -104,9 +124,9 @@ const WithdrawalOptions: React.FC = () => {
         amount: withdrawalAmount,
         currency: balanceCurrency,
         withdrawal_method,
-        wallet_address,
-        bank_name,
-        bank_account,
+        wallet_address: send_wallet_address,
+        bank_name: send_bank_name,
+        bank_account: send_bank_account,
         status: 'pending',
       }
     ]);
@@ -137,15 +157,17 @@ const WithdrawalOptions: React.FC = () => {
         description: "Sua solicitação de saque foi enviada e aguarda aprovação do administrador.",
       });
       setAmount('');
+      setWalletAddress('');
+      setBankName('');
+      setBankAccount('');
     }
   };
 
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4 text-center">Sacar</h2>
-
       <BalanceHeader amount={balance.amount} currency={balance.currency} />
-      
+
       <Tabs value={withdrawalTab} onValueChange={() => {}} className="w-full">
         <TabsList className="grid grid-cols-2 mb-4">
           <TabsTrigger value="USDT" disabled={balanceCurrency !== 'USDT'}>
@@ -161,6 +183,8 @@ const WithdrawalOptions: React.FC = () => {
             <USDTWithdrawalForm
               amount={amount}
               onAmountChange={setAmount}
+              walletAddress={walletAddress}
+              onWalletAddressChange={setWalletAddress}
             />
           )}
         </TabsContent>
@@ -169,22 +193,27 @@ const WithdrawalOptions: React.FC = () => {
             <AOWithdrawalForm
               amount={amount}
               onAmountChange={setAmount}
+              bankName={bankName}
+              onBankNameChange={setBankName}
+              bankAccount={bankAccount}
+              onBankAccountChange={setBankAccount}
             />
           )}
         </TabsContent>
       </Tabs>
-      
-      <Button 
+
+      <Button
         onClick={handleWithdrawal}
         className="w-full mt-6 bg-blue-500 hover:bg-blue-600"
       >
         <ArrowDown size={16} className="mr-2" />
         Solicitar Saque
       </Button>
-      
+
       <WithdrawalNotes />
     </div>
   );
 };
 
 export default WithdrawalOptions;
+
