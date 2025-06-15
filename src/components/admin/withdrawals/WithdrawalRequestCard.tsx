@@ -61,6 +61,19 @@ const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => 
   const [adminNotes, setAdminNotes] = useState("");
   const { toast } = useToast();
 
+  // Format date and hour as "dd/MM/yyyy, HH:mm:ss"
+  const formattedDateTime = new Date(request.created_at).toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
+  // Show first 8 characters of user_id (as ID: xxxxxxxx...)
+  const userIdShort = request.user_id ? `${request.user_id.slice(0, 8)}...` : "";
+
   return (
     <div className="border rounded-lg p-4 mb-4">
       <div className="flex justify-between items-start mb-3">
@@ -69,7 +82,10 @@ const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => 
             {Number(request.amount).toLocaleString()} {request.currency}
           </div>
           <div className="text-sm text-gray-500">
-            {request.withdrawal_method} • {new Date(request.created_at).toLocaleDateString()}
+            {request.withdrawal_method} • {formattedDateTime}
+          </div>
+          <div className="text-xs text-gray-400">
+            ID: {userIdShort}
           </div>
           {request.wallet_address && (
             <div className="text-xs text-gray-400 mt-1">
@@ -84,7 +100,6 @@ const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => 
         </div>
         <div className="flex flex-col items-end gap-2">{getStatusBadge(request.status)}</div>
       </div>
-
       {request.admin_notes && (
         <div className="bg-gray-50 p-2 rounded text-sm mb-3">
           <strong>Notas do Admin:</strong> {request.admin_notes}
@@ -171,4 +186,3 @@ const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => 
 };
 
 export default WithdrawalRequestCard;
-
