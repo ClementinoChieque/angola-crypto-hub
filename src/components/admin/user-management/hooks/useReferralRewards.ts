@@ -1,8 +1,21 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ReferralReward } from '../types';
+
+function isReferralReward(obj: any): obj is ReferralReward {
+  return (
+    obj &&
+    typeof obj.id === 'string' &&
+    typeof obj.referrer_id === 'string' &&
+    typeof obj.referred_user_id === 'string' &&
+    typeof obj.reward_amount === 'number' &&
+    typeof obj.reward_currency === 'string' &&
+    typeof obj.status === 'string' &&
+    typeof obj.created_at === 'string' &&
+    typeof obj.updated_at === 'string'
+  );
+}
 
 export const useReferralRewards = () => {
   const [referralRewards, setReferralRewards] = useState<ReferralReward[]>([]);
@@ -39,20 +52,9 @@ export const useReferralRewards = () => {
         setReferralRewards([]);
         return;
       }
-      // Only include objects that have required fields with correct types
-      setReferralRewards(
-        data.filter(
-          (r) => r &&
-            typeof r.id === "string" &&
-            typeof r.referrer_id === "string" &&
-            typeof r.referred_user_id === "string" &&
-            typeof r.reward_amount === "number" &&
-            typeof r.reward_currency === "string" &&
-            typeof r.status === "string" &&
-            typeof r.created_at === "string" &&
-            typeof r.updated_at === "string"
-        ) as ReferralReward[]
-      );
+      // Only keep items that look like a ReferralReward
+      const rewards: ReferralReward[] = data.filter(isReferralReward);
+      setReferralRewards(rewards);
     } catch (err) {
       console.error('Error fetching referral rewards [catch]:', err);
       toast({
