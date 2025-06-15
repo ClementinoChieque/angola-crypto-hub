@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -62,6 +61,13 @@ const TransactionHistory: React.FC = () => {
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+
+      // LOGS PARA DEBUG
+      console.log('[TransactionHistory] user.id:', user.id);
+      console.log('[TransactionHistory] txError:', txError);
+      console.log('[TransactionHistory] wdError:', wdError);
+      console.log('[TransactionHistory] txs:', txs);
+      console.log('[TransactionHistory] withdrawals:', wd);
 
       const transactionsData = Array.isArray(txs) ? txs : [];
       const withdrawalsData = Array.isArray(wd) ? wd : [];
@@ -148,4 +154,3 @@ const TransactionHistory: React.FC = () => {
 };
 
 export default TransactionHistory;
-
