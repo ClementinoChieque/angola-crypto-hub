@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -120,7 +121,7 @@ export const useUserActions = () => {
 
     setDeletingUserId(userId);
     try {
-      // Delete user-related data in the correct order (children first, then parent)
+      // IMPORTANTE: Não tenta deletar da tabela auth.users - apenas tabelas públicas
       
       // Delete referral rewards
       await supabase
@@ -176,23 +177,26 @@ export const useUserActions = () => {
         .delete()
         .eq('user_id', userId);
 
-      // Delete profile
+      // Delete profile (tabela pública)
       await supabase
         .from('profiles')
         .delete()
         .eq('id', userId);
 
+      // NOTA: NÃO deletamos da tabela auth.users pois não temos permissão
+      // O usuário permanecerá na auth mas sem dados associados
+
       toast({
-        title: "Usuário eliminado",
-        description: "O usuário e todos os seus dados foram eliminados com sucesso"
+        title: "Dados do usuário eliminados",
+        description: "Todos os dados do usuário foram eliminados com sucesso"
       });
 
       return true;
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error('Error deleting user data:', error);
       toast({
-        title: "Erro ao eliminar usuário",
-        description: "Não foi possível eliminar o usuário",
+        title: "Erro ao eliminar dados do usuário",
+        description: "Não foi possível eliminar os dados do usuário",
         variant: "destructive"
       });
       return false;

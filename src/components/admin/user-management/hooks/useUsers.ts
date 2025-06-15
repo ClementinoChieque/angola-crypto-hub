@@ -13,7 +13,7 @@ export const useUsers = () => {
     try {
       console.log("Iniciando fetchUsers...");
 
-      // Buscar IDs distintos de usuários a partir de tabelas públicas
+      // Buscar IDs distintos de usuários a partir de tabelas públicas APENAS
       const { data: referralUsers, error: referralError } = await supabase
         .from('referrals')
         .select('referrer_id, created_at')
@@ -54,39 +54,55 @@ export const useUsers = () => {
         quantificationUsers.forEach(quant => allUserIds.add(quant.user_id));
       }
 
-      // Busca dados agregados por usuário
+      // Busca dados agregados por usuário - SEM ACESSAR TABELA users OU auth.users
       const usersWithData = await Promise.all(
         Array.from(allUserIds).map(async (userId) => {
-          // Busca nome/avatar a partir de 'profiles'
+          // Busca nome/avatar APENAS a partir de 'profiles' (tabela pública)
           let phoneDisplay = `Usuário ${userId.slice(0, 8)}...`;
           try {
-            const { data: profile } = await supabase
+            const { data: profile, error: profileError } = await supabase
               .from('profiles')
               .select('username')
               .eq('id', userId)
               .maybeSingle();
-            if (profile?.username) {
+            
+            if (profileError) {
+              console.warn(`Erro ao buscar profile de ${userId}:`, profileError);
+            } else if (profile?.username) {
               phoneDisplay = profile.username;
             }
           } catch (profileErr) {
-            // Não trave por causa disso, só log
             console.warn(`Falha ao buscar profile de ${userId}:`, profileErr);
           }
 
           // Contagem de convites/recompensas
-          const { data: referrals } = await supabase
+          const { data: referrals, error: referralsError } = await supabase
             .from('referrals')
             .select('id')
             .eq('referrer_id', userId);
 
-          // Quantificação
-          const { data: quantification } = await supabase
+          if (referralsError) {
+            console.warn(`Erro ao buscar referrals para ${userId}:`, referralsError);
+          }
+
+          // Quantificação com join seguro para investment_plans
+          const { data: quantification, error: quantError } = await supabase
             .from('user_quantifications')
-            .select('is_active, balance, investment_plan_id, daily_limit, plan:investment_plans(*)')
+            .select(`
+              is_active, 
+              balance, 
+              investment_plan_id, 
+              daily_limit,
+              plan:investment_plans(*)
+            `)
             .eq('user_id', userId)
             .maybeSingle();
 
-          // Consolida data de criação (dando prioridade a referral, depois proof, depois quantificação)
+          if (quantError) {
+            console.warn(`Erro ao buscar quantification para ${userId}:`, quantError);
+          }
+
+          // Consolida data de criação (prioridade: referral > proof > quantificação)
           let createdAt = new Date().toISOString();
 
           if (referralUsers) {
@@ -104,7 +120,7 @@ export const useUsers = () => {
 
           return {
             id: userId,
-            phone: phoneDisplay, // Nunca tenta buscar de users!
+            phone: phoneDisplay, // NUNCA busca de auth.users!
             created_at: createdAt,
             referral_count: referrals?.length || 0,
             quantification_active: quantification?.is_active || false,
@@ -117,7 +133,7 @@ export const useUsers = () => {
       );
 
       setUsers(usersWithData);
-      console.log("usersWithData retornados:", usersWithData.map(u => u.id));
+      console.log("usersWithData retornados:", usersWithData.length, "usuários");
     } catch (error: any) {
       console.error('Error fetching users:', error);
       toast({
@@ -136,4 +152,3 @@ export const useUsers = () => {
 
   return { users, loading, refetchUsers: fetchUsers };
 };
-
