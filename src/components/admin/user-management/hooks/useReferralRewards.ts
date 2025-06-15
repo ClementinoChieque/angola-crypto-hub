@@ -38,8 +38,20 @@ export const useReferralRewards = () => {
         setReferralRewards([]);
         return;
       }
-      // Normaliza e filtra possíveis entradas inválidas
-      setReferralRewards(data.filter((r) => r && r.id && r.reward_amount != null));
+      // Evita crash de tipos: só mantém itens válidos!
+      const validRewards: ReferralReward[] = data.filter(
+        (r): r is ReferralReward =>
+          !!r &&
+          typeof r.id === "string" &&
+          typeof r.referrer_id === "string" &&
+          typeof r.referred_user_id === "string" &&
+          typeof r.reward_amount === "number" &&
+          typeof r.reward_currency === "string" &&
+          typeof r.status === "string" &&
+          typeof r.created_at === "string" &&
+          typeof r.updated_at === "string"
+      );
+      setReferralRewards(validRewards);
     } catch (err) {
       console.error('Error fetching referral rewards [catch]:', err);
       toast({
