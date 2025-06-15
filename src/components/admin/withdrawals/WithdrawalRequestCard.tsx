@@ -22,7 +22,6 @@ export interface WithdrawalRequest {
 interface Props {
   request: WithdrawalRequest;
   onUpdateStatus: (id: string, status: string, notes?: string) => void;
-  onDelete?: (id: string) => void;
 }
 
 const getStatusBadge = (status: string) => {
@@ -56,7 +55,7 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus, onDelete }) => {
+const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => {
   const [showNotes, setShowNotes] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
   const { toast } = useToast();
@@ -100,20 +99,6 @@ const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus, onDel
         </div>
         <div className="flex flex-col items-end gap-2">
           {getStatusBadge(request.status)}
-          {/* Botão de deletar (apenas admin deve ver, mas não temos contexto aqui, então sempre mostra no admin) */}
-          {onDelete && (
-            <button
-              className="text-red-500 hover:text-red-700 transition-colors p-1 bg-transparent rounded-full"
-              aria-label="Eliminar Solicitação"
-              onClick={() => {
-                if (window.confirm("Tem certeza que deseja eliminar esta solicitação? Esta ação não pode ser desfeita.")) {
-                  onDelete(request.id);
-                }
-              }}
-            >
-              <Trash size={20} />
-            </button>
-          )}
         </div>
       </div>
       {request.admin_notes && (

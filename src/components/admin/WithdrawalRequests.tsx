@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign } from 'lucide-react';
@@ -5,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import WithdrawalRequestCard, { WithdrawalRequest } from './withdrawals/WithdrawalRequestCard';
-import { Trash } from "lucide-react";
+// Removido: import { Trash } from "lucide-react";
 
 const fetchWithdrawalRequests = async (): Promise<WithdrawalRequest[]> => {
   const { data, error } = await supabase
@@ -33,13 +34,7 @@ const updateWithdrawalStatus = async ({
   if (error) throw error;
 };
 
-const deleteWithdrawalRequest = async (id: string) => {
-  const { error } = await supabase
-    .from('withdrawal_requests')
-    .delete()
-    .eq('id', id);
-  if (error) throw error;
-};
+// Removido: deleteWithdrawalRequest()
 
 const WithdrawalRequests: React.FC = () => {
   const { toast } = useToast();
@@ -64,23 +59,7 @@ const WithdrawalRequests: React.FC = () => {
     }
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteWithdrawalRequest,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['withdrawal_requests'] });
-      toast({
-        title: "Solicitação eliminada",
-        description: "A solicitação de saque foi removida com sucesso.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Erro ao eliminar",
-        description: "Não foi possível eliminar a solicitação.",
-        variant: "destructive"
-      });
-    }
-  });
+  // Removido: deleteMutation
 
   const handleUpdateStatus = (requestId: string, status: string, notes?: string) => {
     mutation.mutate({
@@ -94,9 +73,7 @@ const WithdrawalRequests: React.FC = () => {
     });
   };
 
-  const handleDelete = (id: string) => {
-    deleteMutation.mutate(id);
-  };
+  // Removido: handleDelete
 
   return (
     <Card>
@@ -124,7 +101,6 @@ const WithdrawalRequests: React.FC = () => {
                 key={request.id}
                 request={request}
                 onUpdateStatus={handleUpdateStatus}
-                onDelete={handleDelete}
               />
             ))
           )}
