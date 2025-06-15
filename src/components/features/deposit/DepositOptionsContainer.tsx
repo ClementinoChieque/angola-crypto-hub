@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import UploadProofContainer from '@/components/features/uploadproof/UploadProofContainer';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 type DepositType = 'USDT' | 'AKZ';
 
@@ -30,6 +30,7 @@ const DepositOptionsContainer: React.FC = () => {
   const [walletsLoading, setWalletsLoading] = useState(false);
   const [banksLoading, setBanksLoading] = useState(false);
   const [amount, setAmount] = useState<string>('');
+  const { toast } = useToast();
 
   useEffect(() => {
     if (selected === 'USDT') {
@@ -74,6 +75,11 @@ const DepositOptionsContainer: React.FC = () => {
     // Aqui poderia acionar uma toast ou lógica existente futuramente
     // Por ora, apenas console log para marcação visual
     console.log('Depósito confirmado:', { tipo: selected, valor: amount });
+    toast({
+      title: 'Confirmação Recebida',
+      description: `Sua intenção de depósito de ${amount} ${selected} foi registrada. Prossiga com o upload do comprovativo.`,
+    });
+    setAmount('');
   };
 
   return (
