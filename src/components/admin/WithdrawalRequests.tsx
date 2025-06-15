@@ -6,72 +6,86 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle, XCircle, Clock, DollarSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WithdrawalRequest {
   id: string;
   amount: number;
   currency: string;
   withdrawal_method: string;
-  wallet_address?: string;
-  bank_name?: string;
-  bank_account?: string;
+  wallet_address?: string | null;
+  bank_name?: string | null;
+  bank_account?: string | null;
   status: string;
-  admin_notes?: string;
+  admin_notes?: string | null;
   created_at: string;
   user_id: string;
 }
 
+const fetchWithdrawalRequests = async (): Promise<WithdrawalRequest[]> => {
+  const { data, error } = await supabase
+    .from('withdrawal_requests')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data as WithdrawalRequest[];
+};
+
+const updateWithdrawalStatus = async ({
+  id,
+  status,
+  notes,
+}: {
+  id: string;
+  status: string;
+  notes?: string;
+}) => {
+  const { error } = await supabase
+    .from('withdrawal_requests')
+    .update({ status, admin_notes: notes ?? null })
+    .eq('id', id);
+
+  if (error) throw error;
+};
+
 const WithdrawalRequests: React.FC = () => {
-  const [requests, setRequests] = useState<WithdrawalRequest[]>([
-    {
-      id: '1',
-      amount: 100,
-      currency: 'USDT',
-      withdrawal_method: 'crypto',
-      wallet_address: 'TKzxdSv2FZKQrEqkKVgp5DcwEXBEKMg2Ax',
-      status: 'pending',
-      created_at: new Date().toISOString(),
-      user_id: 'user123'
-    },
-    {
-      id: '2',
-      amount: 50000,
-      currency: 'AKZ',
-      withdrawal_method: 'bank',
-      bank_name: 'Banco BAI',
-      bank_account: '123456789',
-      status: 'approved',
-      created_at: new Date().toISOString(),
-      user_id: 'user456'
-    }
-  ]);
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   const [adminNotes, setAdminNotes] = useState('');
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const updateRequestStatus = async (requestId: string, status: string, notes?: string) => {
-    try {
-      setRequests(prev => prev.map(request =>
-        request.id === requestId
-          ? { ...request, status, admin_notes: notes }
-          : request
-      ));
+  const { data: requests, isLoading, error } = useQuery({
+    queryKey: ['withdrawal_requests'],
+    queryFn: fetchWithdrawalRequests,
+  });
 
-      toast({
-        title: "Status atualizado",
-        description: `Solicitação ${status === 'approved' ? 'aprovada' : status === 'rejected' ? 'rejeitada' : 'marcada como completa'}`
-      });
-
-      setSelectedRequest(null);
-      setAdminNotes('');
-    } catch (error) {
-      console.error('Error updating request status:', error);
+  const mutation = useMutation({
+    mutationFn: updateWithdrawalStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['withdrawal_requests'] });
+    },
+    onError: () => {
       toast({
         title: "Erro ao atualizar status",
         description: "Não foi possível atualizar o status da solicitação",
         variant: "destructive"
       });
     }
+  });
+
+  const handleUpdateStatus = (requestId: string, status: string, notes?: string) => {
+    mutation.mutate({
+      id: requestId,
+      status,
+      notes
+    });
+    toast({
+      title: "Status atualizado",
+      description: `Solicitação ${status === 'approved' ? 'aprovada' : status === 'rejected' ? 'rejeitada' : 'marcada como completa'}`
+    });
+    setSelectedRequest(null);
+    setAdminNotes('');
   };
 
   const getStatusBadge = (status: string) => {
@@ -99,12 +113,22 @@ const WithdrawalRequests: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {requests.map((request) => (
+          {isLoading && (
+            <div className="text-center py-8 text-gray-500">
+              Carregando solicitações de saque...
+            </div>
+          )}
+          {error && (
+            <div className="text-center py-8 text-red-500">
+              Erro ao carregar solicitações de saque.
+            </div>
+          )}
+          {requests && requests.length > 0 && requests.map((request) => (
             <div key={request.id} className="border rounded-lg p-4">
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <div className="font-medium text-lg">
-                    {request.amount.toLocaleString()} {request.currency}
+                    {Number(request.amount).toLocaleString()} {request.currency}
                   </div>
                   <div className="text-sm text-gray-500">
                     {request.withdrawal_method} • {new Date(request.created_at).toLocaleDateString()}
@@ -142,7 +166,7 @@ const WithdrawalRequests: React.FC = () => {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => updateRequestStatus(request.id, 'approved')}
+                    onClick={() => handleUpdateStatus(request.id, 'approved')}
                   >
                     <CheckCircle size={16} className="mr-1" />
                     Aprovar
@@ -150,7 +174,7 @@ const WithdrawalRequests: React.FC = () => {
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => updateRequestStatus(request.id, 'rejected')}
+                    onClick={() => handleUpdateStatus(request.id, 'rejected')}
                   >
                     <XCircle size={16} className="mr-1" />
                     Rejeitar
@@ -162,7 +186,7 @@ const WithdrawalRequests: React.FC = () => {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => updateRequestStatus(request.id, 'completed')}
+                  onClick={() => handleUpdateStatus(request.id, 'completed')}
                   className="mt-3"
                 >
                   Marcar como Completo
@@ -180,14 +204,14 @@ const WithdrawalRequests: React.FC = () => {
                   <div className="flex gap-2">
                     <Button
                       size="sm"
-                      onClick={() => updateRequestStatus(request.id, 'approved', adminNotes)}
+                      onClick={() => handleUpdateStatus(request.id, 'approved', adminNotes)}
                     >
                       Aprovar com Notas
                     </Button>
                     <Button
                       size="sm"
                       variant="destructive"
-                      onClick={() => updateRequestStatus(request.id, 'rejected', adminNotes)}
+                      onClick={() => handleUpdateStatus(request.id, 'rejected', adminNotes)}
                     >
                       Rejeitar com Notas
                     </Button>
@@ -207,7 +231,7 @@ const WithdrawalRequests: React.FC = () => {
             </div>
           ))}
 
-          {requests.length === 0 && (
+          {requests && requests.length === 0 && !isLoading && (
             <div className="text-center py-8 text-gray-500">
               Nenhuma solicitação de saque encontrada
             </div>
@@ -219,3 +243,4 @@ const WithdrawalRequests: React.FC = () => {
 };
 
 export default WithdrawalRequests;
+
