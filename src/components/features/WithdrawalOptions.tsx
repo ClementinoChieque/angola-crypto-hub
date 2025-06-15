@@ -29,7 +29,7 @@ const WithdrawalOptions: React.FC = () => {
 
   // Função para buscar o mínimo de saque dependendo da moeda
   const getMinimumWithdrawal = () => {
-    if (withdrawalTab === 'USDT') return 10;
+    if (withdrawalTab === 'USDT') return 5;
     if (withdrawalTab === 'AO') return 5000;
     return 0;
   };
@@ -112,7 +112,7 @@ const WithdrawalOptions: React.FC = () => {
               </div>
               
               <p className="text-xs text-muted-foreground">
-                Saque | Mínimo: 10 USDT
+                Saque | Mínimo: 5 USDT
               </p>
             </div>
           )}
@@ -161,3 +161,4 @@ const WithdrawalOptions: React.FC = () => {
 };
 
 export default WithdrawalOptions;
+
