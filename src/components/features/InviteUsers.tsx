@@ -172,7 +172,7 @@ const InviteUsers: React.FC = () => {
         <ul className="text-[10px] md:text-sm space-y-0.5 md:space-y-1">
           <li>• Ganhe 5% do primeiro depósito de cada amigo</li>
           
-          {!isMobile ?  : null}
+          {!isMobile ? <li></li> : null}
         </ul>
       </div>
     </div>
