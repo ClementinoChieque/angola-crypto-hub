@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import UploadProofContainer from '@/components/features/uploadproof/UploadProofContainer';
 import { useDepositData } from './hooks/useDepositData';
-import type { DepositType } from './types';
+import type { DepositType } from './types/index';
 import DepositMethodSelector from './components/DepositMethodSelector';
 import UsdtWalletList from './components/UsdtWalletList';
 import BankAccountList from './components/BankAccountList';

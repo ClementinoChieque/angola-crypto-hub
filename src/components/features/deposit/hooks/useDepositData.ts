@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { DepositType, UsdtWallet, BankAccount } from '../types';
+import type { DepositType, UsdtWallet, BankAccount } from '../types/index';
 
 export const useDepositData = (selected: DepositType | null) => {
   const [usdtWallets, setUsdtWallets] = useState<UsdtWallet[]>([]);
