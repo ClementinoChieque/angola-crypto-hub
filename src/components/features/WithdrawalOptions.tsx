@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +14,7 @@ type WithdrawalMethod = 'USDT' | 'AO';
 const WithdrawalOptions: React.FC = () => {
   const [amount, setAmount] = useState('');
   const { toast } = useToast();
-  const { balance, setWithdrawalMethod } = useUser();
+  const { balance, setWithdrawalMethod, updateBalance } = useUser();
   const { user } = useAuth(); // para obter user_id
 
   const balanceCurrency = balance.currency; // 'AKZ' ou 'USDT'
@@ -75,6 +74,10 @@ const WithdrawalOptions: React.FC = () => {
       return;
     }
 
+    // Descontar saldo imediatamente do usuário
+    const novoSaldo = balance.amount - withdrawalAmount;
+    await updateBalance(novoSaldo);
+
     // Definir dados adicionais
     let withdrawal_method = '';
     let wallet_address = null;
@@ -83,18 +86,16 @@ const WithdrawalOptions: React.FC = () => {
 
     if (withdrawalTab === 'USDT') {
       withdrawal_method = 'crypto';
-      // você pode coletar/endurecer wallet_address conforme seu fluxo
       wallet_address = null;
     } else {
       withdrawal_method = 'bank';
-      // você pode coletar/endurecer dados bancários conforme seu fluxo
       bank_name = null;
       bank_account = null;
     }
 
     const { error } = await supabase.from('withdrawal_requests').insert([
       {
-        user_id: user.id, // deve ser o id do perfil
+        user_id: user.id,
         amount: withdrawalAmount,
         currency: balanceCurrency,
         withdrawal_method,
@@ -106,6 +107,8 @@ const WithdrawalOptions: React.FC = () => {
     ]);
 
     if (error) {
+      // Se der erro ao registrar solicitação, estornamos o saldo
+      await updateBalance(balance.amount);
       toast({
         title: "Erro ao registrar solicitação",
         description: "Não foi possível registrar seu pedido de saque. Tente novamente.",
@@ -205,4 +208,3 @@ const WithdrawalOptions: React.FC = () => {
 };
 
 export default WithdrawalOptions;
-
