@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import UploadProofContainer from '@/components/features/uploadproof/UploadProofContainer';
 import { supabase } from '@/integrations/supabase/client';
 
 type DepositType = 'USDT' | 'AKZ';
@@ -27,8 +29,8 @@ const DepositOptionsContainer: React.FC = () => {
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
   const [walletsLoading, setWalletsLoading] = useState(false);
   const [banksLoading, setBanksLoading] = useState(false);
+  const [amount, setAmount] = useState<string>('');
 
-  // Fetch USDT wallets when USDT is selected
   useEffect(() => {
     if (selected === 'USDT') {
       const fetchWallets = async () => {
@@ -48,7 +50,6 @@ const DepositOptionsContainer: React.FC = () => {
     }
   }, [selected]);
 
-  // Fetch bank accounts when AKZ is selected
   useEffect(() => {
     if (selected === 'AKZ') {
       const fetchBanks = async () => {
@@ -88,6 +89,7 @@ const DepositOptionsContainer: React.FC = () => {
         </Button>
       </div>
 
+      {/* Listagem das opções administrativas */}
       {selected === 'USDT' && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold mb-2">Carteiras USDT Disponíveis</h3>
@@ -142,6 +144,31 @@ const DepositOptionsContainer: React.FC = () => {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Campo de valor do depósito */}
+      {selected && (
+        <div className="mt-6">
+          <label className="block text-sm font-medium mb-1">
+            Valor do Depósito {selected === 'USDT' ? '(USDT)' : '(AKZ)'}
+          </label>
+          <Input
+            type="number"
+            min="0"
+            inputMode="decimal"
+            placeholder={selected === 'USDT' ? 'Digite o valor em USDT' : 'Digite o valor em AKZ'}
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+            className="max-w-xs"
+          />
+        </div>
+      )}
+
+      {/* Upload de comprovativo */}
+      {selected && (
+        <div className="mt-6">
+          <UploadProofContainer />
         </div>
       )}
     </div>
