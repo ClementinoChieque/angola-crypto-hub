@@ -8,6 +8,10 @@ import { useUser } from '@/context/UserContext';
 import { ArrowDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
+import BalanceHeader from './withdrawal/BalanceHeader';
+import WithdrawalNotes from './withdrawal/WithdrawalNotes';
+import USDTWithdrawalForm from './withdrawal/USDTWithdrawalForm';
+import AOWithdrawalForm from './withdrawal/AOWithdrawalForm';
 
 type WithdrawalMethod = 'USDT' | 'AO';
 
@@ -127,10 +131,7 @@ const WithdrawalOptions: React.FC = () => {
     <div>
       <h2 className="text-xl font-semibold mb-4 text-center">Sacar</h2>
 
-      <div className="bg-muted p-4 rounded-md text-center mb-4">
-        <p className="text-sm">Saldo Disponível</p>
-        <p className="font-bold text-xl">{balance.amount.toLocaleString()} {balance.currency}</p>
-      </div>
+      <BalanceHeader amount={balance.amount} currency={balance.currency} />
       
       <Tabs value={withdrawalTab} onValueChange={() => {}} className="w-full">
         <TabsList className="grid grid-cols-2 mb-4">
@@ -141,48 +142,21 @@ const WithdrawalOptions: React.FC = () => {
             Kwanza (AKZ)
           </TabsTrigger>
         </TabsList>
-        
-        {/* USDT Withdrawal */}
+
         <TabsContent value="USDT">
           {balanceCurrency === 'USDT' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="amount-usdt">Valor (USDT)</Label>
-                <Input
-                  id="amount-usdt"
-                  type="number"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              </div>
-              
-              <p className="text-xs text-muted-foreground">
-                Saque | Mínimo: 5 USDT
-              </p>
-            </div>
+            <USDTWithdrawalForm
+              amount={amount}
+              onAmountChange={setAmount}
+            />
           )}
         </TabsContent>
-        
-        {/* AO Withdrawal */}
         <TabsContent value="AO">
           {balanceCurrency === 'AKZ' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="amount-ao">Valor (AKZ)</Label>
-                <Input
-                  id="amount-ao"
-                  type="number"
-                  placeholder="0.00"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                />
-              </div>
-              
-              <p className="text-xs text-muted-foreground">
-                Saque | Mínimo: 5.000 AKZ
-              </p>
-            </div>
+            <AOWithdrawalForm
+              amount={amount}
+              onAmountChange={setAmount}
+            />
           )}
         </TabsContent>
       </Tabs>
@@ -195,14 +169,7 @@ const WithdrawalOptions: React.FC = () => {
         Solicitar Saque
       </Button>
       
-      <div className="mt-6 text-sm text-muted-foreground">
-        <p>Observações:</p>
-        <ul className="list-disc pl-5 mt-2">
-          <li>Saques são processados em até 72 horas úteis.</li>
-          <li>Certifique-se de inserir as informações corretas.</li>
-          <li>Todos os pedidos passam por aprovação manual do administrador.</li>
-        </ul>
-      </div>
+      <WithdrawalNotes />
     </div>
   );
 };
