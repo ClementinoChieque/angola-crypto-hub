@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -9,13 +10,19 @@ import ImagePreview from './ImagePreview';
 import UploadArea from './UploadArea';
 import ProofUploadList from './ProofUploadList';
 
+// ADDED: Props interface
+interface UploadProofContainerProps {
+  onUpload?: (url: string) => void;
+}
+
 interface ProofUpload {
   imageUrl: string;
   timestamp: Date;
   verified: boolean;
 }
 
-const UploadProofContainer: React.FC = () => {
+// CHANGED: Accept props
+const UploadProofContainer: React.FC<UploadProofContainerProps> = ({ onUpload }) => {
   const {
     dragActive,
     previewUrl,
@@ -109,6 +116,11 @@ const UploadProofContainer: React.FC = () => {
         title: "Comprovativo enviado",
         description: "Seu comprovativo de pagamento foi enviado com sucesso e está sendo analisado",
       });
+
+      // ADDED: Call onUpload!
+      if (onUpload) {
+        onUpload(previewUrl);
+      }
       
       setPreviewUrl(null);
       
@@ -182,3 +194,4 @@ const UploadProofContainer: React.FC = () => {
 };
 
 export default UploadProofContainer;
+
