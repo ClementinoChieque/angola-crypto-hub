@@ -5,7 +5,8 @@ import {
   UserPlus,
   Users,
   TrendingUp,
-  Plus
+  Plus,
+  telegram
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -34,6 +35,7 @@ const Dashboard: React.FC = () => {
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
+    { id: 'suporte', label: 'Suporte', icon: telegram({ size: isMobile ? 16 : 20 }), link: 'https://web.telegram.org/a/' },
   ];
 
   return (
@@ -82,22 +84,37 @@ const Dashboard: React.FC = () => {
           <Card className="p-6 bg-white/90 backdrop-blur-sm">
             <div className="flex flex-col space-y-2">
               <h3 className="font-semibold text-lg mb-4 text-primary">Menu Principal</h3>
-              {menuItems.map((item) => (
-                <button
-                  key={item.id}
-                  className={`flex items-center gap-3 p-4 rounded-xl transition-all duration-300 cursor-pointer ${
-                    activeTab === item.id 
-                      ? 'bg-primary/10 text-primary font-semibold' 
-                      : 'hover:bg-gray-50'
-                  }`}
-                  onClick={() => setActiveTab(item.id)}
-                >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100">
-                    {item.icon}
-                  </div>
-                  <span className="flex-1 text-left">{item.label}</span>
-                </button>
-              ))}
+              {menuItems.map((item) =>
+                item.id === 'suporte' ? (
+                  <a
+                    key={item.id}
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center gap-3 p-4 rounded-xl transition-all duration-300 cursor-pointer hover:bg-gray-50 text-primary font-semibold`}
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100">
+                      {item.icon}
+                    </div>
+                    <span className="flex-1 text-left">{item.label}</span>
+                  </a>
+                ) : (
+                  <button
+                    key={item.id}
+                    className={`flex items-center gap-3 p-4 rounded-xl transition-all duration-300 cursor-pointer ${
+                      activeTab === item.id
+                        ? 'bg-primary/10 text-primary font-semibold'
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => setActiveTab(item.id)}
+                  >
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100">
+                      {item.icon}
+                    </div>
+                    <span className="flex-1 text-left">{item.label}</span>
+                  </button>
+                )
+              )}
             </div>
           </Card>
         </div>
