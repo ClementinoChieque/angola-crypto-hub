@@ -1,11 +1,12 @@
 
+import React from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Hook para promover um usuário a admin pelo número de telefone.
  * Uso: const { promoteToAdmin, loading } = usePromoteToAdmin();
- *       await promoteToAdmin("+244947896752");
+ *       await promoteToAdmin("244947896752");
  */
 export function usePromoteToAdmin() {
   const { toast } = useToast();
@@ -14,21 +15,24 @@ export function usePromoteToAdmin() {
   const promoteToAdmin = async (phone: string) => {
     setLoading(true);
     try {
-      // Busca user pelo telefone
+      // Busca user pelo telefone em profiles (username pode ser com ou sem +)
+      const possiblePhones = [phone, "+" + phone];
       const { data: users, error: userErr } = await supabase
         .from("profiles")
         .select("id")
-        .eq("username", phone)
+        .in("username", possiblePhones)
         .limit(1);
 
       let userId: string | undefined;
       if (users && users.length > 0) {
         userId = users[0].id;
       } else {
-        // Se não achar em profiles, tenta no auth.users:
+        // Busca no auth.users:
         const { data: authUserData, error: authErr } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
         if (authErr) throw authErr;
-        const found = authUserData.users.find((u: any) => u.phone === phone);
+        const found = authUserData.users.find(
+          (u: any) => u.phone === phone || u.phone === "+" + phone
+        );
         if (!found) throw new Error("Usuário não encontrado para o telefone informado!");
         userId = found.id;
       }
@@ -61,3 +65,4 @@ export function usePromoteToAdmin() {
 
   return { promoteToAdmin, loading };
 }
+
