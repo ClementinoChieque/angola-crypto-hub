@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -46,13 +45,13 @@ export const useReferralRewards = () => {
         throw error;
       }
 
-      // Ensure only a valid data array is ever assigned
+      // Fix: Make sure only to assign ReferralReward[] or []
       if (Array.isArray(data)) {
         const rewards: ReferralReward[] = data.filter(isReferralReward);
         setReferralRewards(rewards);
       } else {
-        // If data is not an array, ensure we do not assign error objects!
-        setReferralRewards([]); // Only set an empty valid array!
+        // If data is not an array, set an empty ReferralReward[] array
+        setReferralRewards([]);
       }
     } catch (err) {
       console.error('Error fetching referral rewards [catch]:', err);
@@ -63,7 +62,7 @@ export const useReferralRewards = () => {
           : String(err),
         variant: "destructive"
       });
-      setReferralRewards([]); // Only assign a valid empty ReferralReward array
+      setReferralRewards([]); // Always only use ReferralReward[] (empty array)
     }
   };
 
