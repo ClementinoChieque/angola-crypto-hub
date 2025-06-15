@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -45,16 +46,21 @@ export const useReferralRewards = () => {
         console.error('[ReferralRewards] Erro ao buscar referral_rewards via supabase:', error);
         throw error;
       }
-      // DATA MAY BE undefined, GenericStringError[], or ReferralReward[]
+
+      // Only proceed if data is an array
       if (!Array.isArray(data)) {
         // Protege contra respostas inesperadas da API
         console.warn('[ReferralRewards] Dados recebidos de referral_rewards não são um array:', data);
-        setReferralRewards([]);
+        setReferralRewards([]); // guarantee only ReferralReward[] ever passed
         return;
       }
-      // Only keep items that look like a ReferralReward
-      const rewards: ReferralReward[] = data.filter(isReferralReward);
-      setReferralRewards(rewards);
+
+      // Now check that at least one element is a ReferralReward;
+      // filter returns ReferralReward[].
+      const rewards = data.filter(isReferralReward);
+
+      setReferralRewards(rewards); // Always type-correct
+
     } catch (err) {
       console.error('Error fetching referral rewards [catch]:', err);
       toast({
@@ -64,7 +70,7 @@ export const useReferralRewards = () => {
           : String(err),
         variant: "destructive"
       });
-      setReferralRewards([]);
+      setReferralRewards([]); // Always only use ReferralReward[]
     }
   };
 
@@ -156,3 +162,5 @@ export const useReferralRewards = () => {
 
   return { referralRewards, refetchReferralRewards: fetchReferralRewards, addReferralReward };
 };
+
+// ... end of file
