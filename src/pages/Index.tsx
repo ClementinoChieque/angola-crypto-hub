@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import Dashboard from '@/components/layout/Dashboard';
 import Navbar from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
+import Footer from '@/components/layout/Footer';
 
 const Index = () => {
   const { isAuthenticated } = useAuth();
@@ -19,7 +20,7 @@ const Index = () => {
   if (isAuthenticated) {
     return (
       <div 
-        className="min-h-screen"
+        className="min-h-screen flex flex-col"
         style={{
           backgroundImage: 'url(/lovable-uploads/2ad2720c-6e09-4a8d-9446-2b6bd63bacb6.png)',
           backgroundSize: 'cover',
@@ -30,11 +31,14 @@ const Index = () => {
       >
         {/* Overlay for better readability with transparency */}
         <div className="absolute inset-0 bg-black/40 pointer-events-none"></div>
-        <div className="relative z-10">
+        <div className="relative z-10 flex-grow">
           <Navbar />
           <div className="container mx-auto px-4 py-8">
             <Dashboard />
           </div>
+        </div>
+        <div className="relative z-10">
+          <Footer variant="dark" />
         </div>
       </div>
     );
@@ -42,42 +46,45 @@ const Index = () => {
 
   // Landing page for non-authenticated users
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/a968357d-2b22-46e9-9a6c-d590de85e923.png" 
-              alt="Bitget12" 
-              className="h-8 w-8"
-            />
-            <span className="font-bold text-2xl text-primary">Bitget12</span>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+      <div className="flex-grow">
+        {/* Header */}
+        <header className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/lovable-uploads/a968357d-2b22-46e9-9a6c-d590de85e923.png" 
+                alt="Bitget12" 
+                className="h-8 w-8"
+              />
+              <span className="font-bold text-2xl text-primary">Bitget12</span>
+            </div>
+            <Button onClick={() => navigate('/auth?mode=login')} variant="default">
+              Entrar
+            </Button>
           </div>
-          <Button onClick={() => navigate('/auth?mode=login')} variant="default">
-            Entrar
-          </Button>
-        </div>
-      </header>
+        </header>
 
-      {/* Hero Section */}
-      <main className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Maximize Seus <span className="text-primary">Investimentos</span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida
-          </p>
-          <Button 
-            size="lg" 
-            onClick={() => navigate('/auth?mode=register')}
-            className="px-8 py-4 text-lg"
-          >
-            Cadastrar
-          </Button>
-        </div>
-      </main>
+        {/* Hero Section */}
+        <main className="container mx-auto px-4 py-16">
+          <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              Maximize Seus <span className="text-primary">Investimentos</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida
+            </p>
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/auth?mode=register')}
+              className="px-8 py-4 text-lg"
+            >
+              Cadastrar
+            </Button>
+          </div>
+        </main>
+      </div>
+      <Footer variant="light" />
     </div>
   );
 };
