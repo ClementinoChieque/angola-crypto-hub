@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign } from 'lucide-react';
@@ -6,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import WithdrawalRequestCard, { WithdrawalRequest } from './withdrawals/WithdrawalRequestCard';
+import { Trash } from "lucide-react";
 
 const fetchWithdrawalRequests = async (): Promise<WithdrawalRequest[]> => {
   const { data, error } = await supabase
@@ -33,6 +33,14 @@ const updateWithdrawalStatus = async ({
   if (error) throw error;
 };
 
+const deleteWithdrawalRequest = async (id: string) => {
+  const { error } = await supabase
+    .from('withdrawal_requests')
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
+};
+
 const WithdrawalRequests: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -56,6 +64,24 @@ const WithdrawalRequests: React.FC = () => {
     }
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteWithdrawalRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['withdrawal_requests'] });
+      toast({
+        title: "Solicitação eliminada",
+        description: "A solicitação de saque foi removida com sucesso.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erro ao eliminar",
+        description: "Não foi possível eliminar a solicitação.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleUpdateStatus = (requestId: string, status: string, notes?: string) => {
     mutation.mutate({
       id: requestId,
@@ -66,6 +92,10 @@ const WithdrawalRequests: React.FC = () => {
       title: "Status atualizado",
       description: `Solicitação ${status === 'approved' ? 'aprovada' : status === 'rejected' ? 'rejeitada' : 'marcada como completa'}`
     });
+  };
+
+  const handleDelete = (id: string) => {
+    deleteMutation.mutate(id);
   };
 
   return (
@@ -94,6 +124,7 @@ const WithdrawalRequests: React.FC = () => {
                 key={request.id}
                 request={request}
                 onUpdateStatus={handleUpdateStatus}
+                onDelete={handleDelete}
               />
             ))
           )}

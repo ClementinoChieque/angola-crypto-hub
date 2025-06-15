@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { CheckCircle, XCircle, Clock, Trash } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export interface WithdrawalRequest {
@@ -23,6 +22,7 @@ export interface WithdrawalRequest {
 interface Props {
   request: WithdrawalRequest;
   onUpdateStatus: (id: string, status: string, notes?: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 const getStatusBadge = (status: string) => {
@@ -56,7 +56,7 @@ const getStatusBadge = (status: string) => {
   }
 };
 
-const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => {
+const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus, onDelete }) => {
   const [showNotes, setShowNotes] = useState(false);
   const [adminNotes, setAdminNotes] = useState("");
   const { toast } = useToast();
@@ -98,7 +98,23 @@ const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => 
             </div>
           )}
         </div>
-        <div className="flex flex-col items-end gap-2">{getStatusBadge(request.status)}</div>
+        <div className="flex flex-col items-end gap-2">
+          {getStatusBadge(request.status)}
+          {/* Botão de deletar (apenas admin deve ver, mas não temos contexto aqui, então sempre mostra no admin) */}
+          {onDelete && (
+            <button
+              className="text-red-500 hover:text-red-700 transition-colors p-1 bg-transparent rounded-full"
+              aria-label="Eliminar Solicitação"
+              onClick={() => {
+                if (window.confirm("Tem certeza que deseja eliminar esta solicitação? Esta ação não pode ser desfeita.")) {
+                  onDelete(request.id);
+                }
+              }}
+            >
+              <Trash size={20} />
+            </button>
+          )}
+        </div>
       </div>
       {request.admin_notes && (
         <div className="bg-gray-50 p-2 rounded text-sm mb-3">
