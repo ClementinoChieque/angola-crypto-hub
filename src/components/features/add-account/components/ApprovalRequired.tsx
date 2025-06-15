@@ -17,7 +17,7 @@ const ApprovalRequired: React.FC = () => {
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <p className="text-yellow-800 font-medium mb-2">Conta não aprovada</p>
             <p className="text-yellow-700 text-sm">
-              Você precisa ter sua conta aprovada pelo administrador para poder adicionar contas bancárias e carteiras.
+              Você precisa ter sua conta aprovada  para poder adicionar contas bancárias e carteiras.
               Envie um comprovativo de pagamento e aguarde a aprovação.
             </p>
           </div>
