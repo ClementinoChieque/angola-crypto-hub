@@ -1,38 +1,20 @@
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, ArrowDown, ArrowUp } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Transaction } from './transaction-history/types';
+import { withdrawalStatusLabel } from './transaction-history/utils';
+import MobileTransactionCard from './transaction-history/MobileTransactionCard';
 
-type Transaction = {
-  id: string;
-  amount: number;
-  currency: string;
-  type: 'deposit' | 'withdraw';
-  description?: string | null;
-  created_at: string;
-  status?: string; // Used only for withdrawals
-};
-
-const withdrawalStatusLabel = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return <span className="rounded bg-yellow-100 text-yellow-800 px-2 py-0.5 text-xs">Pendente</span>;
-    case 'approved':
-      return <span className="rounded bg-green-100 text-green-700 px-2 py-0.5 text-xs">Aprovado</span>;
-    case 'rejected':
-      return <span className="rounded bg-red-100 text-red-700 px-2 py-0.5 text-xs">Rejeitado</span>;
-    case 'completed':
-      return <span className="rounded bg-blue-100 text-blue-700 px-2 py-0.5 text-xs">Completo</span>;
-    default:
-      return <span className="text-xs">-</span>;
-  }
-};
 
 const TransactionHistory: React.FC = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,6 +74,12 @@ const TransactionHistory: React.FC = () => {
         </div>
       ) : transactions.length === 0 ? (
         <div className="text-center py-8 text-gray-500">Nenhuma transação encontrada</div>
+      ) : isMobile ? (
+        <div className="space-y-3">
+          {transactions.map((tx) => (
+            <MobileTransactionCard key={tx.id} transaction={tx} />
+          ))}
+        </div>
       ) : (
         <div className="overflow-x-auto">
           <Table>
