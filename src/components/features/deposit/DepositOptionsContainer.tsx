@@ -1,155 +1,144 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import { useUser } from '@/context/UserContext';
-import { ArrowUp } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
-// Corrigido: importar o componente correto
-import UploadProofContainer from '@/components/features/uploadproof/UploadProofContainer';
-import { useAuth } from '@/context/AuthContext';
 
-type DepositMethod = 'USDT' | 'BAE' | 'BFA' | 'BIC' | 'ATL';
+type DepositType = 'USDT' | 'AKZ';
+
+interface UsdtWallet {
+  id: string;
+  wallet_address: string;
+  network: string;
+  is_active: boolean;
+}
+
+interface BankAccount {
+  id: string;
+  bank_name: string;
+  account_number: string;
+  account_holder: string;
+  is_active: boolean;
+}
 
 const DepositOptionsContainer: React.FC = () => {
-  const [amount, setAmount] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState<DepositMethod | null>(null);
-  const [proofImageUrl, setProofImageUrl] = useState<string | null>(null);
-  const { toast } = useToast();
-  const { setDepositMethod, addProofUpload } = useUser();
-  const { user } = useAuth();
+  const [selected, setSelected] = useState<DepositType | null>(null);
+  const [usdtWallets, setUsdtWallets] = useState<UsdtWallet[]>([]);
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
+  const [walletsLoading, setWalletsLoading] = useState(false);
+  const [banksLoading, setBanksLoading] = useState(false);
 
-  const handleMethodSelect = (method: DepositMethod) => {
-    setSelectedMethod(method);
-    setDepositMethod(method);
-  };
-
-  const handleProofUpload = (url: string) => {
-    setProofImageUrl(url);
-  };
-
-  const handleDeposit = async (depositAmount: number, depositCurrency: string) => {
-    if (!selectedMethod) {
-      toast({
-        title: "Método de depósito não selecionado",
-        description: "Por favor, selecione um método de depósito.",
-        variant: "destructive",
-      });
-      return;
+  // Fetch USDT wallets when USDT is selected
+  useEffect(() => {
+    if (selected === 'USDT') {
+      setWalletsLoading(true);
+      supabase
+        .from('broker_usdt_wallets')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .then(({ data }) => {
+          setUsdtWallets(data || []);
+        })
+        .finally(() => setWalletsLoading(false));
     }
+  }, [selected]);
 
-    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-      toast({
-        title: "Valor inválido",
-        description: "Por favor, insira um valor válido para o depósito.",
-        variant: "destructive",
-      });
-      return;
+  // Fetch bank accounts when AKZ is selected
+  useEffect(() => {
+    if (selected === 'AKZ') {
+      setBanksLoading(true);
+      supabase
+        .from('broker_bank_accounts')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .then(({ data }) => {
+          setBankAccounts(data || []);
+        })
+        .finally(() => setBanksLoading(false));
     }
-
-    if (!proofImageUrl) {
-      toast({
-        title: "Comprovante de depósito não enviado",
-        description: "Por favor, envie o comprovante de depósito.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    addProofUpload(proofImageUrl);
-
-    toast({
-      title: "Depósito solicitado",
-      description: "Seu depósito foi solicitado e está aguardando aprovação.",
-    });
-
-    setAmount('');
-    setSelectedMethod(null);
-    setProofImageUrl(null);
-
-    if (user?.id) {
-      await supabase.from('transactions').insert([
-        {
-          user_id: user.id,
-          amount: depositAmount,
-          currency: depositCurrency,
-          type: 'deposit',
-          description: 'Depósito realizado',
-        }
-      ]);
-    }
-  };
+  }, [selected]);
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4 text-center">Opções de Depósito</h2>
-
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <h2 className="text-xl font-semibold mb-4 text-center">Selecione o Método de Depósito</h2>
+      <div className="flex justify-center gap-4 mb-6">
         <Button
-          variant={selectedMethod === 'USDT' ? 'default' : 'outline'}
-          onClick={() => handleMethodSelect('USDT')}
-          className="w-full"
+          variant={selected === 'USDT' ? 'default' : 'outline'}
+          onClick={() => setSelected('USDT')}
+          className="w-40"
         >
-          USDT
+          USDT (Criptomoeda)
         </Button>
         <Button
-          variant={selectedMethod === 'BAE' ? 'default' : 'outline'}
-          onClick={() => handleMethodSelect('BAE')}
-          className="w-full"
+          variant={selected === 'AKZ' ? 'default' : 'outline'}
+          onClick={() => setSelected('AKZ')}
+          className="w-40"
         >
-          BAE
-        </Button>
-        <Button
-          variant={selectedMethod === 'BFA' ? 'default' : 'outline'}
-          onClick={() => handleMethodSelect('BFA')}
-          className="w-full"
-        >
-          BFA
-        </Button>
-        <Button
-          variant={selectedMethod === 'BIC' ? 'default' : 'outline'}
-          onClick={() => handleMethodSelect('BIC')}
-          className="w-full"
-        >
-          BIC
-        </Button>
-        <Button
-          variant={selectedMethod === 'ATL' ? 'default' : 'outline'}
-          onClick={() => handleMethodSelect('ATL')}
-          className="w-full"
-        >
-          ATL
+          Kwanza (AKZ)
         </Button>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="amount">Valor a Depositar</Label>
-          <Input
-            id="amount"
-            type="number"
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+      {selected === 'USDT' && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold mb-2">Carteiras USDT Disponíveis</h3>
+          {walletsLoading ? (
+            <div className="py-8 text-center text-muted-foreground">
+              Carregando carteiras...
+            </div>
+          ) : usdtWallets.length === 0 ? (
+            <div className="py-8 text-center text-muted-foreground">
+              Nenhuma carteira USDT disponível.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {usdtWallets.map((wallet) => (
+                <Card key={wallet.id} className="p-4">
+                  <div>
+                    <div className="text-sm mb-1">
+                      Rede: <span className="font-semibold">{wallet.network}</span>
+                    </div>
+                    <div className="font-mono break-all text-base bg-gray-100 rounded p-2">
+                      {wallet.wallet_address}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
+      )}
 
-        {/* Usa o componente correto para upload, mas mantém a interface esperada */}
-        <UploadProofContainer onUpload={handleProofUpload} />
-
-        <Button
-          onClick={() => handleDeposit(parseFloat(amount), 'AKZ')}
-          className="w-full bg-green-500 hover:bg-green-600"
-          disabled={!selectedMethod || !amount || !proofImageUrl}
-        >
-          <ArrowUp size={16} className="mr-2" />
-          Confirmar Depósito
-        </Button>
-      </div>
+      {selected === 'AKZ' && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold mb-2">Contas Bancárias Disponíveis</h3>
+          {banksLoading ? (
+            <div className="py-8 text-center text-muted-foreground">
+              Carregando contas bancárias...
+            </div>
+          ) : bankAccounts.length === 0 ? (
+            <div className="py-8 text-center text-muted-foreground">
+              Nenhuma conta bancária disponível.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {bankAccounts.map((b) => (
+                <Card key={b.id} className="p-4">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-medium">{b.bank_name}</div>
+                    <div className="text-sm">Titular: {b.account_holder}</div>
+                    <div className="text-sm">Conta: {b.account_number}</div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 export default DepositOptionsContainer;
+
