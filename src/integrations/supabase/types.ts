@@ -409,6 +409,59 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          bank_account: string | null
+          bank_name: string | null
+          created_at: string
+          currency: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+          wallet_address: string | null
+          withdrawal_method: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          bank_account?: string | null
+          bank_name?: string | null
+          created_at?: string
+          currency: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          wallet_address?: string | null
+          withdrawal_method: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          bank_account?: string | null
+          bank_name?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          wallet_address?: string | null
+          withdrawal_method?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

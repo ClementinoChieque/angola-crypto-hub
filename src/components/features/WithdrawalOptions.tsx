@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/UserContext';
 import { ArrowDown } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
 type WithdrawalMethod = 'USDT' | 'AO';
 
@@ -14,27 +16,23 @@ const WithdrawalOptions: React.FC = () => {
   const [amount, setAmount] = useState('');
   const { toast } = useToast();
   const { balance, setWithdrawalMethod } = useUser();
+  const { user } = useAuth(); // para obter user_id
 
-  // Define as opções permitidas
   const balanceCurrency = balance.currency; // 'AKZ' ou 'USDT'
-  // Só exibe o tab da moeda que o usuário tem saldo
   const allowedMethod: WithdrawalMethod = balanceCurrency === 'USDT' ? 'USDT' : 'AO';
-
   const [withdrawalTab, setWithdrawalTab] = useState<WithdrawalMethod>(allowedMethod);
 
-  // Garante que o tab nunca seja de uma moeda diferente do saldo
   useEffect(() => {
     setWithdrawalTab(allowedMethod);
   }, [balanceCurrency]);
 
-  // Função para buscar o mínimo de saque dependendo da moeda
   const getMinimumWithdrawal = () => {
     if (withdrawalTab === 'USDT') return 5;
     if (withdrawalTab === 'AO') return 5000;
     return 0;
   };
 
-  const handleWithdrawal = () => {
+  const handleWithdrawal = async () => {
     if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
       toast({
         title: "Valor inválido",
@@ -47,7 +45,6 @@ const WithdrawalOptions: React.FC = () => {
     const withdrawalAmount = parseFloat(amount);
     const minimumWithdrawal = getMinimumWithdrawal();
 
-    // Checagem do valor mínimo de saque
     if (withdrawalAmount < minimumWithdrawal) {
       toast({
         title: "Valor mínimo não atingido",
@@ -68,13 +65,59 @@ const WithdrawalOptions: React.FC = () => {
 
     setWithdrawalMethod(withdrawalTab);
 
-    toast({
-      title: "Solicitação de saque enviada",
-      description: `Você solicitou um saque de ${withdrawalAmount.toLocaleString()} via ${withdrawalTab}`,
-    });
+    // Enviar solicitação para Supabase
+    if (!user?.id) {
+      toast({
+        title: "Usuário não autenticado",
+        description: "É necessário estar logado para solicitar o saque.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    // Reset form
-    setAmount('');
+    // Definir dados adicionais
+    let withdrawal_method = '';
+    let wallet_address = null;
+    let bank_name = null;
+    let bank_account = null;
+
+    if (withdrawalTab === 'USDT') {
+      withdrawal_method = 'crypto';
+      // você pode coletar/endurecer wallet_address conforme seu fluxo
+      wallet_address = null;
+    } else {
+      withdrawal_method = 'bank';
+      // você pode coletar/endurecer dados bancários conforme seu fluxo
+      bank_name = null;
+      bank_account = null;
+    }
+
+    const { error } = await supabase.from('withdrawal_requests').insert([
+      {
+        user_id: user.id, // deve ser o id do perfil
+        amount: withdrawalAmount,
+        currency: balanceCurrency,
+        withdrawal_method,
+        wallet_address,
+        bank_name,
+        bank_account,
+        status: 'pending',
+      }
+    ]);
+
+    if (error) {
+      toast({
+        title: "Erro ao registrar solicitação",
+        description: "Não foi possível registrar seu pedido de saque. Tente novamente.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Saque solicitado",
+        description: "Sua solicitação de saque foi enviada e aguarda aprovação do administrador.",
+      });
+      setAmount('');
+    }
   };
 
   return (
@@ -154,6 +197,7 @@ const WithdrawalOptions: React.FC = () => {
         <ul className="list-disc pl-5 mt-2">
           <li>Saques são processados em até 72 horas úteis.</li>
           <li>Certifique-se de inserir as informações corretas.</li>
+          <li>Todos os pedidos passam por aprovação manual do administrador.</li>
         </ul>
       </div>
     </div>
