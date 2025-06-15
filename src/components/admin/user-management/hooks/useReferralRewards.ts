@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ReferralReward } from '../types';
 
+// Guard function
 function isReferralReward(obj: any): obj is ReferralReward {
   return (
     obj &&
@@ -44,16 +44,17 @@ export const useReferralRewards = () => {
         throw error;
       }
 
-      // PROPERLY SAFE: Only set valid ReferralReward[]
-      if (
-        Array.isArray(data) &&
-        data.every(isReferralReward)
-      ) {
-        setReferralRewards(data as ReferralReward[]);
-      } else if (Array.isArray(data)) {
-        // If mixed or wrong type, filter only valid objects in the array
-        setReferralRewards(data.filter(isReferralReward));
+      // Only set valid ReferralReward[] if `data` is an array of ReferralReward
+      if (Array.isArray(data)) {
+        const rewards: ReferralReward[] = [];
+        for (const item of data) {
+          if (isReferralReward(item)) {
+            rewards.push(item);
+          }
+        }
+        setReferralRewards(rewards);
       } else {
+        // If data is not an array (e.g., is error), reset state.
         setReferralRewards([]);
       }
     } catch (err) {
@@ -65,7 +66,7 @@ export const useReferralRewards = () => {
           : String(err),
         variant: "destructive"
       });
-      setReferralRewards([]); // Always set a valid, empty array
+      setReferralRewards([]);
     }
   };
 
