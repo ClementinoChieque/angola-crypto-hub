@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -70,7 +71,7 @@ export const useReferralRewards = () => {
     }
   };
 
-  const addReferralReward = async (userId: string, amount: number, currency: 'USDT' | 'AKZ' = 'USDT') => {
+  const addReferralReward = async (userId: string, amount: number) => {
     try {
       if (isNaN(amount) || amount <= 0) {
         toast({
@@ -85,9 +86,9 @@ export const useReferralRewards = () => {
         .from('referral_rewards')
         .insert({
           referrer_id: userId,
-          referred_user_id: userId, // Placeholder - pode ajustar no futuro
+          referred_user_id: userId, // Placeholder
           reward_amount: amount,
-          reward_currency: currency,
+          reward_currency: 'USDT',
           status: 'completed'
         });
 
@@ -96,9 +97,10 @@ export const useReferralRewards = () => {
         throw insertError;
       }
 
+      // Atualizar saldo do usuário na tabela user_quantifications em USDT
       const { data: quant, error: fetchQuantError } = await supabase
         .from('user_quantifications')
-        .select('balance, investment_plan_id, investment_plan:investment_plans(currency)')
+        .select('balance')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -107,18 +109,8 @@ export const useReferralRewards = () => {
         throw fetchQuantError;
       }
 
-      let shouldUpdateBalance = false;
-
-      if (quant && quant.investment_plan) {
-        if (quant.investment_plan.currency === currency) {
-          shouldUpdateBalance = true;
-        }
-      } else if (!quant || !quant.investment_plan) {
-        shouldUpdateBalance = (currency === 'AKZ');
-      }
-
-      if (shouldUpdateBalance) {
-        const newBalance = (quant?.balance || 0) + amount;
+      if (quant) {
+        const newBalance = (quant.balance || 0) + amount;
         const { error: updateError } = await supabase
           .from('user_quantifications')
           .update({ balance: newBalance, updated_at: new Date().toISOString() })
@@ -132,7 +124,7 @@ export const useReferralRewards = () => {
 
       toast({
         title: "Recompensa adicionada",
-        description: `Recompensa de ${amount} ${currency} adicionada e saldo atualizado com sucesso!`
+        description: `Recompensa de ${amount} USDT adicionada e saldo atualizado com sucesso!`
       });
 
       await fetchReferralRewards();
