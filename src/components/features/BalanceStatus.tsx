@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useUser } from '@/context/UserContext';
@@ -6,6 +5,7 @@ import { Circle, ArrowUp, ArrowDown } from 'lucide-react';
 import { useEffect } from 'react';
 import DepositOptions from './DepositOptions';
 import WithdrawalOptions from './WithdrawalOptions';
+import TransactionHistory from './TransactionHistory';
 
 const BalanceStatus: React.FC = () => {
   const { balance } = useUser();
@@ -87,29 +87,56 @@ const BalanceStatus: React.FC = () => {
         </CardContent>
       </Card>
 
-      {isActionOpen && (
-        <Card className="mt-4 border-t-4 border-crypto-blue">
-          <CardContent className="p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">
-                {activeTab === 'deposit' ? 'Depositar' : 'Sacar'}
-              </h3>
-              <button 
-                onClick={toggleActionPanel}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                ✕
-              </button>
-            </div>
+      {/* Abas de ação: Depósito, Saque, Transações */}
+      <div className="flex gap-2 mt-4">
+        <button
+          className={`flex-1 py-2 rounded font-semibold transition-all ${activeTab === 'deposit' ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-primary/10"}`}
+          onClick={() => setActiveTab('deposit')}
+        >
+          Depositar
+        </button>
+        <button
+          className={`flex-1 py-2 rounded font-semibold transition-all ${activeTab === 'withdraw' ? "bg-blue-600 text-white" : "bg-muted text-muted-foreground hover:bg-blue-50"}`}
+          onClick={() => setActiveTab('withdraw')}
+        >
+          Sacar
+        </button>
+        <button
+          className={`flex-1 py-2 rounded font-semibold transition-all ${activeTab === 'transactions' ? "bg-purple-600 text-white" : "bg-muted text-muted-foreground hover:bg-purple-50"}`}
+          onClick={() => setActiveTab('transactions')}
+        >
+          Transações
+        </button>
+      </div>
 
-            {activeTab === 'deposit' && <DepositOptions />}
-            {activeTab === 'withdraw' && <WithdrawalOptions />}
-          </CardContent>
-        </Card>
-      )}
+      {/* Conteúdo de cada aba */}
+      <Card className="mt-4 border-t-4 border-crypto-blue">
+        <CardContent className="p-4">
+          {activeTab === 'deposit' && (
+            <>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium">Depositar</h3>
+              </div>
+              <DepositOptions />
+            </>
+          )}
+          {activeTab === 'withdraw' && (
+            <>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium">Sacar</h3>
+              </div>
+              <WithdrawalOptions />
+            </>
+          )}
+          {activeTab === 'transactions' && (
+            <>
+              <TransactionHistory />
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
 export default BalanceStatus;
-
