@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +14,7 @@ function isReferralReward(obj: any): obj is ReferralReward {
     typeof obj.reward_currency === 'string' &&
     typeof obj.status === 'string' &&
     typeof obj.created_at === 'string' &&
+    // updated_at field from supabase may be present or not; be defensive but expect string
     typeof obj.updated_at === 'string'
   );
 }
@@ -21,7 +23,6 @@ export const useReferralRewards = () => {
   const [referralRewards, setReferralRewards] = useState<ReferralReward[]>([]);
   const { toast } = useToast();
 
-  // Lista EXPLÍCITA de colunas para evitar qualquer expansão automática
   const columns = [
     'id',
     'referrer_id',
@@ -45,19 +46,14 @@ export const useReferralRewards = () => {
         throw error;
       }
 
-      // Only proceed if data is an array AND its elements pass the type check
-      if (!Array.isArray(data)) {
-        // Protege contra respostas inesperadas da API
-        console.warn('[ReferralRewards] Dados recebidos de referral_rewards não são um array:', data);
-        setReferralRewards([]); // Always set to an empty valid array
-        return;
+      // Ensure only a valid data array is ever assigned
+      if (Array.isArray(data)) {
+        const rewards: ReferralReward[] = data.filter(isReferralReward);
+        setReferralRewards(rewards);
+      } else {
+        // If data is not an array, ensure we do not assign error objects!
+        setReferralRewards([]); // Only set an empty valid array!
       }
-
-      // Safe, strict filtering by type guard
-      const rewards: ReferralReward[] = data.filter(isReferralReward);
-
-      setReferralRewards(rewards);
-
     } catch (err) {
       console.error('Error fetching referral rewards [catch]:', err);
       toast({
@@ -67,7 +63,7 @@ export const useReferralRewards = () => {
           : String(err),
         variant: "destructive"
       });
-      setReferralRewards([]); // Always only use ReferralReward[] (empty array)
+      setReferralRewards([]); // Only assign a valid empty ReferralReward array
     }
   };
 
@@ -82,7 +78,6 @@ export const useReferralRewards = () => {
         return false;
       }
 
-      // Adicionar recompensa
       const { error: insertError } = await supabase
         .from('referral_rewards')
         .insert({
@@ -98,7 +93,6 @@ export const useReferralRewards = () => {
         throw insertError;
       }
 
-      // Buscar quantificação do usuário e atualizar saldo se necessário
       const { data: quant, error: fetchQuantError } = await supabase
         .from('user_quantifications')
         .select('balance, investment_plan_id, investment_plan:investment_plans(currency)')
