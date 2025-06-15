@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Upload, 
@@ -6,7 +7,7 @@ import {
   Users,
   TrendingUp,
   Plus,
-  telegram
+  Send
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -35,7 +36,7 @@ const Dashboard: React.FC = () => {
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
-    { id: 'suporte', label: 'Suporte', icon: telegram({ size: isMobile ? 16 : 20 }), link: 'https://web.telegram.org/a/' },
+    { id: 'suporte', label: 'Suporte', icon: <Send size={isMobile ? 16 : 20} />, link: 'https://web.telegram.org/a/' },
   ];
 
   return (
