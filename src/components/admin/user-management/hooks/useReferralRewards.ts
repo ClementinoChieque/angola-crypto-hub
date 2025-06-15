@@ -8,12 +8,24 @@ export const useReferralRewards = () => {
   const [referralRewards, setReferralRewards] = useState<ReferralReward[]>([]);
   const { toast } = useToast();
 
+  // Lista EXPLÍCITA de colunas para evitar qualquer expansão automática
+  const columns = [
+    'id',
+    'referrer_id',
+    'referred_user_id',
+    'reward_amount',
+    'reward_currency',
+    'status',
+    'created_at',
+    'updated_at'
+  ].join(',');
+
   const fetchReferralRewards = async () => {
     try {
-      // Certifique-se de buscar somente em referral_rewards
+      // Busca apenas as colunas explícitas, nunca relações ou expands
       const { data, error } = await supabase
         .from('referral_rewards')
-        .select('*')
+        .select(columns)
         .order('created_at', { ascending: false });
 
       if (error) {
