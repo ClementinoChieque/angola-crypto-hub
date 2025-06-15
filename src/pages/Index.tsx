@@ -21,7 +21,7 @@ const Index = () => {
       <div 
         className="min-h-screen"
         style={{
-          backgroundImage: 'url(/lovable-uploads/2ad2720c-6e09-4a8d-9446-2b6bd63bacb6.png)',
+          backgroundImage: 'url(/lovable-uploads/1dee7611-ed84-4cd6-af42-b0d221356511.png)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
