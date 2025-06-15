@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +7,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/UserContext';
 import { ArrowUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import ProofUpload from './ProofUpload';
+// Corrigido: importar o componente correto
+import UploadProofContainer from '@/components/features/uploadproof/UploadProofContainer';
 import { useAuth } from '@/context/AuthContext';
 
 type DepositMethod = 'USDT' | 'BAE' | 'BFA' | 'BIC' | 'ATL';
@@ -67,7 +69,6 @@ const DepositOptionsContainer: React.FC = () => {
     setSelectedMethod(null);
     setProofImageUrl(null);
 
-    const { user } = useAuth(); // precisa existir/useAuth bem definido
     if (user?.id) {
       await supabase.from('transactions').insert([
         {
@@ -135,7 +136,8 @@ const DepositOptionsContainer: React.FC = () => {
           />
         </div>
 
-        <ProofUpload onUpload={handleProofUpload} />
+        {/* Usa o componente correto para upload, mas mantém a interface esperada */}
+        <UploadProofContainer onUpload={handleProofUpload} />
 
         <Button
           onClick={() => handleDeposit(parseFloat(amount), 'AKZ')}
