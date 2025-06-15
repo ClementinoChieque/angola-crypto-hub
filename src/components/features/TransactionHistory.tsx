@@ -140,7 +140,7 @@ const TransactionHistory: React.FC = () => {
                   <TableCell>
                     {tx.type === 'withdraw'
                       ? withdrawalStatusLabel(tx.status || 'pending')
-                      : <span className="text-xs">-</span>
+                      : <span className="rounded bg-green-100 text-green-700 px-2 py-0.5 text-xs">Completo</span>
                     }
                   </TableCell>
                 </TableRow>
