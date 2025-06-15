@@ -6,15 +6,11 @@ import { Input } from "@/components/ui/input";
 type USDTWithdrawalFormProps = {
   amount: string;
   onAmountChange: (v: string) => void;
-  walletAddress: string;
-  onWalletAddressChange: (v: string) => void;
 };
 
 const USDTWithdrawalForm: React.FC<USDTWithdrawalFormProps> = ({
   amount,
   onAmountChange,
-  walletAddress,
-  onWalletAddressChange,
 }) => (
   <div className="space-y-4">
     <div className="space-y-2">
@@ -27,18 +23,6 @@ const USDTWithdrawalForm: React.FC<USDTWithdrawalFormProps> = ({
         onChange={(e) => onAmountChange(e.target.value)}
       />
     </div>
-    <div className="space-y-2">
-      <Label htmlFor="usdt-wallet">Endereço da Carteira USDT</Label>
-      <Input
-        id="usdt-wallet"
-        type="text"
-        placeholder="Insira seu endereço USDT"
-        value={walletAddress}
-        onChange={(e) => onWalletAddressChange(e.target.value)}
-        autoComplete="off"
-        spellCheck={false}
-      />
-    </div>
     <p className="text-xs text-muted-foreground">
       Saque | Mínimo: 5 USDT
     </p>
@@ -46,4 +30,3 @@ const USDTWithdrawalForm: React.FC<USDTWithdrawalFormProps> = ({
 );
 
 export default USDTWithdrawalForm;
-
