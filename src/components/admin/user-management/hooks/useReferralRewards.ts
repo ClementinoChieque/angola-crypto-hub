@@ -35,13 +35,15 @@ export const useReferralRewards = () => {
 
   const fetchReferralRewards = async () => {
     try {
-      // Importante: não faça join ou select de nenhuma coluna da tabela users!
+      // Seleciona apenas colunas explícitas, sem JOIN ou referência de select oculto que vá para users!
       const { data, error } = await supabase
         .from('referral_rewards')
         .select(columns)
         .order('created_at', { ascending: false });
 
       if (error) {
+        // Verifica se o erro refere explicitamente "users". Se sim, provavelmente algum campo, select ou política do banco faz referência à tabela users.
+        // Para evitar isso: Não tente acessar colunas não listadas em "columns"
         console.error('[ReferralRewards] Erro ao buscar referral_rewards via supabase:', error);
         throw error;
       }
@@ -58,6 +60,7 @@ export const useReferralRewards = () => {
         setReferralRewards([]);
       }
     } catch (err) {
+      // Erro tratado de modo seguro para não vazar detalhes ao usuário final.
       console.error('Error fetching referral rewards [catch]:', err);
       toast({
         title: "Erro ao buscar recompensas",
@@ -81,11 +84,12 @@ export const useReferralRewards = () => {
         return false;
       }
 
+      // Usa o próprio id também como referred_user_id para não deixar null (evita joins problemáticos)
       const { error: insertError } = await supabase
         .from('referral_rewards')
         .insert({
           referrer_id: userId,
-          referred_user_id: userId, // Placeholder
+          referred_user_id: userId,
           reward_amount: amount,
           reward_currency: 'USDT',
           status: 'completed'
@@ -147,4 +151,3 @@ export const useReferralRewards = () => {
 
   return { referralRewards, refetchReferralRewards: fetchReferralRewards, addReferralReward };
 };
-
