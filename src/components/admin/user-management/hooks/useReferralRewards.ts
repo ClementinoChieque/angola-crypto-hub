@@ -35,6 +35,7 @@ export const useReferralRewards = () => {
 
   const fetchReferralRewards = async () => {
     try {
+      // Importante: não faça join ou select de nenhuma coluna da tabela users!
       const { data, error } = await supabase
         .from('referral_rewards')
         .select(columns)
@@ -45,7 +46,6 @@ export const useReferralRewards = () => {
         throw error;
       }
 
-      // Only set valid ReferralReward[] if `data` is an array of ReferralReward
       if (Array.isArray(data)) {
         const rewards: ReferralReward[] = [];
         for (const item of data) {
@@ -55,7 +55,6 @@ export const useReferralRewards = () => {
         }
         setReferralRewards(rewards);
       } else {
-        // If data is not an array (e.g., is error), reset state.
         setReferralRewards([]);
       }
     } catch (err) {
@@ -148,3 +147,4 @@ export const useReferralRewards = () => {
 
   return { referralRewards, refetchReferralRewards: fetchReferralRewards, addReferralReward };
 };
+
