@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Upload, 
@@ -24,13 +23,12 @@ import BalanceStatus from '../features/BalanceStatus';
 import AddAccount from '../features/AddAccount';
 
 const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('upload');
+  const [activeTab, setActiveTab] = useState('quantify');
   const { user } = useAuth();
   const { isDepositVerified } = useUser();
   const isMobile = useIsMobile();
   
   const menuItems = [
-    { id: 'upload', label: 'Upload Comprovativo', icon: <Upload size={isMobile ? 16 : 20} /> },
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
     { id: 'investment', label: 'Plano de Investimento', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
@@ -149,9 +147,6 @@ const Dashboard: React.FC = () => {
         {/* Content area - Span 2 columns on desktop */}
         <div className="md:col-span-2">
           <Card className="p-6 bg-white/90 backdrop-blur-sm">
-            {/* Upload Tab */}
-            {activeTab === 'upload' && <UploadProof />}
-            
             {/* Quantify Tab */}
             {activeTab === 'quantify' && <Quantify />}
             
