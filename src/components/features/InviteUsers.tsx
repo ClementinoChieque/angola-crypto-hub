@@ -171,7 +171,7 @@ const InviteUsers: React.FC = () => {
         <h3 className="font-medium mb-1 md:mb-2 text-xs md:text-sm">Benefícios do Programa</h3>
         <ul className="text-[10px] md:text-sm space-y-0.5 md:space-y-1">
           <li>• Ganhe 5% do primeiro depósito de cada amigo</li>
-          <li>• Acesso antecipado a novas funcionalidades</li>
+          
           {!isMobile ? <li>• Desconto em taxas de transação</li> : null}
         </ul>
       </div>
