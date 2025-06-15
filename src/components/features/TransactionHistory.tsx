@@ -8,18 +8,10 @@ type Transaction = {
   id: string;
   amount: number;
   currency: string;
-  type: string; // 'deposit' ou 'withdraw'
+  type: 'deposit' | 'withdraw';
   description?: string | null;
   created_at: string;
-  status?: string; // Usado apenas para saque
-};
-
-type WithdrawalRequest = {
-  id: string;
-  amount: number;
-  currency: string;
-  status: string; // 'pending', 'approved', 'rejected', 'completed'
-  created_at: string;
+  status?: string; // Used only for withdrawals
 };
 
 const withdrawalStatusLabel = (status: string) => {
@@ -40,7 +32,6 @@ const withdrawalStatusLabel = (status: string) => {
 const TransactionHistory: React.FC = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -48,54 +39,44 @@ const TransactionHistory: React.FC = () => {
       if (!user?.id) return;
       setLoading(true);
 
-      // Busca transações (depósito e saque)
-      const { data: txs, error: txError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      try {
+        // Fetch deposit transactions
+        const { data: depositsData, error: depositError } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('type', 'deposit');
 
-      // Busca solicitações de saque (com status do admin)
-      const { data: wd, error: wdError } = await supabase
-        .from('withdrawal_requests')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        // Fetch withdrawal requests
+        const { data: withdrawalsData, error: withdrawalError } = await supabase
+          .from('withdrawal_requests')
+          .select('*')
+          .eq('user_id', user.id);
 
-      // LOGS PARA DEBUG
-      console.log('[TransactionHistory] user.id:', user.id);
-      console.log('[TransactionHistory] txError:', txError);
-      console.log('[TransactionHistory] wdError:', wdError);
-      console.log('[TransactionHistory] txs:', txs);
-      console.log('[TransactionHistory] withdrawals:', wd);
+        if (depositError) throw depositError;
+        if (withdrawalError) throw withdrawalError;
 
-      const transactionsData = Array.isArray(txs) ? txs : [];
-      const withdrawalsData = Array.isArray(wd) ? wd : [];
+        const deposits = (depositsData || []).map((d) => ({
+          ...d,
+          type: 'deposit' as const,
+        }));
 
-      // Cria um mapa rápido de saque pelo valor e data próximos
-      // Como não existe relação direta, faz match pelo valor, moeda e data próxima (±3 minutos)
-      const statusForWithdrawal = (tx: Transaction) => {
-        if (tx.type !== 'withdraw') return undefined;
-        // Busca saque do mesmo valor/moeda em até 3min de diferença
-        const txDate = new Date(tx.created_at);
-        const w = withdrawalsData.find(wd =>
-          Number(wd.amount) === Number(tx.amount) &&
-          wd.currency === tx.currency &&
-          Math.abs(new Date(wd.created_at).getTime() - txDate.getTime()) < 3 * 60 * 1000
+        const withdrawals = (withdrawalsData || []).map((w: any) => ({
+          ...w,
+          type: 'withdraw' as const,
+          description: w.description || `Saque de ${w.amount} ${w.currency}`,
+        }));
+
+        const combinedTransactions: Transaction[] = [...deposits, ...withdrawals].sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
-        return w ? w.status : undefined;
-      };
 
-      // Adiciona o campo status ao tipo saque
-      const txWithStatus = transactionsData.map(tx =>
-        tx.type === 'withdraw'
-          ? { ...tx, status: statusForWithdrawal(tx) }
-          : { ...tx }
-      );
-
-      setTransactions(txWithStatus);
-      setWithdrawals(withdrawalsData);
-      setLoading(false);
+        setTransactions(combinedTransactions);
+      } catch (error) {
+        console.error("Error fetching transaction history:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
