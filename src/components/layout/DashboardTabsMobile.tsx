@@ -6,7 +6,8 @@ import {
   Users,
   TrendingUp,
   Plus,
-  Send
+  Send,
+  List
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -32,15 +33,15 @@ const DashboardTabsMobile: React.FC<DashboardTabsMobileProps> = ({ activeTab, se
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
+    { id: 'transactions', label: 'Transações', icon: <List size={isMobile ? 16 : 20} /> },
     { id: 'suporte', label: 'Suporte', icon: <Send size={isMobile ? 16 : 20} />, link: 'https://web.telegram.org/a/' },
   ];
 
   // Separar os botões em pares para renderizar as TabsList corretamente
-  const tabPairs = [
-    menuItems.slice(0, 2),
-    menuItems.slice(2, 4),
-    menuItems.slice(4, 6),
-  ];
+  const tabPairs = [];
+  for (let i = 0; i < menuItems.length; i += 2) {
+    tabPairs.push(menuItems.slice(i, i + 2));
+  }
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

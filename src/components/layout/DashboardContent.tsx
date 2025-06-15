@@ -6,6 +6,7 @@ import InvestmentPlans from '../features/InvestmentPlans';
 import AddAccount from '../features/AddAccount';
 import InviteUsers from '../features/InviteUsers';
 import MyInvites from '../features/MyInvites';
+import TransactionHistory from '../features/TransactionHistory';
 
 interface DashboardContentProps {
   activeTab: string;
@@ -19,6 +20,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ activeTab }) => {
       {activeTab === 'add-account' && <AddAccount />}
       {activeTab === 'invite' && <InviteUsers />}
       {activeTab === 'my-invites' && <MyInvites />}
+      {activeTab === 'transactions' && <TransactionHistory />}
     </Card>
   );
 };

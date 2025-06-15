@@ -6,7 +6,8 @@ import {
   Users,
   TrendingUp,
   Plus,
-  Send
+  Send,
+  List
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -32,6 +33,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ activeTab, setActiveTab }
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
+    { id: 'transactions', label: 'Transações', icon: <List size={isMobile ? 16 : 20} /> },
     { id: 'suporte', label: 'Suporte', icon: <Send size={isMobile ? 16 : 20} />, link: 'https://web.telegram.org/a/' },
   ];
 
