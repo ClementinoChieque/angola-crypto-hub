@@ -69,6 +69,13 @@ const DepositOptionsContainer: React.FC = () => {
     }
   }, [selected]);
 
+  // Handler simulando ação ao clicar em confirmar depósito
+  const handleConfirmDeposit = () => {
+    // Aqui poderia acionar uma toast ou lógica existente futuramente
+    // Por ora, apenas console log para marcação visual
+    console.log('Depósito confirmado:', { tipo: selected, valor: amount });
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4 text-center">Selecione o Método de Depósito</h2>
@@ -162,6 +169,16 @@ const DepositOptionsContainer: React.FC = () => {
             onChange={e => setAmount(e.target.value)}
             className="max-w-xs"
           />
+
+          {/* Botão azul Confirmar Depósito */}
+          <Button 
+            className="w-full mt-4 bg-blue-500 hover:bg-blue-600"
+            onClick={handleConfirmDeposit}
+            disabled={!amount || parseFloat(amount) <= 0}
+            type="button"
+          >
+            Confirmar Depósito
+          </Button>
         </div>
       )}
 
