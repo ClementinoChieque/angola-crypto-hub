@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import TermsOfUse from "./pages/TermsOfUse";
+import AboutUs from "./pages/AboutUs";
 
 // Create a single query client instance
 const queryClient = new QueryClient({
@@ -32,6 +33,7 @@ const App = () => {
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/terms" element={<TermsOfUse />} />
+              <Route path="/about-us" element={<AboutUs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Toaster />
