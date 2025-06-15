@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -36,7 +35,6 @@ export const useReferralRewards = () => {
 
   const fetchReferralRewards = async () => {
     try {
-      // Busca apenas as colunas explícitas, nunca relações ou expands
       const { data, error } = await supabase
         .from('referral_rewards')
         .select(columns)
@@ -47,19 +45,18 @@ export const useReferralRewards = () => {
         throw error;
       }
 
-      // Only proceed if data is an array
+      // Only proceed if data is an array AND its elements pass the type check
       if (!Array.isArray(data)) {
         // Protege contra respostas inesperadas da API
         console.warn('[ReferralRewards] Dados recebidos de referral_rewards não são um array:', data);
-        setReferralRewards([]); // guarantee only ReferralReward[] ever passed
+        setReferralRewards([]); // Always set to an empty valid array
         return;
       }
 
-      // Now check that at least one element is a ReferralReward;
-      // filter returns ReferralReward[].
-      const rewards = data.filter(isReferralReward);
+      // Safe, strict filtering by type guard
+      const rewards: ReferralReward[] = data.filter(isReferralReward);
 
-      setReferralRewards(rewards); // Always type-correct
+      setReferralRewards(rewards);
 
     } catch (err) {
       console.error('Error fetching referral rewards [catch]:', err);
@@ -70,7 +67,7 @@ export const useReferralRewards = () => {
           : String(err),
         variant: "destructive"
       });
-      setReferralRewards([]); // Always only use ReferralReward[]
+      setReferralRewards([]); // Always only use ReferralReward[] (empty array)
     }
   };
 
@@ -162,5 +159,3 @@ export const useReferralRewards = () => {
 
   return { referralRewards, refetchReferralRewards: fetchReferralRewards, addReferralReward };
 };
-
-// ... end of file
