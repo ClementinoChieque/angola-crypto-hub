@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -170,8 +171,6 @@ const InviteUsers: React.FC = () => {
         <h3 className="font-medium mb-1 md:mb-2 text-xs md:text-sm">Benefícios do Programa</h3>
         <ul className="text-[10px] md:text-sm space-y-0.5 md:space-y-1">
           <li>• Ganhe 5% do primeiro depósito de cada amigo</li>
-          
-          {!isMobile ? <li></li> : null}
         </ul>
       </div>
     </div>
