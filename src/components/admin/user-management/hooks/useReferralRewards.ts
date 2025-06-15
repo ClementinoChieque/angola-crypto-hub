@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -12,9 +13,7 @@ function isReferralReward(obj: any): obj is ReferralReward {
     typeof obj.reward_amount === 'number' &&
     typeof obj.reward_currency === 'string' &&
     typeof obj.status === 'string' &&
-    typeof obj.created_at === 'string' &&
-    // updated_at field from supabase may be present or not; be defensive but expect string
-    typeof obj.updated_at === 'string'
+    typeof obj.created_at === 'string'
   );
 }
 
@@ -45,12 +44,16 @@ export const useReferralRewards = () => {
         throw error;
       }
 
-      // Fix: Make sure only to assign ReferralReward[] or []
-      if (Array.isArray(data)) {
-        const rewards: ReferralReward[] = data.filter(isReferralReward);
-        setReferralRewards(rewards);
+      // PROPERLY SAFE: Only set valid ReferralReward[]
+      if (
+        Array.isArray(data) &&
+        data.every(isReferralReward)
+      ) {
+        setReferralRewards(data as ReferralReward[]);
+      } else if (Array.isArray(data)) {
+        // If mixed or wrong type, filter only valid objects in the array
+        setReferralRewards(data.filter(isReferralReward));
       } else {
-        // If data is not an array, set an empty ReferralReward[] array
         setReferralRewards([]);
       }
     } catch (err) {
@@ -62,7 +65,7 @@ export const useReferralRewards = () => {
           : String(err),
         variant: "destructive"
       });
-      setReferralRewards([]); // Always only use ReferralReward[] (empty array)
+      setReferralRewards([]); // Always set a valid, empty array
     }
   };
 
