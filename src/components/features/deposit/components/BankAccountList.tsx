@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import type { BankAccount } from '../types';
+import type { BankAccount } from '../types/index';
 
 interface BankAccountListProps {
   accounts: BankAccount[];

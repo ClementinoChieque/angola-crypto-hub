@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import type { UsdtWallet } from '../types';
+import type { UsdtWallet } from '../types/index';
 
 interface UsdtWalletListProps {
   wallets: UsdtWallet[];

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import type { DepositType } from '../types';
+import type { DepositType } from '../types/index';
 
 interface DepositMethodSelectorProps {
   selected: DepositType | null;

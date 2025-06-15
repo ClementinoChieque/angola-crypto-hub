@@ -1,14 +1,13 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useUser } from '@/context/UserContext';
-import { Circle, ArrowUp, ArrowDown } from 'lucide-react';
+import { Circle, ArrowUp, ArrowDown, Award } from 'lucide-react';
 import { useEffect } from 'react';
 import DepositOptions from './DepositOptions';
 import WithdrawalOptions from './WithdrawalOptions';
 
 const BalanceStatus: React.FC = () => {
-  const { balance } = useUser();
+  const { balance, levelName } = useUser();
   const [exchangeRate, setExchangeRate] = useState(1350); // 1 USDT = 1350,00 AKZ
   const [usdtEquivalent, setUsdtEquivalent] = useState(0);
   const [akzEquivalent, setAkzEquivalent] = useState(0);
@@ -42,9 +41,17 @@ const BalanceStatus: React.FC = () => {
           <div className="flex flex-col">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-sm font-medium text-muted-foreground">Saldo Atual</h3>
-              <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
-                <Circle size={8} fill="currentColor" className="mr-1" />
-                <span>Ativo</span>
+              <div className="flex items-center gap-2">
+                {levelName && (
+                  <div className="flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full text-xs font-semibold">
+                    <Award size={12} className="mr-1" />
+                    <span>Nível: {levelName}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
+                  <Circle size={8} fill="currentColor" className="mr-1" />
+                  <span>Ativo</span>
+                </div>
               </div>
             </div>
             

@@ -12,6 +12,7 @@ type ProofUpload = {
 
 type UserContextType = {
   balance: { amount: number; currency: string };
+  levelName: string | null;
   depositMethod: DepositMethod;
   withdrawalMethod: WithdrawalMethod;
   isDepositVerified: boolean;
@@ -28,6 +29,7 @@ type UserContextType = {
 
 const defaultContext: UserContextType = {
   balance: { amount: 0, currency: 'AKZ' },
+  levelName: null,
   depositMethod: null,
   withdrawalMethod: null,
   isDepositVerified: false,
@@ -49,6 +51,7 @@ export const useUser = () => useContext(UserContext);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, isAuthenticated } = useAuth();
   const [balance, setBalance] = useState({ amount: 0, currency: 'AKZ' });
+  const [levelName, setLevelName] = useState<string | null>(null);
   const [depositMethod, setDepositMethod] = useState<DepositMethod>(null);
   const [withdrawalMethod, setWithdrawalMethod] = useState<WithdrawalMethod>(null);
   const [isDepositVerified, setIsDepositVerified] = useState(false);
@@ -76,7 +79,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         try {
           const { data, error } = await supabase
             .from('user_quantifications')
-            .select('balance, investment_plan:investment_plans(currency)')
+            .select('balance, investment_plan:investment_plans(currency, level_name)')
             .eq('user_id', user.id)
             .single();
 
@@ -89,9 +92,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
               amount: data.balance || 0,
               currency: data.investment_plan?.currency || 'AKZ',
             });
+            setLevelName(data.investment_plan?.level_name || null);
+          } else {
+            setLevelName(null);
           }
         } catch(error) {
           console.error("Error fetching user balance from DB:", error);
+          setLevelName(null);
         }
       }
     };
@@ -147,6 +154,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     <UserContext.Provider
       value={{
         balance,
+        levelName,
         depositMethod,
         withdrawalMethod,
         isDepositVerified,
