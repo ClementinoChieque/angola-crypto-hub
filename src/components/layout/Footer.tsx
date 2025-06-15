@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ variant = 'light' }) => {
             &copy; {new Date().getFullYear()} Bitget12. Todos os direitos reservados.
           </p>
           <div className="flex gap-4">
-            <a href="#" className={hoverColor}>Políticas de Uso</a>
+            <a href="/terms" className={hoverColor}>Políticas de Uso</a>
             <a href="#" className={hoverColor}>Sobre Nós</a>
           </div>
         </div>
