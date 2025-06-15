@@ -31,32 +31,40 @@ const DepositOptionsContainer: React.FC = () => {
   // Fetch USDT wallets when USDT is selected
   useEffect(() => {
     if (selected === 'USDT') {
-      setWalletsLoading(true);
-      supabase
-        .from('broker_usdt_wallets')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .then(({ data }) => {
+      const fetchWallets = async () => {
+        setWalletsLoading(true);
+        try {
+          const { data } = await supabase
+            .from('broker_usdt_wallets')
+            .select('*')
+            .eq('is_active', true)
+            .order('created_at', { ascending: false });
           setUsdtWallets(data || []);
-        })
-        .finally(() => setWalletsLoading(false));
+        } finally {
+          setWalletsLoading(false);
+        }
+      };
+      fetchWallets();
     }
   }, [selected]);
 
   // Fetch bank accounts when AKZ is selected
   useEffect(() => {
     if (selected === 'AKZ') {
-      setBanksLoading(true);
-      supabase
-        .from('broker_bank_accounts')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .then(({ data }) => {
+      const fetchBanks = async () => {
+        setBanksLoading(true);
+        try {
+          const { data } = await supabase
+            .from('broker_bank_accounts')
+            .select('*')
+            .eq('is_active', true)
+            .order('created_at', { ascending: false });
           setBankAccounts(data || []);
-        })
-        .finally(() => setBanksLoading(false));
+        } finally {
+          setBanksLoading(false);
+        }
+      };
+      fetchBanks();
     }
   }, [selected]);
 
@@ -141,4 +149,3 @@ const DepositOptionsContainer: React.FC = () => {
 };
 
 export default DepositOptionsContainer;
-
