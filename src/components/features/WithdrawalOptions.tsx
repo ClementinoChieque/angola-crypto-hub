@@ -97,7 +97,8 @@ const WithdrawalOptions: React.FC = () => {
       bank_account = null;
     }
 
-    const { error } = await supabase.from('withdrawal_requests').insert([
+    // 1. Registrar solicitação de saque
+    const { error: withdrawalError, data: withdrawalData } = await supabase.from('withdrawal_requests').insert([
       {
         user_id: user.id,
         amount: withdrawalAmount,
@@ -110,11 +111,23 @@ const WithdrawalOptions: React.FC = () => {
       }
     ]);
 
-    if (error) {
-      // Se der erro ao registrar solicitação, estornamos o saldo
+    // 2. Registrar transação de saque (withdraw)
+    const { error: transactionError } = await supabase.from('transactions').insert([
+      {
+        user_id: user.id,
+        amount: withdrawalAmount,
+        currency: balanceCurrency,
+        type: 'withdraw',
+        description: 'Solicitação de saque',
+      }
+    ]);
+
+    // Se der erro em alguma das etapas:
+    if (withdrawalError || transactionError) {
+      // Se der erro ao registrar solicitação ou transação, estornamos o saldo
       await updateBalance(balance.amount);
       toast({
-        title: "Erro ao registrar solicitação",
+        title: "Erro ao registrar saque",
         description: "Não foi possível registrar seu pedido de saque. Tente novamente.",
         variant: "destructive",
       });
