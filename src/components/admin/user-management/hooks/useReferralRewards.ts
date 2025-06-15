@@ -32,26 +32,27 @@ export const useReferralRewards = () => {
         console.error('[ReferralRewards] Erro ao buscar referral_rewards via supabase:', error);
         throw error;
       }
+      // DATA MAY BE undefined, GenericStringError[], or ReferralReward[]
       if (!Array.isArray(data)) {
         // Protege contra respostas inesperadas da API
         console.warn('[ReferralRewards] Dados recebidos de referral_rewards não são um array:', data);
         setReferralRewards([]);
         return;
       }
-      // Evita crash de tipos: só mantém itens válidos!
-      const validRewards: ReferralReward[] = data.filter(
-        (r): r is ReferralReward =>
-          !!r &&
-          typeof r.id === "string" &&
-          typeof r.referrer_id === "string" &&
-          typeof r.referred_user_id === "string" &&
-          typeof r.reward_amount === "number" &&
-          typeof r.reward_currency === "string" &&
-          typeof r.status === "string" &&
-          typeof r.created_at === "string" &&
-          typeof r.updated_at === "string"
+      // Only include objects that have required fields with correct types
+      setReferralRewards(
+        data.filter(
+          (r) => r &&
+            typeof r.id === "string" &&
+            typeof r.referrer_id === "string" &&
+            typeof r.referred_user_id === "string" &&
+            typeof r.reward_amount === "number" &&
+            typeof r.reward_currency === "string" &&
+            typeof r.status === "string" &&
+            typeof r.created_at === "string" &&
+            typeof r.updated_at === "string"
+        ) as ReferralReward[]
       );
-      setReferralRewards(validRewards);
     } catch (err) {
       console.error('Error fetching referral rewards [catch]:', err);
       toast({
