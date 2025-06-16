@@ -14,7 +14,6 @@ interface DepositRequest {
   amount: number;
   currency: string;
   description: string | null;
-  status: string;
   created_at: string;
   profiles?: {
     username: string;
@@ -57,46 +56,6 @@ const UserDeposits: React.FC = () => {
     fetchDeposits();
   }, []);
 
-  const updateDepositStatus = async (depositId: string, status: string) => {
-    setUpdating(depositId);
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .update({ status })
-        .eq('id', depositId);
-
-      if (error) throw error;
-
-      await fetchDeposits();
-      toast({
-        title: "Sucesso",
-        description: `Depósito ${status === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso`,
-      });
-    } catch (error) {
-      console.error('Error updating deposit:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao atualizar status do depósito",
-        variant: "destructive",
-      });
-    } finally {
-      setUpdating(null);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Badge variant="outline" className="text-yellow-600 border-yellow-300"><Clock size={12} className="mr-1" />Pendente</Badge>;
-      case 'approved':
-        return <Badge variant="outline" className="text-green-600 border-green-300"><CheckCircle size={12} className="mr-1" />Aprovado</Badge>;
-      case 'rejected':
-        return <Badge variant="outline" className="text-red-600 border-red-300"><XCircle size={12} className="mr-1" />Rejeitado</Badge>;
-      default:
-        return <Badge variant="outline">-</Badge>;
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -128,7 +87,10 @@ const UserDeposits: React.FC = () => {
                   <CardTitle className="text-lg">
                     {deposit.profiles?.username || 'Usuário desconhecido'}
                   </CardTitle>
-                  {getStatusBadge(deposit.status)}
+                  <Badge variant="outline" className="text-green-600 border-green-300">
+                    <CheckCircle size={12} className="mr-1" />
+                    Completo
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
@@ -152,38 +114,6 @@ const UserDeposits: React.FC = () => {
                     </div>
                   )}
                 </div>
-
-                {deposit.status === 'pending' && (
-                  <div className="flex gap-2 pt-3 border-t">
-                    <Button
-                      onClick={() => updateDepositStatus(deposit.id, 'approved')}
-                      disabled={updating === deposit.id}
-                      className="bg-green-600 hover:bg-green-700 flex-1"
-                      size={isMobile ? "sm" : "default"}
-                    >
-                      {updating === deposit.id ? (
-                        <Loader2 className="animate-spin mr-2" size={16} />
-                      ) : (
-                        <CheckCircle className="mr-2" size={16} />
-                      )}
-                      Aprovar
-                    </Button>
-                    <Button
-                      onClick={() => updateDepositStatus(deposit.id, 'rejected')}
-                      disabled={updating === deposit.id}
-                      variant="outline"
-                      className="border-red-300 text-red-600 hover:bg-red-50 flex-1"
-                      size={isMobile ? "sm" : "default"}
-                    >
-                      {updating === deposit.id ? (
-                        <Loader2 className="animate-spin mr-2" size={16} />
-                      ) : (
-                        <XCircle className="mr-2" size={16} />
-                      )}
-                      Rejeitar
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           ))}
