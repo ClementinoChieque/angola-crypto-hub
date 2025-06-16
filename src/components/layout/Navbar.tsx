@@ -4,11 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/context/AuthContext';
 import { useUser } from '@/context/UserContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { Menu, X, LogOut, User, Wallet } from 'lucide-react';
+import LanguageSelector from './LanguageSelector';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const { balance } = useUser();
+  const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -32,12 +35,13 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
+          <LanguageSelector />
           {user ? (
             <>
               <div className="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-full border">
                 <Wallet size={16} className="text-primary" />
                 <div className="flex flex-col">
-                  <span className="text-xs text-muted-foreground">Saldo:</span>
+                  <span className="text-xs text-muted-foreground">{t('balance')}:</span>
                   <span className="font-semibold text-sm text-primary">
                     {balance.amount.toLocaleString()} {balance.currency}
                   </span>
@@ -54,10 +58,12 @@ const Navbar: React.FC = () => {
                 className="flex items-center gap-2"
               >
                 <LogOut size={16} />
-                <span>Sair</span>
+                <span>{t('logout')}</span>
               </Button>
             </>
-          ) : null}
+          ) : (
+            <LanguageSelector />
+          )}
         </nav>
 
         {/* Mobile Navigation */}
@@ -77,11 +83,14 @@ const Navbar: React.FC = () => {
                     alt="Bitget12" 
                     className="h-6 w-6"
                   />
-                  <span className="font-bold text-xl text-primary">Menu</span>
+                  <span className="font-bold text-xl text-primary">{t('menu')}</span>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <LanguageSelector />
+                  <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
 
               <div className="flex flex-col py-6 space-y-4">
@@ -90,7 +99,7 @@ const Navbar: React.FC = () => {
                     <div className="bg-gray-50 rounded-lg p-4 border">
                       <div className="flex items-center gap-3 mb-3">
                         <Wallet size={20} className="text-primary" />
-                        <span className="font-semibold">Saldo Atual</span>
+                        <span className="font-semibold">{t('currentBalance')}</span>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-primary">
@@ -103,7 +112,7 @@ const Navbar: React.FC = () => {
                     <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border">
                       <User size={18} className="text-gray-600" />
                       <div>
-                        <div className="text-sm text-muted-foreground">Usuário</div>
+                        <div className="text-sm text-muted-foreground">{t('user')}</div>
                         <div className="font-medium">{user.phoneNumber}</div>
                       </div>
                     </div>
@@ -114,7 +123,7 @@ const Navbar: React.FC = () => {
                       className="flex items-center gap-3 justify-start"
                     >
                       <LogOut size={16} />
-                      <span>Sair da Conta</span>
+                      <span>{t('logoutAccount')}</span>
                     </Button>
                   </>
                 ) : null}
