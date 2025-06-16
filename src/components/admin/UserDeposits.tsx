@@ -30,6 +30,7 @@ const UserDeposits: React.FC = () => {
   const isMobile = useIsMobile();
 
   const fetchDeposits = async () => {
+    console.log('Iniciando fetchDeposits...');
     try {
       const { data, error } = await supabase
         .from('transactions')
@@ -40,7 +41,12 @@ const UserDeposits: React.FC = () => {
         .eq('type', 'deposit')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao buscar depósitos:', error);
+        throw error;
+      }
+      
+      console.log('Depósitos carregados:', data);
       setDeposits(data || []);
     } catch (error) {
       console.error('Error fetching deposits:', error);
@@ -59,16 +65,50 @@ const UserDeposits: React.FC = () => {
   }, []);
 
   const updateDepositStatus = async (depositId: string, status: string) => {
+    console.log(`Iniciando atualização do depósito ${depositId} para status: ${status}`);
     setUpdating(depositId);
+    
     try {
-      const { error } = await supabase
+      // Primeiro, vamos verificar se o depósito existe
+      const { data: existingDeposit, error: fetchError } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('id', depositId)
+        .single();
+
+      if (fetchError) {
+        console.error('Erro ao buscar depósito:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('Depósito encontrado:', existingDeposit);
+
+      // Agora vamos tentar atualizar
+      const { data: updatedData, error: updateError } = await supabase
         .from('transactions')
         .update({ status })
-        .eq('id', depositId);
+        .eq('id', depositId)
+        .select();
 
-      if (error) throw error;
+      if (updateError) {
+        console.error('Erro ao atualizar depósito:', updateError);
+        throw updateError;
+      }
 
+      console.log('Depósito atualizado com sucesso:', updatedData);
+
+      // Atualizar o estado local imediatamente
+      setDeposits(prevDeposits => 
+        prevDeposits.map(deposit => 
+          deposit.id === depositId 
+            ? { ...deposit, status } 
+            : deposit
+        )
+      );
+
+      // Também refetch para garantir que temos os dados mais recentes
       await fetchDeposits();
+      
       toast({
         title: "Sucesso",
         description: `Depósito ${status === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso`,
@@ -77,7 +117,7 @@ const UserDeposits: React.FC = () => {
       console.error('Error updating deposit:', error);
       toast({
         title: "Erro",
-        description: "Erro ao atualizar status do depósito",
+        description: `Erro ao atualizar status do depósito: ${error.message}`,
         variant: "destructive",
       });
     } finally {
