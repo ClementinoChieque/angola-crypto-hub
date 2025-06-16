@@ -2,6 +2,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
+import { useLanguage } from '@/context/LanguageContext';
 import LoginForm from '@/components/auth/LoginForm';
 import RegisterForm from '@/components/auth/RegisterForm';
 import { useAuthHandlers } from '@/hooks/useAuthHandlers';
@@ -10,6 +11,7 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode') || 'login';
   const { handleLogin, handleRegister, isLoading } = useAuthHandlers();
+  const { t } = useLanguage();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">

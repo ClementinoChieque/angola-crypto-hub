@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { registerSchema, RegisterFormData } from '@/schemas/authSchemas';
+import { useLanguage } from '@/context/LanguageContext';
 import OptimizedCountrySelect from './OptimizedCountrySelect';
 
 interface RegisterFormProps {
@@ -14,6 +15,8 @@ interface RegisterFormProps {
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
+  const { t } = useLanguage();
+  
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -33,10 +36,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
           name="inviteCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Código de Convite</FormLabel>
+              <FormLabel>{t('inviteCode')}</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Digite o código de convite"
+                  placeholder={t('enterInviteCode')}
                   {...field}
                 />
               </FormControl>
@@ -56,11 +59,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
           name="phoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Número de Telefone</FormLabel>
+              <FormLabel>{t('phoneNumber')}</FormLabel>
               <FormControl>
                 <Input 
                   type="tel"
-                  placeholder="Número de telefone sem código do país"
+                  placeholder={t('phoneNumberWithoutCountry')}
                   {...field}
                 />
               </FormControl>
@@ -74,11 +77,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Senha</FormLabel>
+              <FormLabel>{t('password')}</FormLabel>
               <FormControl>
                 <Input 
                   type="password"
-                  placeholder="Crie uma senha forte"
+                  placeholder={t('createStrongPassword')}
                   {...field}
                 />
               </FormControl>
@@ -92,10 +95,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nome completo</FormLabel>
+              <FormLabel>{t('fullName')}</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Seu nome completo"
+                  placeholder={t('enterFullName')}
                   {...field}
                 />
               </FormControl>
@@ -109,7 +112,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
           className="w-full"
           disabled={isLoading}
         >
-          {isLoading ? "Processando..." : "Cadastrar"}
+          {isLoading ? t('processing') : t('register')}
         </Button>
       </form>
     </Form>
