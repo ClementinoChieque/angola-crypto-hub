@@ -14,6 +14,7 @@ export const registerSchema = z.object({
   countryCode: z.string(),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   fullName: z.string().min(3, "Nome completo é obrigatório"),
+  inviteCode: z.string().min(1, "Código de convite é obrigatório"),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
