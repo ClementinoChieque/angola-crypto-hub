@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,27 +29,7 @@ const UserDeposits: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
-  const checkAdminRole = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log('Current user:', user);
-      
-      if (user) {
-        const { data: roles, error } = await supabase
-          .from('user_roles')
-          .select('*')
-          .eq('user_id', user.id);
-        
-        console.log('User roles:', roles);
-        console.log('Roles query error:', error);
-      }
-    } catch (error) {
-      console.error('Error checking admin role:', error);
-    }
-  };
-
   const fetchDeposits = async () => {
-    console.log('Iniciando fetchDeposits...');
     try {
       const { data, error } = await supabase
         .from('transactions')
@@ -60,11 +41,9 @@ const UserDeposits: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Erro ao buscar depósitos:', error);
         throw error;
       }
       
-      console.log('Depósitos carregados:', data);
       setDeposits(data || []);
     } catch (error) {
       console.error('Error fetching deposits:', error);
@@ -79,34 +58,13 @@ const UserDeposits: React.FC = () => {
   };
 
   useEffect(() => {
-    checkAdminRole();
     fetchDeposits();
   }, []);
 
   const updateDepositStatus = async (depositId: string, status: string) => {
-    console.log(`Iniciando atualização do depósito ${depositId} para status: ${status}`);
-    
-    // Verificar role de admin antes de tentar atualizar
-    await checkAdminRole();
-    
     setUpdating(depositId);
     
     try {
-      // Primeiro, vamos verificar se o depósito existe
-      const { data: existingDeposit, error: fetchError } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('id', depositId)
-        .single();
-
-      if (fetchError) {
-        console.error('Erro ao buscar depósito:', fetchError);
-        throw fetchError;
-      }
-
-      console.log('Depósito encontrado:', existingDeposit);
-
-      // Agora vamos tentar atualizar
       const { data: updatedData, error: updateError } = await supabase
         .from('transactions')
         .update({ status })
@@ -114,11 +72,8 @@ const UserDeposits: React.FC = () => {
         .select();
 
       if (updateError) {
-        console.error('Erro ao atualizar depósito:', updateError);
         throw updateError;
       }
-
-      console.log('Depósito atualizado com sucesso:', updatedData);
 
       // Atualizar o estado local imediatamente
       setDeposits(prevDeposits => 
