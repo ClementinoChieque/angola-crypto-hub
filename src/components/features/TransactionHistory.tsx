@@ -15,19 +15,12 @@ const TransactionHistory: React.FC = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    console.log('TransactionHistory - useEffect triggered, user:', user?.id);
-    
     const fetchData = async () => {
-      if (!user?.id) {
-        console.log('TransactionHistory - No user ID, skipping fetch');
-        return;
-      }
+      if (!user?.id) return;
       
-      console.log('TransactionHistory - Starting data fetch for user:', user.id);
       setLoading(true);
 
       try {
-        console.log('TransactionHistory - Fetching deposits...');
         // Fetch deposit transactions
         const { data: depositsData, error: depositError } = await supabase
           .from('transactions')
@@ -35,18 +28,11 @@ const TransactionHistory: React.FC = () => {
           .eq('user_id', user.id)
           .eq('type', 'deposit');
 
-        console.log('TransactionHistory - Deposits data:', depositsData);
-        console.log('TransactionHistory - Deposits error:', depositError);
-
-        console.log('TransactionHistory - Fetching withdrawals...');
         // Fetch withdrawal requests
         const { data: withdrawalsData, error: withdrawalError } = await supabase
           .from('withdrawal_requests')
           .select('*')
           .eq('user_id', user.id);
-
-        console.log('TransactionHistory - Withdrawals data:', withdrawalsData);
-        console.log('TransactionHistory - Withdrawals error:', withdrawalError);
 
         if (depositError) throw depositError;
         if (withdrawalError) throw withdrawalError;
@@ -66,13 +52,11 @@ const TransactionHistory: React.FC = () => {
           (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
 
-        console.log('TransactionHistory - Combined transactions:', combinedTransactions);
         setTransactions(combinedTransactions);
       } catch (error) {
-        console.error("TransactionHistory - Error fetching transaction history:", error);
+        console.error("Error fetching transaction history:", error);
       } finally {
         setLoading(false);
-        console.log('TransactionHistory - Fetch completed');
       }
     };
 
@@ -80,8 +64,6 @@ const TransactionHistory: React.FC = () => {
   }, [user?.id]);
 
   const withdrawals = transactions.filter(tx => tx.type === 'withdraw');
-
-  console.log('TransactionHistory - Rendering component, transactions count:', transactions.length);
 
   return (
     <div>
