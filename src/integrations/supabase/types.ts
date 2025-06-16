@@ -259,7 +259,6 @@ export type Database = {
           currency: string
           description: string | null
           id: string
-          status: string | null
           type: string
           user_id: string
         }
@@ -269,7 +268,6 @@ export type Database = {
           currency: string
           description?: string | null
           id?: string
-          status?: string | null
           type: string
           user_id: string
         }
@@ -279,7 +277,6 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
-          status?: string | null
           type?: string
           user_id?: string
         }

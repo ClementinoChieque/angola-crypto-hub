@@ -24,11 +24,6 @@ const DepositOptionsContainer: React.FC = () => {
     setAmount('');
   };
 
-  const handleBack = () => {
-    setSelected(null);
-    setAmount('');
-  };
-
   return (
     <div>
       <DepositMethodSelector selected={selected} onSelect={setSelected} />
@@ -44,9 +39,10 @@ const DepositOptionsContainer: React.FC = () => {
       {selected && (
         <>
           <DepositForm
-            selectedMethod={selected === 'USDT' ? 'crypto' : 'bank'}
-            currency={selected}
-            onBack={handleBack}
+            selectedType={selected}
+            amount={amount}
+            onAmountChange={setAmount}
+            onConfirm={handleConfirmDeposit}
           />
           <div className="mt-6">
             <UploadProofContainer />
