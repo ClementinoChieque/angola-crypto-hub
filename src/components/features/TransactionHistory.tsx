@@ -7,7 +7,6 @@ import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Transaction } from './transaction-history/types';
 import TransactionsList from './transaction-history/TransactionsList';
-import DepositsOnly from './transaction-history/DepositsOnly';
 
 const TransactionHistory: React.FC = () => {
   const { user } = useAuth();
@@ -63,7 +62,6 @@ const TransactionHistory: React.FC = () => {
     fetchData();
   }, [user?.id]);
 
-  const deposits = transactions.filter(tx => tx.type === 'deposit');
   const withdrawals = transactions.filter(tx => tx.type === 'withdraw');
 
   return (
@@ -71,23 +69,14 @@ const TransactionHistory: React.FC = () => {
       <h2 className="text-xl font-semibold mb-4 text-center">Transações</h2>
       
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-4">
+        <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="all">Todas</TabsTrigger>
-          <TabsTrigger value="deposits">Depósitos</TabsTrigger>
           <TabsTrigger value="withdrawals">Saques</TabsTrigger>
         </TabsList>
         
         <TabsContent value="all">
           <TransactionsList 
             transactions={transactions} 
-            loading={loading} 
-            isMobile={isMobile} 
-          />
-        </TabsContent>
-        
-        <TabsContent value="deposits">
-          <DepositsOnly 
-            deposits={deposits} 
             loading={loading} 
             isMobile={isMobile} 
           />
