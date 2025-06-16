@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +27,25 @@ const UserDeposits: React.FC = () => {
   const [updating, setUpdating] = useState<string | null>(null);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+
+  const checkAdminRole = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log('Current user:', user);
+      
+      if (user) {
+        const { data: roles, error } = await supabase
+          .from('user_roles')
+          .select('*')
+          .eq('user_id', user.id);
+        
+        console.log('User roles:', roles);
+        console.log('Roles query error:', error);
+      }
+    } catch (error) {
+      console.error('Error checking admin role:', error);
+    }
+  };
 
   const fetchDeposits = async () => {
     console.log('Iniciando fetchDeposits...');
@@ -61,11 +79,16 @@ const UserDeposits: React.FC = () => {
   };
 
   useEffect(() => {
+    checkAdminRole();
     fetchDeposits();
   }, []);
 
   const updateDepositStatus = async (depositId: string, status: string) => {
     console.log(`Iniciando atualização do depósito ${depositId} para status: ${status}`);
+    
+    // Verificar role de admin antes de tentar atualizar
+    await checkAdminRole();
+    
     setUpdating(depositId);
     
     try {
