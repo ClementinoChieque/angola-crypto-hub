@@ -70,17 +70,10 @@ const Index = () => {
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            {t('language') === 'pt' ? (
-              <>Maximize Seus <span className="text-primary">Investimentos</span></>
-            ) : (
-              <>Maximize Your <span className="text-primary">Investments</span></>
-            )}
+            Maximize Seus <span className="text-primary">Investimentos</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            {t('language') === 'pt' 
-              ? 'Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida'
-              : 'Cryptocurrency investment platform with high returns and guaranteed security'
-            }
+            Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida
           </p>
           <Button 
             size="lg" 
