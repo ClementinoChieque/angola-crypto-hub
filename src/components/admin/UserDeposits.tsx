@@ -16,6 +16,7 @@ interface DepositRequest {
   description: string | null;
   status: string;
   created_at: string;
+  type: string;
   profiles?: {
     username: string;
   };
