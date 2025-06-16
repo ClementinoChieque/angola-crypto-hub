@@ -21,7 +21,20 @@ const DepositForm: React.FC<DepositFormProps> = ({ selectedMethod, currency, onB
   const { toast } = useToast();
 
   const handleConfirmDeposit = async () => {
-    if (!user?.id || !amount || Number(amount) <= 0) {
+    console.log('Starting deposit confirmation...', { user: user?.id, amount, currency });
+    
+    if (!user?.id) {
+      console.error('User not authenticated');
+      toast({
+        title: "Erro",
+        description: "Usuário não autenticado. Por favor, faça login novamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!amount || Number(amount) <= 0) {
+      console.error('Invalid amount:', amount);
       toast({
         title: "Erro",
         description: "Por favor, insira um valor válido",
@@ -32,23 +45,30 @@ const DepositForm: React.FC<DepositFormProps> = ({ selectedMethod, currency, onB
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      console.log('Inserting transaction into database...');
+      
+      const transactionData = {
+        user_id: user.id,
+        amount: Number(amount),
+        currency: currency,
+        type: 'deposit',
+        description: `Depósito via ${selectedMethod === 'bank' ? 'Transferência Bancária' : 'USDT'}`,
+        status: 'pending'
+      };
+      
+      console.log('Transaction data:', transactionData);
+
+      const { data, error } = await supabase
         .from('transactions')
-        .insert({
-          user_id: user.id,
-          amount: Number(amount),
-          currency: currency,
-          type: 'deposit',
-          description: `Depósito via ${selectedMethod === 'bank' ? 'Transferência Bancária' : 'USDT'}`,
-          status: 'pending'
-        });
+        .insert(transactionData)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
-      console.log('Depósito confirmado:', {
-        tipo: currency,
-        valor: amount
-      });
+      console.log('Transaction created successfully:', data);
 
       toast({
         title: "Sucesso",
@@ -58,10 +78,10 @@ const DepositForm: React.FC<DepositFormProps> = ({ selectedMethod, currency, onB
       setAmount('');
       onBack();
     } catch (error) {
-      console.error('Erro ao confirmar depósito:', error);
+      console.error('Erro completo ao confirmar depósito:', error);
       toast({
         title: "Erro",
-        description: "Erro ao processar depósito",
+        description: `Erro ao processar depósito: ${error.message || 'Erro desconhecido'}`,
         variant: "destructive",
       });
     } finally {
