@@ -15,8 +15,8 @@ export const useAdminCheck = () => {
         return;
       }
 
-      // Check if the user's phone number matches our admin user
-      const adminPhones = ['+244947896752', '244947896752'];
+      // Check if the user's phone number matches our admin users
+      const adminPhones = ['+244947896752', '244947896752', '+244930024983', '244930024983'];
       const isAdminUser = adminPhones.includes(user.phoneNumber);
       
       setIsAdmin(isAdminUser);
