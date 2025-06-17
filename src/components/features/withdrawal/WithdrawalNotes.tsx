@@ -7,7 +7,7 @@ const WithdrawalNotes = () => (
     <ul className="list-disc pl-5 mt-2">
       <li>Saques são processados em até 72 horas úteis.</li>
       <li>Certifique-se de inserir as informações corretas.</li>
-      <li>Todos os pedidos passam por aprovação manual do administrador.</li>
+      <li>Todos os pedidos de saques são creditados na sua conta bancária em até 72 horas úteis.</li>
     </ul>
   </div>
 );
