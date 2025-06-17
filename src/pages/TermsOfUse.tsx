@@ -40,14 +40,14 @@ const TermsOfUse = () => {
           <CardContent className="space-y-6 text-gray-700 leading-relaxed">
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">1. Objetivo</h2>
-              <p>Esta Política de Uso estabelece as regras e condições para a participação de investidores na plataforma de investimento em criptomoedas BITGET12, onde especialistas gerenciam os fundos investidos e os lucros são distribuídos mensalmente aos investidores durante um período de 365 dias.</p>
+              <p>Esta Política de Uso estabelece as regras e condições para a participação de investidores na plataforma de investimento em criptomoedas BITGET12, onde os fundos investidos e os lucros são distribuídos mensalmente aos investidores durante um período de 365 dias.</p>
             </div>
             
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">2. Definições</h2>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Plataforma:</strong> Sistema online que conecta investidores a especialistas em criptomoedas para gestão de investimentos.</li>
-                <li><strong>Período de Investimento:</strong> 365 dias a partir da data de ativação do investimento.</li>
+                <li><strong>Plataforma:</strong> Sistema online que conecta investidores ao mercado de criptomoedas para gestão de investimentos.</li>
+                <li><strong>Período de Investimento:</strong> 365 dias a partir da data de activação do investimento.</li>
                 <li><strong>Lucro Mensal:</strong> Retorno financeiro gerado pelos investimentos, distribuído aos investidores a cada 30 dias ou antes desde que atinja o limite estabelecida pela Bitget12.</li>
               </ul>
             </div>
@@ -65,8 +65,8 @@ const TermsOfUse = () => {
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">3.3. Gestão dos Fundos:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Os fundos investidos serão gerenciados exclusivamente por especialistas credenciados pela Bitget12.</li>
-                  <li>A estratégia de investimento será definida pelos especialistas, com foco em criptomoedas, e os investidores não terão controle direto sobre as decisões de trading.</li>
+                  <li>Os fundos investidos serão gerenciados exclusivamente pela Bitget12.</li>
+                  <li>A estratégia de investimento é definida pela Bitget12, com foco em criptomoedas, e os investidores não terão controlo direto sobre as decisões de trading.</li>
               </ul>
             </div>
 
@@ -98,7 +98,7 @@ const TermsOfUse = () => {
             
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">7. Prazo do Investimento</h2>
-                <p className="mb-2"><strong>7.1.</strong> O investimento terá duração de 365 dias, contados a partir da ativação do aporte.</p>
+                <p className="mb-2"><strong>7.1.</strong> O investimento tem duração de 365 dias, contados a partir da activação do aporte.</p>
                 <p><strong>7.3.</strong> Ao final dos 365 dias, o investidor poderá optar por resgatar o capital remanescente, reinvestir ou encerrar sua participação.</p>
             </div>
 
@@ -107,12 +107,12 @@ const TermsOfUse = () => {
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">8.1. Da Plataforma:</h3>
               <ul className="list-disc pl-6 space-y-2">
                   <li>Garantir a transparência na gestão e distribuição dos lucros.</li>
-                  <li>Selecionar especialistas qualificados e monitorar suas atividades.</li>
-                  <li>Proteger os dados dos investidores conforme a Lei de Regulamento Geral de Proteção de Dados Internacional (RGPDI)</li>
+                  <li>Proteger os dados dos investidores conforme a Lei de Regulamento Geral de Proteção de Dados Internacional (RGPDI)</li>                               
+                 
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">8.2. Do Investidor:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Fornecer informações verdadeiras e atualizadas no cadastro.</li>
+                  <li>Fornecer informações verdadeiras e actualizadas no cadastro.</li>
               </ul>
             </div>
             
