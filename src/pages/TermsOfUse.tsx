@@ -65,8 +65,8 @@ const TermsOfUse = () => {
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">3.3. Gestão dos Fundos:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Os fundos investidos serão gerenciados exclusivamente pela Bitget12.</li>
-                  <li>A estratégia de investimento é definida pela Bitget12, com foco em criptomoedas, e os investidores não terão controlo direto sobre as decisões de trading.</li>
+                  <li>Os fundos investidos serão gerenciados exclusivamente pela <strong>Bitget12<strong>.</li>
+                  <li>A estratégia de investimento é definida pela <strong>Bitget12<strong>, com foco em criptomoedas, e os investidores não terão controlo direto sobre as decisões de trading.</li>
               </ul>
             </div>
 
@@ -75,7 +75,7 @@ const TermsOfUse = () => {
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">4.1. Periodicidade:</h3>
               <ul className="list-disc pl-6 space-y-2">
                   <li>Os lucros, serão calculados e distribuídos mensalmente, a cada 30 dias ou menos, durante o período de 365 dias.</li>
-                  <li>O primeiro pagamento será realizado até 30 dias ou menos após a ativação do investimento.</li>
+                  <li>O primeiro pagamento será realizado até 30 dias ou menos após a activação do investimento.</li>
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">4.2. Cálculo dos Lucros:</h3>
               <ul className="list-disc pl-6 space-y-2">
