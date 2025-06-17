@@ -40,12 +40,12 @@ const AboutUs = () => {
           <CardContent className="space-y-6 text-gray-700 leading-relaxed">
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">Quem Somos</h2>
-              <p>Somos a Bitget12, uma plataforma inovadora de investimento em criptomoedas que conecta investidores a especialistas altamente qualificados no mercado de ativos digitais. Fundada com a missão de democratizar o acesso a oportunidades de investimento em criptomoedas, oferecemos uma solução segura, transparente e acessível para quem deseja diversificar seu portfólio financeiro com o potencial de retorno do mercado cripto.</p>
+              <p>Somos a <strong>Bitget12</strong>, uma plataforma inovadora de investimento em criptomoedas que conecta investidores a especialistas altamente qualificados no mercado de ativos digitais. Fundada com a missão de democratizar o acesso a oportunidades de investimento em criptomoedas, oferecemos uma solução segura, transparente e acessível para quem deseja diversificar seu portfólio financeiro com o potencial de retorno do mercado cripto.</p>
             </div>
             
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">Nossa Missão</h2>
-              <p>Proporcionar aos investidores, a oportunidade de participar do mercado de criptomoedas com confiança, por meio da gestão profissional de especialistas. Nosso objectivo é simplificar o processo de investimento, garantindo transparência, segurança e distribuição justa dos lucros gerados.</p>
+              <p>Proporcionar aos investidores, a oportunidade de participar do mercado de criptomoedas com confiança, por meio da gestão profissional de especialistas. Nosso objetivo é simplificar o processo de investimento, garantindo transparência, segurança e distribuição justa dos lucros gerados.</p>
             </div>
 
             <div>
@@ -55,7 +55,7 @@ const AboutUs = () => {
 
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">O Que Fazemos</h2>
-              <p>Na Bitget12, conectamos investidores a uma equipe de especialistas em criptomoedas que gerenciam os fundos aportados com estratégias avançadas e bem fundamentadas. Durante 365 dias, os lucros gerados são distribuídos mensalmente aos investidores, proporcionando uma experiência de investimento prática e orientada a resultados. Nosso modelo elimina a complexidade de negociar criptoativos diretamente, permitindo que os usuários se beneficiem do conhecimento e da expertise da Bitget12 como profissional do setor.</p>
+              <p>Na Bitget12, conectamos investidores a uma equipe de especialistas em criptomoedas que gerenciam os fundos aportados com estratégias avançadas e bem fundamentadas. Durante 365 dias, os lucros gerados são distribuídos mensalmente aos investidores, proporcionando uma experiência de investimento prática e orientada a resultados. Nosso modelo elimina a complexidade de negociar criptoativos diretamente, permitindo que os usuários se beneficiem do conhecimento e da expertise de profissionais do setor.</p>
             </div>
 
             <div>
