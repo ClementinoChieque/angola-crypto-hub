@@ -21,7 +21,7 @@ const Footer: React.FC<FooterProps> = ({ variant = 'light' }) => {
           </p>
           <div className="flex gap-4">
             <a href="/terms" className={hoverColor}>Políticas de Uso</a>
-            <a href="/about-us" className={hoverColor}>Sobre Nós</a>
+            <a href="/about" className={hoverColor}>Sobre Nós</a>
           </div>
         </div>
       </div>
@@ -30,4 +30,3 @@ const Footer: React.FC<FooterProps> = ({ variant = 'light' }) => {
 };
 
 export default Footer;
-
