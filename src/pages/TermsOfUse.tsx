@@ -56,17 +56,17 @@ const TermsOfUse = () => {
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">3. Condições de Participação</h2>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">3.1. Elegibilidade:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Investidores devem ser maiores de 18 anos ou legalmente emancipados.</li>
+                <li>Investidores devem ser maiores de 18 anos ou legalmente emancipados.</li>
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">3.2. Aporte Mínimo:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>O valor mínimo para investimento será informado no momento do cadastro e pode variar conforme a estratégia escolhida.</li>
-                  <li>Os aportes devem ser realizados em moeda fiduciária ou criptomoedas aceitas pela plataforma.</li>
+                <li>O valor mínimo para investimento será informado no momento do cadastro e pode variar conforme a estratégia escolhida.</li>
+                <li>Os aportes devem ser realizados em moeda fiduciária ou criptomoedas aceitas pela plataforma.</li>
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">3.3. Gestão dos Fundos:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Os fundos investidos serão gerenciados exclusivamente pela <strong>Bitget12<strong>.</li>
-                  <li>A estratégia de investimento é definida pela <strong>Bitget12<strong>, com foco em criptomoedas, e os investidores não terão controlo direto sobre as decisões de trading.</li>
+                <li>Os fundos investidos serão gerenciados exclusivamente pela <strong>Bitget12</strong>.</li>
+                <li>A estratégia de investimento é definida pela <strong>Bitget12</strong>, com foco em criptomoedas, e os investidores não terão controlo direto sobre as decisões de trading.</li>
               </ul>
             </div>
 
@@ -74,17 +74,17 @@ const TermsOfUse = () => {
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">4. Distribuição de Lucros</h2>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">4.1. Periodicidade:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Os lucros, serão calculados e distribuídos mensalmente, a cada 30 dias ou menos, durante o período de 365 dias.</li>
-                  <li>O primeiro pagamento será realizado até 30 dias ou menos após a activação do investimento.</li>
+                <li>Os lucros, serão calculados e distribuídos mensalmente, a cada 30 dias ou menos, durante o período de 365 dias.</li>
+                <li>O primeiro pagamento será realizado até 30 dias ou menos após a activação do investimento.</li>
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">4.2. Cálculo dos Lucros:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>O lucro será proporcional ao valor investido pelo usuário, deduzidas as taxas administrativas e de performance.</li>
+                <li>O lucro será proporcional ao valor investido pelo usuário, deduzidas as taxas administrativas e de performance.</li>
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">4.3. Forma de Pagamento:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Os lucros serão pagos na moeda ou criptomoeda definida no momento do cadastro, conforme escolha do investidor.</li>
-                  <li>Pagamentos serão realizados via transferência para a carteira ou conta bancária registrada pelo usuário.</li>
+                <li>Os lucros serão pagos na moeda ou criptomoeda definida no momento do cadastro, conforme escolha do investidor.</li>
+                <li>Pagamentos serão realizados via transferência para a carteira ou conta bancária registrada pelo usuário.</li>
               </ul>
             </div>
 
@@ -92,27 +92,26 @@ const TermsOfUse = () => {
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">5. Taxas</h2>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">5.1. Taxa Administrativa:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Cobrada uma taxa equivalente a 25% do valor investido, para custeio da operação da plataforma.</li>
+                <li>Cobrada uma taxa equivalente a 25% do valor investido, para custeio da operação da plataforma.</li>
               </ul>
             </div>
             
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">7. Prazo do Investimento</h2>
-                <p className="mb-2"><strong>7.1.</strong> O investimento tem duração de 365 dias, contados a partir da activação do aporte.</p>
-                <p><strong>7.3.</strong> Ao final dos 365 dias, o investidor poderá optar por resgatar o capital remanescente, reinvestir ou encerrar sua participação.</p>
+              <p className="mb-2"><strong>7.1.</strong> O investimento tem duração de 365 dias, contados a partir da activação do aporte.</p>
+              <p><strong>7.3.</strong> Ao final dos 365 dias, o investidor poderá optar por resgatar o capital remanescente, reinvestir ou encerrar sua participação.</p>
             </div>
 
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">8. Responsabilidades</h2>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">8.1. Da Plataforma:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Garantir a transparência na gestão e distribuição dos lucros.</li>
-                  <li>Proteger os dados dos investidores conforme a Lei de Regulamento Geral de Proteção de Dados Internacional (RGPDI)</li>                               
-                 
+                <li>Garantir a transparência na gestão e distribuição dos lucros.</li>
+                <li>Proteger os dados dos investidores conforme a Lei de Regulamento Geral de Proteção de Dados Internacional (RGPDI)</li>
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">8.2. Do Investidor:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Fornecer informações verdadeiras e actualizadas no cadastro.</li>
+                <li>Fornecer informações verdadeiras e actualizadas no cadastro.</li>
               </ul>
             </div>
             
@@ -120,8 +119,8 @@ const TermsOfUse = () => {
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">9. Rescisão</h2>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">9.1. A plataforma poderá encerrar a participação de um investidor em caso de:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                  <li>Descumprimento desta Política ou dos Termos de Uso.</li>
-                  <li>Suspeita de actividades ilegais ou fraudulentas.</li>
+                <li>Descumprimento desta Política ou dos Termos de Uso.</li>
+                <li>Suspeita de actividades ilegais ou fraudulentas.</li>
               </ul>
             </div>
 
