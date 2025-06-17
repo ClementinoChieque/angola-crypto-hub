@@ -39,7 +39,7 @@ const TermsOfUse = () => {
           </CardHeader>
           <CardContent className="space-y-6 text-gray-700 leading-relaxed">
             <div>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-800">1. Objetivo</h2>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-800">1. Objectivo</h2>
               <p>Esta Política de Uso estabelece as regras e condições para a participação de investidores na plataforma de investimento em criptomoedas BITGET12, onde os fundos investidos e os lucros são distribuídos mensalmente aos investidores durante um período de 365 dias.</p>
             </div>
             
