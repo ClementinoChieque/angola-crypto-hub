@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Eye, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface UserDeposit {
@@ -27,9 +28,14 @@ const UserDeposits = () => {
   const [deposits, setDeposits] = useState<UserDeposit[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
   const fetchDeposits = async () => {
+    console.log('Fetching deposits...');
+    setLoading(true);
+    setError(null);
+    
     try {
       const { data, error } = await supabase
         .from('user_deposits')
@@ -42,11 +48,19 @@ const UserDeposits = () => {
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Deposits query result:', { data, error });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Successfully fetched deposits:', data?.length || 0);
       setDeposits(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar depósitos:', error);
-      toast.error('Erro ao carregar depósitos');
+      setError(error.message || 'Erro desconhecido ao carregar depósitos');
+      toast.error('Erro ao carregar depósitos: ' + (error.message || 'Erro desconhecido'));
     } finally {
       setLoading(false);
     }
@@ -67,7 +81,7 @@ const UserDeposits = () => {
 
       toast.success(`Status do depósito atualizado para ${newStatus}`);
       fetchDeposits();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao atualizar status:', error);
       toast.error('Erro ao atualizar status do depósito');
     } finally {
@@ -107,7 +121,27 @@ const UserDeposits = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-sm text-muted-foreground">Carregando depósitos...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <AlertCircle className="mx-auto h-12 w-12 text-red-500 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Erro ao carregar depósitos</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <Button onClick={fetchDeposits} variant="outline">
+              Tentar novamente
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -204,6 +238,9 @@ const UserDeposits = () => {
         {deposits.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">Nenhum depósito encontrado</p>
+            <Button onClick={fetchDeposits} variant="outline" className="mt-4">
+              Recarregar
+            </Button>
           </div>
         ) : (
           <Table>
@@ -243,8 +280,17 @@ const UserDeposits = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {getStatusIcon(deposit.status)}
-                      {getStatusBadge(deposit.status)}
+                      {deposit.status === 'approved' && <CheckCircle className="h-4 w-4 text-green-600" />}
+                      {deposit.status === 'rejected' && <XCircle className="h-4 w-4 text-red-600" />}
+                      {deposit.status === 'pending' && <Clock className="h-4 w-4 text-yellow-600" />}
+                      <Badge className={
+                        deposit.status === 'approved' ? "bg-green-100 text-green-800" :
+                        deposit.status === 'rejected' ? "bg-red-100 text-red-800" :
+                        "bg-yellow-100 text-yellow-800"
+                      }>
+                        {deposit.status === 'approved' ? 'Aprovado' :
+                         deposit.status === 'rejected' ? 'Rejeitado' : 'Pendente'}
+                      </Badge>
                     </div>
                   </TableCell>
                   <TableCell>
