@@ -21,7 +21,7 @@ interface UserDeposit {
   profiles?: {
     username: string;
     full_name: string;
-  };
+  } | null;
 }
 
 const UserDeposits = () => {
@@ -36,7 +36,7 @@ const UserDeposits = () => {
         .from('user_deposits')
         .select(`
           *,
-          profiles:user_id (
+          profiles!inner(
             username,
             full_name
           )
