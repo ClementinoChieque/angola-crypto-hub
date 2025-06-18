@@ -7,8 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DollarSign, Banknote } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
 
 interface DepositFormProps {
   selectedMethod: 'bank' | 'crypto';
@@ -26,95 +24,26 @@ const DepositForm: React.FC<DepositFormProps> = ({
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('🚀 Iniciando processo de depósito...');
-    console.log('👤 Usuário atual:', user);
-    console.log('💰 Valor:', amount);
-    console.log('🏦 Método:', selectedMethod);
-    
     if (!amount || parseFloat(amount) <= 0) {
-      console.log('❌ Valor inválido');
       toast.error('Por favor, insira um valor válido');
-      return;
-    }
-
-    if (!user?.id) {
-      console.log('❌ Usuário não autenticado');
-      toast.error('Usuário não autenticado');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Determine currency based on method
-      const currency = selectedMethod === 'bank' ? 'AKZ' : 'USDT';
-      const depositDescription = description || `Depósito via ${selectedMethod === 'bank' ? 'Banco' : 'USDT'}`;
+      // Simular processamento
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('💾 Inserindo depósito na tabela user_deposits...');
-      console.log('📄 Dados do depósito:', {
-        user_id: user.id,
-        amount: parseFloat(amount),
-        currency: currency,
-        description: depositDescription,
-        status: 'pending'
-      });
-      
-      // Create deposit record
-      const { data: depositData, error: depositError } = await supabase
-        .from('user_deposits')
-        .insert([
-          {
-            user_id: user.id,
-            amount: parseFloat(amount),
-            currency: currency,
-            description: depositDescription,
-            status: 'pending'
-          }
-        ])
-        .select();
-
-      console.log('✅ Resultado da inserção user_deposits:', { depositData, depositError });
-
-      if (depositError) {
-        console.error('❌ Erro ao inserir em user_deposits:', depositError);
-        throw depositError;
-      }
-
-      console.log('💾 Inserindo transação na tabela transactions...');
-      // Also create a transaction record for backward compatibility
-      const { data: transactionData, error: transactionError } = await supabase
-        .from('transactions')
-        .insert([
-          {
-            user_id: user.id,
-            amount: parseFloat(amount),
-            currency: currency,
-            type: 'deposit',
-            description: depositDescription,
-            status: 'pending'
-          }
-        ])
-        .select();
-
-      console.log('✅ Resultado da inserção transactions:', { transactionData, transactionError });
-
-      if (transactionError) {
-        console.error('❌ Erro ao inserir em transactions:', transactionError);
-        throw transactionError;
-      }
-
-      console.log('🎉 Depósito registrado com sucesso!');
       toast.success('Depósito registrado com sucesso! Aguarde a aprovação do administrador.');
       setAmount('');
       setDescription('');
       onSuccess();
     } catch (error) {
-      console.error('💥 Erro ao registrar depósito:', error);
       toast.error('Erro ao registrar depósito. Tente novamente.');
     } finally {
       setLoading(false);
