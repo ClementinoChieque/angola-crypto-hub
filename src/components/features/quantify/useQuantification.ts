@@ -77,21 +77,24 @@ export const useQuantification = () => {
     const earningPerQuantification = dailyLimit > 0
       ? Number((Number(dailyEarning) / dailyLimit).toFixed(2))
       : 0;
-    const newResult = `Ganhos: +${earningPerQuantification.toFixed(2)} ${planCurrency}`;
+    
+    // Usar sempre a moeda do saldo do usuário para os ganhos
+    const earningCurrency = balance.currency;
+    const newResult = `Ganhos: +${earningPerQuantification.toFixed(2)} ${earningCurrency}`;
     setResults(prev => [newResult, ...prev].slice(0, 5));
     
     if (user?.id) {
       const newBalance = Number((balance.amount + earningPerQuantification).toFixed(2));
       await updateBalance(newBalance);
 
-      // Registrar o ganho na tabela quantification_earnings
+      // Registrar o ganho na tabela quantification_earnings usando a moeda do saldo
       try {
         const { error: earningError } = await supabase
           .from('quantification_earnings')
           .insert({
             user_id: user.id,
             amount: earningPerQuantification,
-            currency: planCurrency,
+            currency: earningCurrency,
             description: 'Ganho de quantificação'
           });
 
@@ -121,9 +124,9 @@ export const useQuantification = () => {
     
     toast({
       title: "Quantificação concluída",
-      description: `Você ganhou ${earningPerQuantification.toFixed(2)} ${planCurrency}.`,
+      description: `Você ganhou ${earningPerQuantification.toFixed(2)} ${earningCurrency}.`,
     });
-  }, [dailyEarning, dailyLimit, planCurrency, user, balance, updateBalance, usedToday, toast]);
+  }, [dailyEarning, dailyLimit, user, balance, updateBalance, usedToday, toast]);
 
   useEffect(() => {
     if (user?.id) {
