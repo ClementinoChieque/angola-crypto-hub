@@ -35,7 +35,7 @@ const UserDeposits = () => {
         .from('user_deposits')
         .select(`
           *,
-          profiles!user_deposits_user_id_fkey(
+          profiles(
             username,
             full_name
           )
