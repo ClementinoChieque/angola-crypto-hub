@@ -31,12 +31,19 @@ const DepositForm: React.FC<DepositFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('🚀 Iniciando processo de depósito...');
+    console.log('👤 Usuário atual:', user);
+    console.log('💰 Valor:', amount);
+    console.log('🏦 Método:', selectedMethod);
+    
     if (!amount || parseFloat(amount) <= 0) {
+      console.log('❌ Valor inválido');
       toast.error('Por favor, insira um valor válido');
       return;
     }
 
     if (!user?.id) {
+      console.log('❌ Usuário não autenticado');
       toast.error('Usuário não autenticado');
       return;
     }
@@ -46,24 +53,41 @@ const DepositForm: React.FC<DepositFormProps> = ({
     try {
       // Determine currency based on method
       const currency = selectedMethod === 'bank' ? 'AKZ' : 'USDT';
+      const depositDescription = description || `Depósito via ${selectedMethod === 'bank' ? 'Banco' : 'USDT'}`;
+      
+      console.log('💾 Inserindo depósito na tabela user_deposits...');
+      console.log('📄 Dados do depósito:', {
+        user_id: user.id,
+        amount: parseFloat(amount),
+        currency: currency,
+        description: depositDescription,
+        status: 'pending'
+      });
       
       // Create deposit record
-      const { error: depositError } = await supabase
+      const { data: depositData, error: depositError } = await supabase
         .from('user_deposits')
         .insert([
           {
             user_id: user.id,
             amount: parseFloat(amount),
             currency: currency,
-            description: description || `Depósito via ${selectedMethod === 'bank' ? 'Banco' : 'USDT'}`,
+            description: depositDescription,
             status: 'pending'
           }
-        ]);
+        ])
+        .select();
 
-      if (depositError) throw depositError;
+      console.log('✅ Resultado da inserção user_deposits:', { depositData, depositError });
 
+      if (depositError) {
+        console.error('❌ Erro ao inserir em user_deposits:', depositError);
+        throw depositError;
+      }
+
+      console.log('💾 Inserindo transação na tabela transactions...');
       // Also create a transaction record for backward compatibility
-      const { error: transactionError } = await supabase
+      const { data: transactionData, error: transactionError } = await supabase
         .from('transactions')
         .insert([
           {
@@ -71,19 +95,26 @@ const DepositForm: React.FC<DepositFormProps> = ({
             amount: parseFloat(amount),
             currency: currency,
             type: 'deposit',
-            description: description || `Depósito via ${selectedMethod === 'bank' ? 'Banco' : 'USDT'}`,
+            description: depositDescription,
             status: 'pending'
           }
-        ]);
+        ])
+        .select();
 
-      if (transactionError) throw transactionError;
+      console.log('✅ Resultado da inserção transactions:', { transactionData, transactionError });
 
+      if (transactionError) {
+        console.error('❌ Erro ao inserir em transactions:', transactionError);
+        throw transactionError;
+      }
+
+      console.log('🎉 Depósito registrado com sucesso!');
       toast.success('Depósito registrado com sucesso! Aguarde a aprovação do administrador.');
       setAmount('');
       setDescription('');
       onSuccess();
     } catch (error) {
-      console.error('Erro ao registrar depósito:', error);
+      console.error('💥 Erro ao registrar depósito:', error);
       toast.error('Erro ao registrar depósito. Tente novamente.');
     } finally {
       setLoading(false);
