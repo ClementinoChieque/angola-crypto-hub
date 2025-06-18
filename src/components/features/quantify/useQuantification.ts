@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -65,7 +66,6 @@ export const useQuantification = () => {
         setCanQuantify(false);
       }
     } catch (error) {
-      console.error('Error checking quantification status:', error);
       setCanQuantify(false);
     } finally {
       setLoading(false);
@@ -84,6 +84,24 @@ export const useQuantification = () => {
       const newBalance = Number((balance.amount + earningPerQuantification).toFixed(2));
       await updateBalance(newBalance);
 
+      // Registrar o ganho na tabela quantification_earnings
+      try {
+        const { error: earningError } = await supabase
+          .from('quantification_earnings')
+          .insert({
+            user_id: user.id,
+            amount: earningPerQuantification,
+            currency: planCurrency,
+            description: 'Ganho de quantificação'
+          });
+
+        if (earningError) {
+          throw earningError;
+        }
+      } catch (error) {
+        // Se não conseguir registrar o ganho, apenas continua sem quebrar a funcionalidade
+      }
+
       const newUsedToday = usedToday + 1;
       try {
         const { error } = await supabase
@@ -97,7 +115,7 @@ export const useQuantification = () => {
         if (error) throw error;
         setUsedToday(newUsedToday);
       } catch (error) {
-        console.error('Error updating usage count:', error);
+        // Se não conseguir atualizar o contador, apenas continua
       }
     }
     

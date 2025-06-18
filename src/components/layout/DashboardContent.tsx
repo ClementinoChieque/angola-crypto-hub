@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import Quantify from '../features/Quantify';
+import Ganhos from '../features/Ganhos';
 import InvestmentPlans from '../features/InvestmentPlans';
 import AddAccount from '../features/AddAccount';
 import InviteUsers from '../features/InviteUsers';
@@ -16,6 +17,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ activeTab }) => {
   return (
     <Card className="p-6 bg-white/90 backdrop-blur-sm">
       {activeTab === 'quantify' && <Quantify />}
+      {activeTab === 'ganhos' && <Ganhos />}
       {activeTab === 'investment' && <InvestmentPlans />}
       {activeTab === 'add-account' && <AddAccount />}
       {activeTab === 'invite' && <InviteUsers />}

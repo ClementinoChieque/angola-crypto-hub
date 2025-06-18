@@ -7,7 +7,8 @@ import {
   TrendingUp,
   Plus,
   Send,
-  List
+  List,
+  Coins
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -29,6 +30,7 @@ const DashboardTabsMobile: React.FC<DashboardTabsMobileProps> = ({ activeTab, se
 
   const menuItems: MenuItem[] = [
     { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
+    { id: 'ganhos', label: 'Ganhos', icon: <Coins size={isMobile ? 16 : 20} /> },
     { id: 'investment', label: 'Plano de Investimento', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
