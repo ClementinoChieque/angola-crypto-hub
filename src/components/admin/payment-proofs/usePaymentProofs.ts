@@ -17,13 +17,11 @@ export const usePaymentProofs = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching payment proofs:', error);
         throw error;
       }
 
       setProofs(data || []);
     } catch (error) {
-      console.error('Error loading payment proofs:', error);
       toast({
         title: "Erro ao carregar comprovativos",
         description: "Não foi possível carregar os comprovativos de pagamento",
@@ -36,8 +34,6 @@ export const usePaymentProofs = () => {
 
   const updateProofStatus = async (proofId: string, status: 'verified' | 'rejected', adminNotes?: string): Promise<boolean> => {
     try {
-      console.log('Updating proof status:', { proofId, status, adminNotes });
-      
       const { error } = await supabase
         .from('payment_proofs')
         .update({ 
@@ -48,7 +44,6 @@ export const usePaymentProofs = () => {
         .eq('id', proofId);
 
       if (error) {
-        console.error('Error updating proof status:', error);
         throw error;
       }
 
@@ -66,7 +61,6 @@ export const usePaymentProofs = () => {
 
       return true;
     } catch (error) {
-      console.error('Error updating proof status:', error);
       toast({
         title: "Erro ao atualizar status",
         description: "Não foi possível atualizar o status do comprovativo",
@@ -78,8 +72,6 @@ export const usePaymentProofs = () => {
 
   const deleteProof = async (proofId: string): Promise<boolean> => {
     try {
-      console.log('Attempting to delete payment proof:', proofId);
-      
       // Get the proof before deletion to preserve user quantification if needed
       const { data: proof } = await supabase
         .from('payment_proofs')
@@ -93,14 +85,12 @@ export const usePaymentProofs = () => {
         .eq('id', proofId);
 
       if (error) {
-        console.error('Error deleting payment proof:', error);
         throw error;
       }
 
       // Update local state
       setProofs(prev => prev.filter(p => p.id !== proofId));
       
-      console.log('Payment proof deleted successfully');
       toast({
         title: "Comprovativo eliminado",
         description: "O comprovativo foi eliminado com sucesso",
@@ -108,7 +98,6 @@ export const usePaymentProofs = () => {
 
       return true;
     } catch (error) {
-      console.error('Error deleting payment proof:', error);
       toast({
         title: "Erro ao eliminar comprovativo",
         description: "Não foi possível eliminar o comprovativo",

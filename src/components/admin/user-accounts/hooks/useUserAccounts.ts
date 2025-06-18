@@ -46,7 +46,6 @@ export const useUserAccounts = () => {
         setUsdtWallets(usdtWalletsWithPhone);
       }
     } catch (error) {
-      console.error('Error fetching user accounts:', error);
       toast({
         title: "Erro ao carregar contas",
         description: "Não foi possível carregar as contas dos usuários",

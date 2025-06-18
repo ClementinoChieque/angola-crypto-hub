@@ -34,7 +34,6 @@ export const useUserAccounts = () => {
         .order('created_at', { ascending: false });
 
       if (bankError) {
-        console.error('Error fetching bank accounts:', bankError);
         toast({
           title: "Erro ao carregar contas bancárias",
           description: "Não foi possível carregar suas contas bancárias",
@@ -45,7 +44,6 @@ export const useUserAccounts = () => {
       }
 
       if (walletError) {
-        console.error('Error fetching USDT wallets:', walletError);
         toast({
           title: "Erro ao carregar carteiras USDT",
           description: "Não foi possível carregar suas carteiras USDT",
@@ -55,7 +53,6 @@ export const useUserAccounts = () => {
         setUsdtWallets(walletData || []);
       }
     } catch (error) {
-      console.error('Error fetching user accounts:', error);
       toast({
         title: "Erro ao carregar dados",
         description: "Não foi possível carregar suas contas",
