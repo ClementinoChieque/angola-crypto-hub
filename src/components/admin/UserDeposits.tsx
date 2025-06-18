@@ -32,11 +32,26 @@ const UserDeposits = () => {
   const isMobile = useIsMobile();
 
   const fetchDeposits = async () => {
-    console.log('Fetching deposits...');
+    console.log('🔍 Iniciando busca de depósitos...');
     setLoading(true);
     setError(null);
     
     try {
+      // Primeiro, vamos verificar se há dados na tabela user_deposits
+      console.log('📊 Verificando dados na tabela user_deposits...');
+      const { data: rawDeposits, error: rawError } = await supabase
+        .from('user_deposits')
+        .select('*');
+
+      console.log('📋 Dados brutos da tabela user_deposits:', rawDeposits);
+      console.log('⚠️ Erro na consulta bruta:', rawError);
+
+      if (rawError) {
+        console.error('❌ Erro ao buscar dados brutos:', rawError);
+      }
+
+      // Agora vamos fazer a consulta com join
+      console.log('🔗 Fazendo consulta com join...');
       const { data, error } = await supabase
         .from('user_deposits')
         .select(`
@@ -48,17 +63,18 @@ const UserDeposits = () => {
         `)
         .order('created_at', { ascending: false });
 
-      console.log('Deposits query result:', { data, error });
+      console.log('🎯 Resultado da consulta com join:', { data, error });
+      console.log('📊 Número de depósitos retornados:', data?.length || 0);
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('❌ Erro na consulta Supabase:', error);
         throw error;
       }
       
-      console.log('Successfully fetched deposits:', data?.length || 0);
+      console.log('✅ Depósitos carregados com sucesso:', data?.length || 0);
       setDeposits(data || []);
     } catch (error: any) {
-      console.error('Erro ao buscar depósitos:', error);
+      console.error('💥 Erro ao buscar depósitos:', error);
       setError(error.message || 'Erro desconhecido ao carregar depósitos');
       toast.error('Erro ao carregar depósitos: ' + (error.message || 'Erro desconhecido'));
     } finally {
@@ -67,6 +83,7 @@ const UserDeposits = () => {
   };
 
   const updateDepositStatus = async (depositId: string, newStatus: string) => {
+    console.log(`🔄 Atualizando status do depósito ${depositId} para ${newStatus}`);
     setUpdating(depositId);
     try {
       const { error } = await supabase
@@ -82,7 +99,7 @@ const UserDeposits = () => {
       toast.success(`Status do depósito atualizado para ${newStatus}`);
       fetchDeposits();
     } catch (error: any) {
-      console.error('Erro ao atualizar status:', error);
+      console.error('❌ Erro ao atualizar status:', error);
       toast.error('Erro ao atualizar status do depósito');
     } finally {
       setUpdating(null);
@@ -114,6 +131,7 @@ const UserDeposits = () => {
   };
 
   useEffect(() => {
+    console.log('🚀 Componente UserDeposits montado, carregando depósitos...');
     fetchDeposits();
   }, []);
 
@@ -169,7 +187,14 @@ const UserDeposits = () => {
                   </p>
                   <p className="text-xs text-muted-foreground">ID: {deposit.user_id.slice(0, 8)}...</p>
                 </div>
-                {getStatusBadge(deposit.status)}
+                <Badge className={
+                  deposit.status === 'approved' ? "bg-green-100 text-green-800" :
+                  deposit.status === 'rejected' ? "bg-red-100 text-red-800" :
+                  "bg-yellow-100 text-yellow-800"
+                }>
+                  {deposit.status === 'approved' ? 'Aprovado' :
+                   deposit.status === 'rejected' ? 'Rejeitado' : 'Pendente'}
+                </Badge>
               </div>
               
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -218,7 +243,10 @@ const UserDeposits = () => {
         {deposits.length === 0 && (
           <Card>
             <CardContent className="text-center py-8">
-              <p className="text-muted-foreground">Nenhum depósito encontrado</p>
+              <p className="text-muted-foreground mb-4">Nenhum depósito encontrado</p>
+              <Button onClick={fetchDeposits} variant="outline">
+                🔄 Recarregar
+              </Button>
             </CardContent>
           </Card>
         )}
@@ -237,9 +265,9 @@ const UserDeposits = () => {
       <CardContent>
         {deposits.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">Nenhum depósito encontrado</p>
+            <p className="text-muted-foreground mb-4">Nenhum depósito encontrado</p>
             <Button onClick={fetchDeposits} variant="outline" className="mt-4">
-              Recarregar
+              🔄 Recarregar
             </Button>
           </div>
         ) : (
