@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,7 @@ const UserDeposits = () => {
         .from('user_deposits')
         .select(`
           *,
-          profiles!inner(
+          profiles!user_deposits_user_id_fkey(
             username,
             full_name
           )
