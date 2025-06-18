@@ -51,6 +51,7 @@ const translations = {
     transactions: 'Transações',
     invites: 'Convites',
     settings: 'Configurações',
+    ganhos: 'Ganhos',
     
     // Investimentos
     investmentPlans: 'Planos de Investimento',
@@ -192,6 +193,7 @@ const translations = {
     transactions: 'Transactions',
     invites: 'Invites',
     settings: 'Settings',
+    ganhos: 'Earnings',
     
     // Investments
     investmentPlans: 'Investment Plans',
