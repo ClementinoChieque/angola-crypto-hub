@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Upload, 
@@ -70,7 +71,9 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mt-8 md:mt-16 relative z-10">
         {/* Menu sidebar on desktop */}
         <div className="hidden md:block">
-          <DashboardMenu activeTab={activeTab} setActiveTab={setActiveTab} />
+          <Card className="p-4 bg-white">
+            <DashboardMenu activeTab={activeTab} setActiveTab={setActiveTab} />
+          </Card>
         </div>
         {/* Tabs on mobile */}
         <div className="md:hidden">

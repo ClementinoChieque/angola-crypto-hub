@@ -46,7 +46,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ activeTab, setActiveTab }
             href={item.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 px-4 py-2 text-sm transition-colors hover:bg-white/20 rounded-md"
+            className="flex items-center gap-3 px-4 py-2 text-sm transition-colors hover:bg-gray-100 rounded-md text-gray-700"
           >
             {item.icon}
             <span>{item.label}</span>
@@ -57,8 +57,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ activeTab, setActiveTab }
             variant="ghost"
             onClick={() => setActiveTab(item.id)}
             className={cn(
-              "w-full justify-start gap-3 px-4 py-2 text-sm transition-colors hover:bg-white/20",
-              activeTab === item.id && "bg-white/20"
+              "w-full justify-start gap-3 px-4 py-2 text-sm transition-colors hover:bg-gray-100 text-gray-700",
+              activeTab === item.id && "bg-gray-100"
             )}
           >
             {item.icon}
