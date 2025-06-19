@@ -60,7 +60,7 @@ const AKZInvestmentPlan: React.FC = () => {
           <li>• Investimento mínimo: 8.000,00 Kz</li>
           <li>• Retornos diários em Kwanza</li>
           <li>• Período de investimento: 365 dias</li>
-          <li>• Planos adaptados ao mercado angolano</li>
+          <li>• Saques disponíveis após período mínimo</li>
         </ul>
       </div>
     </Card>
