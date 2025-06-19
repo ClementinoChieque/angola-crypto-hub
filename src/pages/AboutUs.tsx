@@ -45,7 +45,7 @@ const AboutUs = () => {
             
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">Nossa Missão</h2>
-              <p>Proporcionar aos investidores, a oportunidade de participar do mercado de criptomoedas com confiança, por meio da gestão profissional de especialistas. Nosso objetivo é simplificar o processo de investimento, garantindo transparência, segurança e distribuição justa dos lucros gerados.</p>
+              <p>Proporcionar aos investidores, a oportunidade de participar do mercado de criptomoedas com confiança, por meio da gestão profissional da Bitget12. Nosso objectivo é simplificar o processo de investimento, garantindo transparência, segurança e distribuição justa dos lucros gerados.</p>
             </div>
 
             <div>
