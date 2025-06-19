@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useUser } from '@/context/UserContext';
@@ -119,6 +120,13 @@ const BalanceStatus: React.FC = () => {
                 <h3 className="text-lg font-medium">Depositar</h3>
               </div>
               <DepositOptions />
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <p className="text-sm text-blue-800 font-medium mb-2">Observações:</p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Verifique cuidadosamente o valor antes de confirmar o depósito</li>
+                  <li>• Horário de depósito das 9h-22horas</li>
+                </ul>
+              </div>
             </>
           )}
           {activeTab === 'withdraw' && (
