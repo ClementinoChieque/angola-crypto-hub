@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { registerSchema, RegisterFormData } from '@/schemas/authSchemas';
 import { useLanguage } from '@/context/LanguageContext';
+import { Eye, EyeOff } from 'lucide-react';
 import OptimizedCountrySelect from './OptimizedCountrySelect';
 
 interface RegisterFormProps {
@@ -16,6 +17,7 @@ interface RegisterFormProps {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
   const { t } = useLanguage();
+  const [showPassword, setShowPassword] = useState(false);
   
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -79,11 +81,27 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
             <FormItem>
               <FormLabel>{t('password')}</FormLabel>
               <FormControl>
-                <Input 
-                  type="password"
-                  placeholder={t('createStrongPassword')}
-                  {...field}
-                />
+                <div className="relative">
+                  <Input 
+                    type={showPassword ? "text" : "password"}
+                    placeholder={t('createStrongPassword')}
+                    {...field}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-500" />
+                    )}
+                  </Button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
