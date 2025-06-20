@@ -32,7 +32,10 @@ export const useAuthHandlers = () => {
         const countryData = countryCodes.find(c => c.code === values.countryCode);
         const country = countryData ? countryData.country as Country : 'Angola';
         
-        login(formattedPhone, values.countryCode, country);
+        // Get full name from user metadata
+        const fullName = session.user.user_metadata?.full_name || session.user.user_metadata?.fullName;
+        
+        login(formattedPhone, values.countryCode, country, fullName);
         
         toast({
           title: "Login bem-sucedido",
@@ -99,7 +102,7 @@ export const useAuthHandlers = () => {
         const countryData = countryCodes.find(c => c.code === values.countryCode);
         const country = countryData ? countryData.country as Country : 'Angola';
         
-        login(formattedPhone, values.countryCode, country);
+        login(formattedPhone, values.countryCode, country, values.fullName);
         
         toast({
           title: "Registro bem-sucedido",

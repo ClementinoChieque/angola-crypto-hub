@@ -49,7 +49,12 @@ const Navbar: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-full border">
                 <User size={16} className="text-gray-600" />
-                <span className="text-sm font-medium">{user.phoneNumber}</span>
+                <div className="flex flex-col">
+                  {user.fullName && (
+                    <span className="text-xs text-muted-foreground font-medium">{user.fullName}</span>
+                  )}
+                  <span className="text-sm font-medium">{user.phoneNumber}</span>
+                </div>
               </div>
               <Button
                 variant="outline"
@@ -113,6 +118,9 @@ const Navbar: React.FC = () => {
                       <User size={18} className="text-gray-600" />
                       <div>
                         <div className="text-sm text-muted-foreground">{t('user')}</div>
+                        {user.fullName && (
+                          <div className="font-semibold text-primary">{user.fullName}</div>
+                        )}
                         <div className="font-medium">{user.phoneNumber}</div>
                       </div>
                     </div>

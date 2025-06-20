@@ -1,8 +1,16 @@
 
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { signOut } from '@/services/auth';
 import { Country } from '@/types/auth';
-import { User } from '@/types/authContext';
+
+type User = {
+  phoneNumber: string;
+  countryCode: string;
+  country: Country;
+  isAuthenticated: boolean;
+  email?: string;
+  id?: string;
+  fullName?: string;
+};
 
 interface UseAuthActionsProps {
   setUser: (user: User | null) => void;
@@ -10,36 +18,29 @@ interface UseAuthActionsProps {
 }
 
 export const useAuthActions = ({ setUser, setIsAuthenticated }: UseAuthActionsProps) => {
-  const { toast } = useToast();
-
-  const login = (phoneNumber: string, countryCode: string, country: Country) => {
-    const newUser = { phoneNumber, countryCode, country, isAuthenticated: true };
-    setUser(newUser);
+  const login = (phoneNumber: string, countryCode: string, country: Country, fullName?: string) => {
+    const userData: User = {
+      phoneNumber,
+      countryCode,
+      country,
+      isAuthenticated: true,
+      fullName
+    };
+    
+    setUser(userData);
     setIsAuthenticated(true);
-    localStorage.setItem('crypto_user', JSON.stringify(newUser));
-    toast({
-      title: "Login bem-sucedido",
-      description: "Bem-vindo à plataforma!"
-    });
+    localStorage.setItem('crypto_user', JSON.stringify(userData));
   };
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      await signOut();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
       setUser(null);
       setIsAuthenticated(false);
       localStorage.removeItem('crypto_user');
-      toast({
-        title: "Logout realizado",
-        description: "Até breve!"
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);
-      toast({
-        title: "Erro ao fazer logout",
-        description: "Tente novamente mais tarde",
-        variant: "destructive"
-      });
     }
   };
 

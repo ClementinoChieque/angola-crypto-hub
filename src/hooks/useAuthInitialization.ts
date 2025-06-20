@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { getCurrentUser, getCurrentSession } from '@/services/auth';
+import { getCurrentUser, getCurrentSession, getProfile } from '@/services/auth';
 import { Country } from '@/types/auth';
 import { getCountryFromCode, extractCountryCodeFromPhone } from '@/utils/countryMapping';
 
@@ -12,6 +12,7 @@ type User = {
   isAuthenticated: boolean;
   email?: string;
   id?: string;
+  fullName?: string;
 };
 
 interface UseAuthInitializationProps {
@@ -31,13 +32,27 @@ export const useAuthInitialization = ({ setUser, setIsAuthenticated }: UseAuthIn
           const countryCode = extractCountryCodeFromPhone(phone);
           const country = getCountryFromCode(countryCode);
           
+          // Try to get full name from user metadata or profile
+          let fullName = sbUser.user_metadata?.full_name || sbUser.user_metadata?.fullName;
+          
+          // If not in metadata, try to get from profiles table
+          if (!fullName && sbUser.id) {
+            try {
+              const profile = await getProfile(sbUser.id);
+              fullName = profile?.full_name;
+            } catch (error) {
+              console.log('Profile not found, using metadata only');
+            }
+          }
+          
           const userFromSupabase = {
             id: sbUser.id,
             phoneNumber: phone,
             countryCode: countryCode,
             country,
             isAuthenticated: true,
-            email: sbUser.email
+            email: sbUser.email,
+            fullName
           };
           
           setUser(userFromSupabase);
@@ -59,13 +74,27 @@ export const useAuthInitialization = ({ setUser, setIsAuthenticated }: UseAuthIn
           const countryCode = extractCountryCodeFromPhone(phone);
           const country = getCountryFromCode(countryCode);
           
+          // Try to get full name from user metadata or profile
+          let fullName = supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.fullName;
+          
+          // If not in metadata, try to get from profiles table
+          if (!fullName && supabaseUser.id) {
+            try {
+              const profile = await getProfile(supabaseUser.id);
+              fullName = profile?.full_name;
+            } catch (error) {
+              console.log('Profile not found, using metadata only');
+            }
+          }
+          
           const userUpdate = {
             id: supabaseUser.id,
             phoneNumber: phone,
             countryCode,
             country,
             isAuthenticated: true,
-            email: supabaseUser.email
+            email: supabaseUser.email,
+            fullName
           };
           
           setUser(userUpdate);
