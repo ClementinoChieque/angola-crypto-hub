@@ -35,8 +35,8 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ activeTab, setActiveTab }
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={20} /> },
     { id: 'transactions', label: 'Transações', icon: <List size={20} /> },
-    { id: 'suporte-telegram', label: 'Suporte Telegram', icon: <Send size={20} />, link: 'https://web.telegram.org/a/' },
-    { id: 'suporte-whatsapp', label: 'Suporte WhatsApp', icon: <MessageCircle size={20} />, link: 'https://web.whatsapp.com/' },
+    { id: 'suporte-telegram', label: 'Suporte Telegram', icon: <Send size={20} />, link: 'a' },
+    { id: 'suporte-whatsapp', label: 'Suporte WhatsApp', icon: <MessageCircle size={20} />, link: 'https://wa.link/upzjio' },
   ];
 
   return (
