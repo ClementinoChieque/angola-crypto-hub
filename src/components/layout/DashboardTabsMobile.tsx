@@ -37,7 +37,7 @@ const DashboardTabsMobile: React.FC<DashboardTabsMobileProps> = ({ activeTab, se
     { id: 'invite', label: 'Convidar', icon: <UserPlus size={isMobile ? 16 : 20} /> },
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
     { id: 'transactions', label: 'Transações', icon: <List size={isMobile ? 16 : 20} /> },
-    { id: 'suporte-telegram', label: 'Suporte Telegram', icon: <Send size={isMobile ? 16 : 20} />, link: 'https://web.telegram.org/a/' },
+    { id: 'suporte-telegram', label: 'Suporte Telegram', icon: <Send size={isMobile ? 16 : 20} /> },
     { id: 'suporte-whatsapp', label: 'Suporte WhatsApp', icon: <MessageCircle size={isMobile ? 16 : 20} />, link: 'https://web.whatsapp.com/' },
   ];
 
