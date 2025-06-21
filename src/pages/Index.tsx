@@ -73,13 +73,13 @@ const Index = () => {
             {language === 'en' ? (
               <>Maximize Your <span className="text-primary">Investments</span></>
             ) : (
-              <>Maximize Seus <span className="text-primary">Investimentos</span></>
+              <>Maximize Your <span className="text-primary">Investments</span></>
             )}
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             {language === 'en' 
               ? "Cryptocurrency investment platform with high returns and guaranteed security"
-              : "Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida"
+              : "Cryptocurrency investment platform with high returns and guaranteed security"
             }
           </p>
           <Button 
