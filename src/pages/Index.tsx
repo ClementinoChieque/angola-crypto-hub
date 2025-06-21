@@ -10,7 +10,7 @@ import Footer from '@/components/layout/Footer';
 
 const Index = () => {
   const { isAuthenticated } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,10 +70,17 @@ const Index = () => {
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Maximize Seus <span className="text-primary">Investimentos</span>
+            {language === 'en' ? (
+              <>Maximize Your <span className="text-primary">Investments</span></>
+            ) : (
+              <>Maximize Seus <span className="text-primary">Investimentos</span></>
+            )}
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida
+            {language === 'en' 
+              ? "Cryptocurrency investment platform with high returns and guaranteed security"
+              : "Plataforma de investimento em criptomoedas com altos rendimentos e segurança garantida"
+            }
           </p>
           <Button 
             size="lg" 
