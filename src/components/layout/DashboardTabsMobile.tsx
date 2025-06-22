@@ -38,7 +38,7 @@ const DashboardTabsMobile: React.FC<DashboardTabsMobileProps> = ({ activeTab, se
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={isMobile ? 16 : 20} /> },
     { id: 'transactions', label: 'Transações', icon: <List size={isMobile ? 16 : 20} /> },
     { id: 'suporte-telegram', label: 'Suporte Telegram', icon: <Send size={isMobile ? 16 : 20} /> },
-    { id: 'suporte-whatsapp', label: 'Suporte WhatsApp', icon: <MessageCircle size={isMobile ? 16 : 20} />, link: 'https://web.whatsapp.com/' },
+    { id: 'suporte-whatsapp', label: 'Suporte WhatsApp', icon: <MessageCircle size={isMobile ? 16 : 20} />, link: 'https://api.whatsapp.com/send?phone=48510601767&text=Ol%C3%A1%2C%20seja%20Bem-vindo(a)%20%C3%A0%20Bitget12!' },
   ];
 
   // Separar os botões em pares para renderizar as TabsList corretamente
