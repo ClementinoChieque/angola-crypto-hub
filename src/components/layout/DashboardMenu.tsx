@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Circle, 
@@ -36,7 +35,7 @@ const DashboardMenu: React.FC<DashboardMenuProps> = ({ activeTab, setActiveTab }
     { id: 'my-invites', label: 'Meus Convidados', icon: <Users size={20} /> },
     { id: 'transactions', label: 'Transações', icon: <List size={20} /> },
     { id: 'suporte-telegram', label: 'Suporte Telegram', icon: <Send size={20} /> },
-    { id: 'suporte-whatsapp', label: 'Suporte WhatsApp', icon: <MessageCircle size={20} />, link: 'https://wa.link/upzjio' },
+    { id: 'suporte-whatsapp', label: 'Suporte WhatsApp', icon: <MessageCircle size={20} />, link: 'https://api.whatsapp.com/send?phone=48510601767&text=Ol%C3%A1%2C%20seja%20Bem-vindo(a)%20%C3%A0%20Bitget12!' },
   ];
 
   return (
