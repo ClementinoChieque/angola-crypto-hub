@@ -62,7 +62,7 @@ const DashboardTabsMobile: React.FC<DashboardTabsMobileProps> = ({ activeTab, se
                 style={{ textDecoration: 'none'}}
               >
                 {item.icon}
-                <span className="mt-1 text-center">{item.label}</span>
+                <span className="mt-1 text-center text-xs">{item.label}</span>
               </a>
             ) : (
               <TabsTrigger
@@ -71,7 +71,7 @@ const DashboardTabsMobile: React.FC<DashboardTabsMobileProps> = ({ activeTab, se
                 className="flex flex-col items-center py-2 text-xs"
               >
                 {item.icon}
-                <span className="mt-1 text-center">{item.label}</span>
+                <span className="mt-1 text-center text-xs">{item.label}</span>
               </TabsTrigger>
             )
           )}
