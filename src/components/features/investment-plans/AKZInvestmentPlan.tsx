@@ -9,8 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const AKZInvestmentPlan: React.FC = () => {
+  const isMobile = useIsMobile();
+  
   const investmentData = [
     { level: 'BitcoinL1', investment: '8 000,00 Kz', dailyEarning: '200,00 Kz', monthlyEarnings: '6 000,00 Kz', yearlyEarnings: '73 000,00 Kz' },
     { level: 'BitcoinL2', investment: '12 000,00 Kz', dailyEarning: '300,00 Kz', monthlyEarnings: '9 000,00 Kz', yearlyEarnings: '109 500,00 Kz' },
@@ -22,6 +25,35 @@ const AKZInvestmentPlan: React.FC = () => {
     { level: 'BitcoinL8', investment: '1 000 000,00 Kz', dailyEarning: '25 000,00 Kz', monthlyEarnings: '750 000,00 Kz', yearlyEarnings: '9 125 000,00 Kz' },
   ];
 
+  const MobileCard = ({ row, index }: { row: typeof investmentData[0], index: number }) => (
+    <Card key={index} className="p-4 mb-4 border-l-4 border-l-green-600">
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="font-bold text-green-600">{row.level}</span>
+          <span className="bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs font-medium">
+            {row.investment}
+          </span>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <span className="text-gray-500 block">Ganho Diário</span>
+            <span className="font-medium text-xs">{row.dailyEarning}</span>
+          </div>
+          <div>
+            <span className="text-gray-500 block">Ganho Mensal</span>
+            <span className="font-medium text-xs">{row.monthlyEarnings}</span>
+          </div>
+        </div>
+        
+        <div className="pt-2 border-t">
+          <span className="text-gray-500 text-sm block">365 Dias</span>
+          <span className="font-bold text-sm text-green-600">{row.yearlyEarnings}</span>
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <Card className="p-6">
       <div className="text-center mb-6">
@@ -29,30 +61,38 @@ const AKZInvestmentPlan: React.FC = () => {
         <p className="text-gray-600">Planos de investimento em Kwanza Angolano com retornos atrativos</p>
       </div>
 
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-green-600 hover:bg-green-600">
-              <TableHead className="text-white font-bold">Level</TableHead>
-              <TableHead className="text-white font-bold">Investimento</TableHead>
-              <TableHead className="text-white font-bold">Ganhos diários</TableHead>
-              <TableHead className="text-white font-bold">Ganhos Mensais</TableHead>
-              <TableHead className="text-white font-bold">365 Dias</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {investmentData.map((row, index) => (
-              <TableRow key={index} className="hover:bg-gray-50">
-                <TableCell className="font-medium">{row.level}</TableCell>
-                <TableCell className="text-center">{row.investment}</TableCell>
-                <TableCell className="text-center">{row.dailyEarning}</TableCell>
-                <TableCell className="text-center">{row.monthlyEarnings}</TableCell>
-                <TableCell className="text-center">{row.yearlyEarnings}</TableCell>
+      {isMobile ? (
+        <div className="space-y-4">
+          {investmentData.map((row, index) => (
+            <MobileCard key={index} row={row} index={index} />
+          ))}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-green-600 hover:bg-green-600">
+                <TableHead className="text-white font-bold">Level</TableHead>
+                <TableHead className="text-white font-bold">Investimento</TableHead>
+                <TableHead className="text-white font-bold">Ganhos diários</TableHead>
+                <TableHead className="text-white font-bold">Ganhos Mensais</TableHead>
+                <TableHead className="text-white font-bold">365 Dias</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {investmentData.map((row, index) => (
+                <TableRow key={index} className="hover:bg-gray-50">
+                  <TableCell className="font-medium">{row.level}</TableCell>
+                  <TableCell className="text-center">{row.investment}</TableCell>
+                  <TableCell className="text-center">{row.dailyEarning}</TableCell>
+                  <TableCell className="text-center">{row.monthlyEarnings}</TableCell>
+                  <TableCell className="text-center">{row.yearlyEarnings}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       <div className="mt-6 p-4 bg-green-50 rounded-lg">
         <h4 className="font-semibold text-green-900 mb-2">Informações Importantes:</h4>
