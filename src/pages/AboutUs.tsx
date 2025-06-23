@@ -49,7 +49,7 @@ const AboutUs = () => {
           <CardContent className="space-y-6 text-gray-700 leading-relaxed">
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">Quem Somos</h2>
-              <p>Somos a <strong>Bitget12</strong>, uma plataforma inovadora de investimento em criptomoedas que conecta investidores a especialistas altamente qualificados no mercado de ativos digitais. Fundada com a missão de democratizar o acesso a oportunidades de investimento em criptomoedas, oferecemos uma solução segura, transparente e acessível para quem deseja diversificar seu portfólio financeiro com o potencial de retorno do mercado cripto.</p>
+              <p>Somos a <strong>Bitget12</strong>, uma plataforma inovadora de investimento em criptomoedas Fundada em 2018 que conecta investidores ao  mercado de ativos digitais. Fundada com a missão de democratizar o acesso a oportunidades de investimento em criptomoedas, oferecemos uma solução segura, transparente e acessível para quem deseja diversificar seu portfólio financeiro com o potencial de retorno do mercado cripto.</p>
             </div>
             
             <div>
