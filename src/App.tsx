@@ -11,6 +11,7 @@ import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
 import AboutUs from '@/pages/AboutUs';
 import TermsOfUse from '@/pages/TermsOfUse';
+import Referral from '@/pages/Referral';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/terms" element={<TermsOfUse />} />
+                <Route path="/referral" element={<Referral />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Toaster />
