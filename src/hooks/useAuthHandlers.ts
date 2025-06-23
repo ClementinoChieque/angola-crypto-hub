@@ -59,11 +59,23 @@ export const useAuthHandlers = () => {
     setIsLoading(true);
 
     try {
+      // Obter código de convite do formulário ou do localStorage
+      const inviteCode = values.inviteCode || localStorage.getItem('referralCode');
+      
+      if (!inviteCode) {
+        toast({
+          title: "Código de convite obrigatório",
+          description: "É necessário um código de convite para se registrar",
+          variant: "destructive"
+        });
+        return;
+      }
+
       // Verificar se o código de convite é válido
       const { data: referralCodeData, error: referralError } = await supabase
         .from('referral_codes')
         .select('user_id, code')
-        .eq('code', values.inviteCode)
+        .eq('code', inviteCode)
         .eq('is_active', true)
         .single();
 
@@ -93,10 +105,13 @@ export const useAuthHandlers = () => {
           .insert({
             referrer_id: referralCodeData.user_id,
             referred_user_id: session.user.id,
-            referral_code: values.inviteCode,
+            referral_code: inviteCode,
             status: 'completed',
             completed_at: new Date().toISOString()
           });
+
+        // Limpar o código de convite do localStorage após uso bem-sucedido
+        localStorage.removeItem('referralCode');
 
         // Find country name based on code
         const countryData = countryCodes.find(c => c.code === values.countryCode);
