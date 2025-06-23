@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '@/components/layout/Footer';
@@ -34,8 +33,18 @@ const AboutUs = () => {
 
       <main className="flex-grow container mx-auto px-4 py-8">
         <Card className="w-full max-w-4xl mx-auto bg-white/95 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center text-primary">Sobre Nós</CardTitle>
+          <CardHeader className="p-0">
+            {/* Imagem de capa */}
+            <div className="w-full h-64 md:h-80 overflow-hidden rounded-t-lg">
+              <img 
+                src="/lovable-uploads/4d42eb4c-4fe2-451d-af1e-df22ec3ca43f.png" 
+                alt="Bitget - The Perfect 10/10 Crypto Partner" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="p-6">
+              <CardTitle className="text-3xl font-bold text-center text-primary">Sobre Nós</CardTitle>
+            </div>
           </CardHeader>
           <CardContent className="space-y-6 text-gray-700 leading-relaxed">
             <div>
@@ -79,4 +88,3 @@ const AboutUs = () => {
 };
 
 export default AboutUs;
-
