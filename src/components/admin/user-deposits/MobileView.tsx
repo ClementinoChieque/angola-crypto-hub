@@ -23,14 +23,18 @@ interface UserDeposit {
 interface MobileViewProps {
   deposits: UserDeposit[];
   updating: string | null;
+  deleting: string | null;
   onUpdateStatus: (depositId: string, status: string) => void;
+  onDelete: (depositId: string) => void;
   onRetry: () => void;
 }
 
 const MobileView: React.FC<MobileViewProps> = ({
   deposits,
   updating,
+  deleting,
   onUpdateStatus,
+  onDelete,
   onRetry
 }) => {
   return (
@@ -49,7 +53,9 @@ const MobileView: React.FC<MobileViewProps> = ({
           key={deposit.id}
           deposit={deposit}
           updating={updating}
+          deleting={deleting}
           onUpdateStatus={onUpdateStatus}
+          onDelete={onDelete}
         />
       ))}
       

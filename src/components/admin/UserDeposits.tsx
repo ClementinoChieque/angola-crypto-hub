@@ -15,9 +15,11 @@ const UserDeposits = () => {
     deposits,
     loading,
     updating,
+    deleting,
     error,
     fetchDeposits,
-    updateDepositStatus
+    updateDepositStatus,
+    deleteDeposit
   } = useUserDeposits();
   const isMobile = useIsMobile();
 
@@ -34,7 +36,9 @@ const UserDeposits = () => {
       <MobileView
         deposits={deposits}
         updating={updating}
+        deleting={deleting}
         onUpdateStatus={updateDepositStatus}
+        onDelete={deleteDeposit}
         onRetry={fetchDeposits}
       />
     );
@@ -55,7 +59,9 @@ const UserDeposits = () => {
           <DepositTable
             deposits={deposits}
             updating={updating}
+            deleting={deleting}
             onUpdateStatus={updateDepositStatus}
+            onDelete={deleteDeposit}
           />
         )}
       </CardContent>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface UserDeposit {
@@ -23,13 +23,17 @@ interface UserDeposit {
 interface DepositTableProps {
   deposits: UserDeposit[];
   updating: string | null;
+  deleting: string | null;
   onUpdateStatus: (depositId: string, status: string) => void;
+  onDelete: (depositId: string) => void;
 }
 
 const DepositTable: React.FC<DepositTableProps> = ({
   deposits,
   updating,
-  onUpdateStatus
+  deleting,
+  onUpdateStatus,
+  onDelete
 }) => {
   return (
     <Table>
@@ -91,27 +95,42 @@ const DepositTable: React.FC<DepositTableProps> = ({
               </div>
             </TableCell>
             <TableCell>
-              {deposit.status === 'pending' ? (
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    onClick={() => onUpdateStatus(deposit.id, 'approved')}
-                    disabled={updating === deposit.id}
-                  >
-                    {updating === deposit.id ? '...' : 'Aprovar'}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => onUpdateStatus(deposit.id, 'rejected')}
-                    disabled={updating === deposit.id}
-                  >
-                    {updating === deposit.id ? '...' : 'Rejeitar'}
-                  </Button>
-                </div>
-              ) : (
-                <span className="text-muted-foreground text-sm">-</span>
-              )}
+              <div className="flex gap-2 flex-wrap">
+                {deposit.status === 'pending' && (
+                  <>
+                    <Button
+                      size="sm"
+                      onClick={() => onUpdateStatus(deposit.id, 'approved')}
+                      disabled={updating === deposit.id || deleting === deposit.id}
+                    >
+                      {updating === deposit.id ? '...' : 'Aprovar'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onUpdateStatus(deposit.id, 'rejected')}
+                      disabled={updating === deposit.id || deleting === deposit.id}
+                    >
+                      {updating === deposit.id ? '...' : 'Rejeitar'}
+                    </Button>
+                  </>
+                )}
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => onDelete(deposit.id)}
+                  disabled={updating === deposit.id || deleting === deposit.id}
+                >
+                  {deleting === deposit.id ? (
+                    '...'
+                  ) : (
+                    <>
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Eliminar
+                    </>
+                  )}
+                </Button>
+              </div>
             </TableCell>
           </TableRow>
         ))}
