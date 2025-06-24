@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, XCircle, Clock, Trash2 } from 'lucide-react';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface UserDeposit {
@@ -23,17 +23,13 @@ interface UserDeposit {
 interface DepositTableProps {
   deposits: UserDeposit[];
   updating: string | null;
-  deleting: string | null;
   onUpdateStatus: (depositId: string, status: string) => void;
-  onDelete: (depositId: string) => void;
 }
 
 const DepositTable: React.FC<DepositTableProps> = ({
   deposits,
   updating,
-  deleting,
-  onUpdateStatus,
-  onDelete
+  onUpdateStatus
 }) => {
   return (
     <Table>
@@ -101,7 +97,7 @@ const DepositTable: React.FC<DepositTableProps> = ({
                     <Button
                       size="sm"
                       onClick={() => onUpdateStatus(deposit.id, 'approved')}
-                      disabled={updating === deposit.id || deleting === deposit.id}
+                      disabled={updating === deposit.id}
                     >
                       {updating === deposit.id ? '...' : 'Aprovar'}
                     </Button>
@@ -109,27 +105,12 @@ const DepositTable: React.FC<DepositTableProps> = ({
                       size="sm"
                       variant="outline"
                       onClick={() => onUpdateStatus(deposit.id, 'rejected')}
-                      disabled={updating === deposit.id || deleting === deposit.id}
+                      disabled={updating === deposit.id}
                     >
                       {updating === deposit.id ? '...' : 'Rejeitar'}
                     </Button>
                   </>
                 )}
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => onDelete(deposit.id)}
-                  disabled={updating === deposit.id || deleting === deposit.id}
-                >
-                  {deleting === deposit.id ? (
-                    '...'
-                  ) : (
-                    <>
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Eliminar
-                    </>
-                  )}
-                </Button>
               </div>
             </TableCell>
           </TableRow>

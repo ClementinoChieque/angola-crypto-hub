@@ -22,7 +22,6 @@ export const useUserDeposits = () => {
   const [deposits, setDeposits] = useState<UserDeposit[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fetchDeposits = async () => {
@@ -86,25 +85,6 @@ export const useUserDeposits = () => {
     }
   };
 
-  const deleteDeposit = async (depositId: string) => {
-    setDeleting(depositId);
-    try {
-      const { error } = await supabase
-        .from('user_deposits')
-        .delete()
-        .eq('id', depositId);
-
-      if (error) throw error;
-
-      toast.success('Depósito eliminado com sucesso');
-      fetchDeposits();
-    } catch (error: any) {
-      toast.error('Erro ao eliminar depósito');
-    } finally {
-      setDeleting(null);
-    }
-  };
-
   useEffect(() => {
     fetchDeposits();
   }, []);
@@ -113,10 +93,8 @@ export const useUserDeposits = () => {
     deposits,
     loading,
     updating,
-    deleting,
     error,
     fetchDeposits,
-    updateDepositStatus,
-    deleteDeposit
+    updateDepositStatus
   };
 };

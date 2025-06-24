@@ -3,7 +3,6 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
 
 interface UserDeposit {
   id: string;
@@ -23,17 +22,13 @@ interface UserDeposit {
 interface MobileDepositCardProps {
   deposit: UserDeposit;
   updating: string | null;
-  deleting: string | null;
   onUpdateStatus: (depositId: string, status: string) => void;
-  onDelete: (depositId: string) => void;
 }
 
 const MobileDepositCard: React.FC<MobileDepositCardProps> = ({
   deposit,
   updating,
-  deleting,
-  onUpdateStatus,
-  onDelete
+  onUpdateStatus
 }) => {
   return (
     <Card className="p-4">
@@ -73,46 +68,27 @@ const MobileDepositCard: React.FC<MobileDepositCardProps> = ({
           </div>
         )}
         
-        <div className="space-y-2">
-          {deposit.status === 'pending' && (
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                className="flex-1"
-                onClick={() => onUpdateStatus(deposit.id, 'approved')}
-                disabled={updating === deposit.id || deleting === deposit.id}
-              >
-                Aprovar
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1"
-                onClick={() => onUpdateStatus(deposit.id, 'rejected')}
-                disabled={updating === deposit.id || deleting === deposit.id}
-              >
-                Rejeitar
-              </Button>
-            </div>
-          )}
-          
-          <Button
-            size="sm"
-            variant="destructive"
-            className="w-full"
-            onClick={() => onDelete(deposit.id)}
-            disabled={updating === deposit.id || deleting === deposit.id}
-          >
-            {deleting === deposit.id ? (
-              'Eliminando...'
-            ) : (
-              <>
-                <Trash2 className="h-4 w-4 mr-1" />
-                Eliminar Depósito
-              </>
-            )}
-          </Button>
-        </div>
+        {deposit.status === 'pending' && (
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              className="flex-1"
+              onClick={() => onUpdateStatus(deposit.id, 'approved')}
+              disabled={updating === deposit.id}
+            >
+              Aprovar
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1"
+              onClick={() => onUpdateStatus(deposit.id, 'rejected')}
+              disabled={updating === deposit.id}
+            >
+              Rejeitar
+            </Button>
+          </div>
+        )}
       </div>
     </Card>
   );
