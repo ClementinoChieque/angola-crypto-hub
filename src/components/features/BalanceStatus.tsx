@@ -123,7 +123,8 @@ const BalanceStatus: React.FC = () => {
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-sm text-blue-800 font-medium mb-2">Observações:</p>
                 <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Verifique cuidadosamente o valor antes de confirmar o depósito</li>
+                  <li>• Não guardar as contas e o endereço da carteira</li>
+                  <li>• Verifique cuidadosamente o seu o plano na seção "Plano de Investimento" antes de confirmar o depósito</li>
                   <li>• Horário de depósito das 9h-22horas</li>
                 </ul>
               </div>
