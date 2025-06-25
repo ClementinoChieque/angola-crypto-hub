@@ -28,6 +28,10 @@ export const useAuthHandlers = () => {
       });
       
       if (session) {
+        // Clear any existing localStorage data before login
+        const userKey = `crypto_user_data_${session.user.id}`;
+        localStorage.removeItem(userKey);
+        
         // Find country name based on code
         const countryData = countryCodes.find(c => c.code === values.countryCode);
         const country = countryData ? countryData.country as Country : 'Angola';
@@ -99,6 +103,14 @@ export const useAuthHandlers = () => {
       });
       
       if (session) {
+        // Clear ALL localStorage data to prevent cross-contamination
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+          if (key.startsWith('crypto_user_data_')) {
+            localStorage.removeItem(key);
+          }
+        });
+        
         // Criar registro de convite aceito
         await supabase
           .from('referrals')

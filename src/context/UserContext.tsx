@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -58,24 +59,50 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [proofUploads, setProofUploads] = useState<ProofUpload[]>([]);
   const [referralCount, setReferralCount] = useState(0);
 
-  // Load user data from local storage
+  // Reset all state when user changes or logs out
   useEffect(() => {
-    if (user) {
-      const storedData = localStorage.getItem(`crypto_user_data_${user.phoneNumber}`);
+    if (!isAuthenticated || !user) {
+      setBalance({ amount: 0, currency: 'AKZ' });
+      setLevelName(null);
+      setDepositMethod(null);
+      setWithdrawalMethod(null);
+      setIsDepositVerified(false);
+      setProofUploads([]);
+      setReferralCount(0);
+    }
+  }, [isAuthenticated, user?.id]);
+
+  // Load user data from local storage only for authenticated users
+  useEffect(() => {
+    if (user?.id && isAuthenticated) {
+      // Use user ID instead of phone number for more reliable key
+      const userKey = `crypto_user_data_${user.id}`;
+      const storedData = localStorage.getItem(userKey);
+      
       if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        setBalance(parsedData.balance || { amount: 0, currency: 'AKZ' });
-        setIsDepositVerified(parsedData.isDepositVerified || false);
-        setProofUploads(parsedData.proofUploads || []);
-        setReferralCount(parsedData.referralCount || 0);
+        try {
+          const parsedData = JSON.parse(storedData);
+          // Only use localStorage data if it matches current user
+          if (parsedData.userId === user.id) {
+            setIsDepositVerified(parsedData.isDepositVerified || false);
+            setProofUploads(parsedData.proofUploads || []);
+            setReferralCount(parsedData.referralCount || 0);
+          } else {
+            // Clear outdated data
+            localStorage.removeItem(userKey);
+          }
+        } catch (error) {
+          console.error('Error parsing stored user data:', error);
+          localStorage.removeItem(userKey);
+        }
       }
     }
-  }, [user]);
+  }, [user?.id, isAuthenticated]);
 
   // Fetch authoritative balance from the database when authenticated
   useEffect(() => {
     const fetchBalanceFromDB = async () => {
-      if (user?.id) {
+      if (user?.id && isAuthenticated) {
         try {
           const { data, error } = await supabase
             .from('user_quantifications')
@@ -94,32 +121,36 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             });
             setLevelName(data.investment_plan?.level_name || null);
           } else {
+            // New user - reset to defaults
+            setBalance({ amount: 0, currency: 'AKZ' });
             setLevelName(null);
           }
         } catch(error) {
           console.error("Error fetching user balance from DB:", error);
+          setBalance({ amount: 0, currency: 'AKZ' });
           setLevelName(null);
         }
       }
     };
 
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.id) {
       fetchBalanceFromDB();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user?.id]);
 
   // Save user data to local storage when it changes
   useEffect(() => {
-    if (user) {
+    if (user?.id && isAuthenticated) {
+      const userKey = `crypto_user_data_${user.id}`;
       const userData = {
-        balance,
+        userId: user.id, // Include user ID for validation
         isDepositVerified,
         proofUploads,
         referralCount,
       };
-      localStorage.setItem(`crypto_user_data_${user.phoneNumber}`, JSON.stringify(userData));
+      localStorage.setItem(userKey, JSON.stringify(userData));
     }
-  }, [user, balance, isDepositVerified, proofUploads, referralCount]);
+  }, [user?.id, isAuthenticated, isDepositVerified, proofUploads, referralCount]);
 
   const addProofUpload = (imageUrl: string) => {
     const newProof = { imageUrl, timestamp: new Date(), verified: false };
