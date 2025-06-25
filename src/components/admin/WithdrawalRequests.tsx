@@ -6,15 +6,32 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import WithdrawalRequestCard, { WithdrawalRequest } from './withdrawals/WithdrawalRequestCard';
-// Removido: import { Trash } from "lucide-react";
 
-const fetchWithdrawalRequests = async (): Promise<WithdrawalRequest[]> => {
+interface WithdrawalRequestWithProfile extends WithdrawalRequest {
+  profiles?: {
+    username: string;
+    full_name: string;
+  } | null;
+}
+
+const fetchWithdrawalRequests = async (): Promise<WithdrawalRequestWithProfile[]> => {
   const { data, error } = await supabase
     .from('withdrawal_requests')
-    .select('*')
+    .select(`
+      *,
+      profiles:user_id (
+        username,
+        full_name
+      )
+    `)
     .order('created_at', { ascending: false });
-  if (error) throw error;
-  return data as WithdrawalRequest[];
+  
+  if (error) {
+    console.error('Erro ao buscar solicitações de saque:', error);
+    throw error;
+  }
+  
+  return data as WithdrawalRequestWithProfile[];
 };
 
 const updateWithdrawalStatus = async ({
@@ -34,8 +51,6 @@ const updateWithdrawalStatus = async ({
   if (error) throw error;
 };
 
-// Removido: deleteWithdrawalRequest()
-
 const WithdrawalRequests: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -49,8 +64,13 @@ const WithdrawalRequests: React.FC = () => {
     mutationFn: updateWithdrawalStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['withdrawal_requests'] });
+      toast({
+        title: "Status atualizado",
+        description: "Status da solicitação atualizado com sucesso"
+      });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Erro ao atualizar status:', error);
       toast({
         title: "Erro ao atualizar status",
         description: "Não foi possível atualizar o status da solicitação",
@@ -59,28 +79,24 @@ const WithdrawalRequests: React.FC = () => {
     }
   });
 
-  // Removido: deleteMutation
-
   const handleUpdateStatus = (requestId: string, status: string, notes?: string) => {
     mutation.mutate({
       id: requestId,
       status,
       notes
     });
-    toast({
-      title: "Status atualizado",
-      description: `Solicitação ${status === 'approved' ? 'aprovada' : status === 'rejected' ? 'rejeitada' : 'marcada como completa'}`
-    });
   };
 
-  // Removido: handleDelete
+  if (error) {
+    console.error('Erro ao carregar solicitações:', error);
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <DollarSign size={24} />
-          Solicitações de Saque
+          Solicitações de Saque ({requests?.length || 0})
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -92,7 +108,7 @@ const WithdrawalRequests: React.FC = () => {
           )}
           {error && (
             <div className="text-center py-8 text-red-500">
-              Erro ao carregar solicitações de saque.
+              Erro ao carregar solicitações de saque: {error.message}
             </div>
           )}
           {requests && requests.length > 0 && (

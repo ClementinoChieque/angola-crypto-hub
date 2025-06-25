@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, XCircle, Clock, Trash } from "lucide-react";
+import { CheckCircle, XCircle, Clock, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export interface WithdrawalRequest {
@@ -17,6 +18,10 @@ export interface WithdrawalRequest {
   admin_notes?: string | null;
   created_at: string;
   user_id: string;
+  profiles?: {
+    username: string;
+    full_name: string;
+  } | null;
 }
 
 interface Props {
@@ -83,8 +88,11 @@ const WithdrawalRequestCard: React.FC<Props> = ({ request, onUpdateStatus }) => 
           <div className="text-sm text-gray-500">
             {request.withdrawal_method} • {formattedDateTime}
           </div>
-          <div className="text-xs text-gray-400">
-            ID: {userIdShort}
+          <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
+            <User size={12} />
+            <span>
+              {request.profiles?.full_name || request.profiles?.username || `ID: ${userIdShort}`}
+            </span>
           </div>
           {request.wallet_address && (
             <div className="text-xs text-gray-400 mt-1">
