@@ -87,7 +87,7 @@ const DepositOptionsContainer: React.FC = () => {
     onSuccess: () => {
       toast({
         title: 'Depósito Registrado',
-        description: 'Seu depósito foi registrado com sucesso e está aguardando aprovação.',
+        description: 'Seu depósito foi registrado com sucesso, faça o upload do comprovativo e aguarde a aprovação.',
       });
     },
     selectedCurrency: selected || 'USDT'
