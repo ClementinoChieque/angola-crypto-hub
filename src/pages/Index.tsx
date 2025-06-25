@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -12,12 +12,34 @@ const Index = () => {
   const { isAuthenticated } = useAuth();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      // Don't redirect, show landing page instead
+    // Give time for auth initialization to complete
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated && !isInitializing) {
+      // Only redirect after initialization is complete
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, isInitializing]);
+
+  // Show loading screen during initialization
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isAuthenticated) {
     return (
