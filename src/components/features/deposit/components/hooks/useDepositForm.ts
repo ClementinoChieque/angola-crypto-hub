@@ -47,7 +47,7 @@ export const useDepositForm = ({ onSuccess, selectedCurrency = 'USDT' }: UseDepo
         throw error;
       }
       
-      toast.success('Depósito registrado com sucesso! Aguarde a aprovação do administrador.');
+      toast.success('Depósito registrado com sucesso! Faça o upload do comprovativo e aguarde a aprovação.');
       setAmount('');
       setDescription('');
       onSuccess();
