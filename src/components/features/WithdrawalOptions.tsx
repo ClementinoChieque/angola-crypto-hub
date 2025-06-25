@@ -119,7 +119,7 @@ const WithdrawalOptions: React.FC = () => {
     } else {
       toast({
         title: "Saque solicitado",
-        description: "Sua solicitação de saque foi enviada e aguarda aprovação do administrador.",
+        description: "Sua solicitação de saque foi enviada com sucesso, aguarde a aprovação.",
       });
       setAmount('');
     }
