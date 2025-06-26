@@ -21,12 +21,18 @@ const TransactionHistory: React.FC = () => {
       setLoading(true);
 
       try {
-        // Fetch deposit transactions
+        // Fetch deposit transactions from the old transactions table
         const { data: depositsData, error: depositError } = await supabase
           .from('transactions')
           .select('*')
           .eq('user_id', user.id)
           .eq('type', 'deposit');
+
+        // Fetch user deposits from the new user_deposits table
+        const { data: userDepositsData, error: userDepositError } = await supabase
+          .from('user_deposits')
+          .select('*')
+          .eq('user_id', user.id);
 
         // Fetch withdrawal requests
         const { data: withdrawalsData, error: withdrawalError } = await supabase
@@ -35,11 +41,20 @@ const TransactionHistory: React.FC = () => {
           .eq('user_id', user.id);
 
         if (depositError) throw depositError;
+        if (userDepositError) throw userDepositError;
         if (withdrawalError) throw withdrawalError;
 
+        // Map old deposits
         const deposits = (depositsData || []).map((d) => ({
           ...d,
           type: 'deposit' as const,
+        }));
+
+        // Map new user deposits
+        const userDeposits = (userDepositsData || []).map((d) => ({
+          ...d,
+          type: 'deposit' as const,
+          description: d.description || `Depósito de ${d.amount} ${d.currency}`,
         }));
 
         const withdrawals = (withdrawalsData || []).map((w: any) => ({
@@ -48,7 +63,7 @@ const TransactionHistory: React.FC = () => {
           description: w.description || `Saque de ${w.amount} ${w.currency}`,
         }));
 
-        const combinedTransactions: Transaction[] = [...deposits, ...withdrawals].sort(
+        const combinedTransactions: Transaction[] = [...deposits, ...userDeposits, ...withdrawals].sort(
           (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
 
