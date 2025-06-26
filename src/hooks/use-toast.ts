@@ -1,4 +1,3 @@
-
 import * as React from "react"
 
 import type {
@@ -7,7 +6,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 5
-const TOAST_REMOVE_DELAY = 3000 // 3 segundos
+const TOAST_REMOVE_DELAY = 2000 // 2 segundos
 
 type ToasterToast = ToastProps & {
   id: string
@@ -151,11 +150,8 @@ function toast(props: Toast) {
     },
   })
 
-  // Automaticamente programa o dismiss após 3 segundos
-  setTimeout(() => {
-    dismiss()
-  }, TOAST_REMOVE_DELAY)
-
+  // Remove o timeout duplicado - o dismiss automático será gerenciado pelo addToRemoveQueue
+  
   return {
     id,
     dismiss,
