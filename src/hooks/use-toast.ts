@@ -142,7 +142,6 @@ function toast(props: Toast) {
     type: "ADD_TOAST",
     toast: {
       ...props,
-      id,
       open: true,
       onOpenChange: (open: boolean) => {
         if (!open) {
