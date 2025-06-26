@@ -7,7 +7,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 5
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 5000 // Reduzido para 5 segundos
 
 type ToasterToast = ToastProps & {
   id: string
@@ -128,10 +128,6 @@ type Toast = Omit<ToasterToast, "id">
 function toast(props: Toast) {
   const id = genId()
 
-  // Start open as true
-  let open = true
-
-  // Patch: always update open/react state of toast when the close button is used
   const update = (props: ToasterToast) =>
     dispatch({
       type: "UPDATE_TOAST",
@@ -139,7 +135,6 @@ function toast(props: Toast) {
     })
   
   const dismiss = () => {
-    open = false
     dispatch({ type: "DISMISS_TOAST", toastId: id })
   }
 
@@ -147,9 +142,12 @@ function toast(props: Toast) {
     type: "ADD_TOAST",
     toast: {
       ...props,
-      open: open,
-      onOpenChange: (nextOpen: boolean) => {
-        if (!nextOpen) dismiss();
+      id,
+      open: true,
+      onOpenChange: (open: boolean) => {
+        if (!open) {
+          dismiss()
+        }
       },
     },
   })
@@ -198,4 +196,3 @@ function addToRemoveQueue(toastId: string) {
 }
 
 export { useToast, toast }
-
