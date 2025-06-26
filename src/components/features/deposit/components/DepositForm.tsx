@@ -5,7 +5,6 @@ import { DollarSign, Banknote } from 'lucide-react';
 import { useDepositForm } from './hooks/useDepositForm';
 import AccountDetails from './AccountDetails';
 import AmountInput from './AmountInput';
-import DescriptionInput from './DescriptionInput';
 import DepositInstructions from './DepositInstructions';
 import DepositFormActions from './DepositFormActions';
 
@@ -25,8 +24,6 @@ const DepositForm: React.FC<DepositFormProps> = ({
   const {
     amount,
     setAmount,
-    description,
-    setDescription,
     loading,
     handleSubmit,
   } = useDepositForm({ onSuccess });
@@ -50,11 +47,6 @@ const DepositForm: React.FC<DepositFormProps> = ({
             selectedMethod={selectedMethod}
             amount={amount}
             onAmountChange={setAmount}
-          />
-
-          <DescriptionInput
-            description={description}
-            onDescriptionChange={setDescription}
           />
 
           <DepositInstructions />
