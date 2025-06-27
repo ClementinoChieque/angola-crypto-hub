@@ -15,11 +15,11 @@ const AKZInvestmentPlan: React.FC = () => {
   const isMobile = useIsMobile();
   
   const investmentData = [
-    { level: 'BitcoinL1', investment: '8 000,00 Kz', dailyEarning: '200,00 Kz', monthlyEarnings: '6 000,00 Kz', yearlyEarnings: '73 000,00 Kz' },
-    { level: 'BitcoinL2', investment: '12 000,00 Kz', dailyEarning: '300,00 Kz', monthlyEarnings: '9 000,00 Kz', yearlyEarnings: '109 500,00 Kz' },
-    { level: 'BitcoinL3', investment: '20 000,00 Kz', dailyEarning: '500,00 Kz', monthlyEarnings: '15 000,00 Kz', yearlyEarnings: '182 500,00 Kz' },
-    { level: 'BitcoinL4', investment: '30 000,00 Kz', dailyEarning: '750,00 Kz', monthlyEarnings: '22 500,00 Kz', yearlyEarnings: '273 750,00 Kz' },
-    { level: 'BitcoinL5', investment: '50 000,00 Kz', dailyEarning: '1 250,00 Kz', monthlyEarnings: '37 500,00 Kz', yearlyEarnings: '456 250,00 Kz' },
+    { level: 'BitcoinL1', investment: '10 000,00 Kz', dailyEarning: '250,00 Kz', monthlyEarnings: '7 500,00 Kz', yearlyEarnings: '91 250,00 Kz' },
+    { level: 'BitcoinL2', investment: '30 000,00 Kz', dailyEarning: '750,00 Kz', monthlyEarnings: '22 500,00 Kz', yearlyEarnings: '273 750,00 Kz' },
+    { level: 'BitcoinL3', investment: '70 000,00 Kz', dailyEarning: '1750,00 Kz', monthlyEarnings: '52 500,00 Kz', yearlyEarnings: '638 750,00 Kz' },
+    { level: 'BitcoinL4', investment: '80 000,00 Kz', dailyEarning: '2000,00 Kz', monthlyEarnings: '60 000,00 Kz', yearlyEarnings: '730 000,00 Kz' },
+    { level: 'BitcoinL5', investment: '100 000,00 Kz', dailyEarning: '2 500,00 Kz', monthlyEarnings: '75 000,00 Kz', yearlyEarnings: '456 250,00 Kz' },
     { level: 'BitcoinL6', investment: '150 000,00 Kz', dailyEarning: '3 750,00 Kz', monthlyEarnings: '112 500,00 Kz', yearlyEarnings: '1 368 750,00 Kz' },
     { level: 'BitcoinL7', investment: '300 000,00 Kz', dailyEarning: '7 500,00 Kz', monthlyEarnings: '225 000,00 Kz', yearlyEarnings: '2 737 500,00 Kz' },
     { level: 'BitcoinL8', investment: '1 000 000,00 Kz', dailyEarning: '25 000,00 Kz', monthlyEarnings: '750 000,00 Kz', yearlyEarnings: '9 125 000,00 Kz' },
