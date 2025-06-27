@@ -31,6 +31,9 @@ interface UsersListProps {
   dailyLimit: string;
   onDailyLimitChange: (limit: string) => void;
   onUpdateInvestment: (userId: string) => void;
+  rewardAmount: string;
+  onRewardAmountChange: (amount: string) => void;
+  onGiveReward: (userId: string) => void;
 }
 
 const UsersList: React.FC<UsersListProps> = ({
@@ -48,7 +51,10 @@ const UsersList: React.FC<UsersListProps> = ({
   onBalanceChange,
   dailyLimit,
   onDailyLimitChange,
-  onUpdateInvestment
+  onUpdateInvestment,
+  rewardAmount,
+  onRewardAmountChange,
+  onGiveReward
 }) => {
   if (loading) {
     return (
@@ -131,10 +137,25 @@ const UsersList: React.FC<UsersListProps> = ({
                           placeholder="e.g., 1"
                         />
                       </div>
+                      <div>
+                        <Label htmlFor="reward-amount">Valor da Recompensa (USDT)</Label>
+                        <Input
+                          id="reward-amount"
+                          type="number"
+                          value={rewardAmount}
+                          onChange={(e) => onRewardAmountChange(e.target.value)}
+                          placeholder="e.g., 10.00"
+                        />
+                      </div>
                    </div>
-                  <Button onClick={() => onUpdateInvestment(user.id)} className="mt-4 w-full">
-                    Salvar Alterações de Investimento
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                    <Button onClick={() => onUpdateInvestment(user.id)} className="flex-1">
+                      Salvar Alterações de Investimento
+                    </Button>
+                    <Button onClick={() => onGiveReward(user.id)} variant="outline" className="flex-1">
+                      Dar Recompensa
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
