@@ -64,7 +64,7 @@ const AboutUs = () => {
 
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">O Que Fazemos</h2>
-              <p>Na Bitget12, conectamos investidores á Bitget12 responsável pelo gerenciamento dos fundos aportados com estratégias avançadas e bem fundamentadas. Durante 365 dias, os lucros gerados são distribuídos mensalmente aos investidores, proporcionando uma experiência de investimento prática e orientada a resultados. Nosso modelo elimina a complexidade de negociar criptoativos diretamente, permitindo que os usuários se beneficiem do conhecimento e da expertise da Bitget12 no setor.</p>
+              <p>Conectamos investidores á Bitget12, responsável pelo gerenciamento dos fundos aportados com estratégias avançadas e bem fundamentadas. Durante 365 dias, os lucros gerados são distribuídos mensalmente aos investidores, proporcionando uma experiência de investimento prática e orientada a resultados. Nosso modelo elimina a complexidade de negociar criptoativos diretamente, permitindo que os usuários se beneficiem do conhecimento e da expertise da Bitget12 no setor.</p>
             </div>
 
             <div>
