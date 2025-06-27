@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users } from 'lucide-react';
@@ -19,10 +20,7 @@ interface UsersListProps {
   loading: boolean;
   selectedUser: string | null;
   deletingUserId: string | null;
-  rewardAmount: string;
   onSelectUser: (userId: string | null) => void;
-  onRewardAmountChange: (amount: string) => void;
-  onAddReward: (userId: string) => void;
   onToggleQuantification: (userId: string, currentStatus: boolean) => void;
   onDeleteUser: (userId: string) => void;
   investmentPlans: InvestmentPlan[];
@@ -40,10 +38,7 @@ const UsersList: React.FC<UsersListProps> = ({
   loading,
   selectedUser,
   deletingUserId,
-  rewardAmount,
   onSelectUser,
-  onRewardAmountChange,
-  onAddReward,
   onToggleQuantification,
   onDeleteUser,
   investmentPlans,
@@ -90,10 +85,7 @@ const UsersList: React.FC<UsersListProps> = ({
                 user={user}
                 isSelected={selectedUser === user.id}
                 isDeletingUser={deletingUserId === user.id}
-                rewardAmount={rewardAmount}
                 onSelectUser={() => onSelectUser(selectedUser === user.id ? null : user.id)}
-                onRewardAmountChange={onRewardAmountChange}
-                onAddReward={onAddReward}
                 onToggleQuantification={onToggleQuantification}
                 onDeleteUser={onDeleteUser}
               />

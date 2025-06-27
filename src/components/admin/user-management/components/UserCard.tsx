@@ -2,20 +2,14 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Gift, Zap, Trash2 } from 'lucide-react';
+import { Zap, Trash2 } from 'lucide-react';
 import { UserWithReferrals } from '../types';
 
 interface UserCardProps {
   user: UserWithReferrals;
   isSelected: boolean;
   isDeletingUser: boolean;
-  rewardAmount: string;
-  // Remover rewardCurrency
   onSelectUser: (userId: string | null) => void;
-  onRewardAmountChange: (amount: string) => void;
-  onAddReward: (userId: string) => void;
   onToggleQuantification: (userId: string, currentStatus: boolean) => void;
   onDeleteUser: (userId: string) => void;
 }
@@ -24,10 +18,7 @@ const UserCard: React.FC<UserCardProps> = ({
   user,
   isSelected,
   isDeletingUser,
-  rewardAmount,
   onSelectUser,
-  onRewardAmountChange,
-  onAddReward,
   onToggleQuantification,
   onDeleteUser
 }) => {
@@ -54,14 +45,6 @@ const UserCard: React.FC<UserCardProps> = ({
       <div className="flex gap-2 mt-3">
         <Button
           size="sm"
-          variant="outline"
-          onClick={() => onSelectUser(user.id)}
-        >
-          <Gift size={16} className="mr-1" />
-          Adicionar Recompensa
-        </Button>
-        <Button
-          size="sm"
           variant={user.quantification_active ? "destructive" : "default"}
           onClick={() => onToggleQuantification(user.id, user.quantification_active)}
         >
@@ -78,39 +61,6 @@ const UserCard: React.FC<UserCardProps> = ({
           {isDeletingUser ? 'Eliminando...' : 'Eliminar Usuário'}
         </Button>
       </div>
-
-      {isSelected && (
-        <div className="mt-4 p-4 border-t">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="reward_amount_usdt">Valor da Recompensa (USDT)</Label>
-              <Input
-                id="reward_amount_usdt"
-                type="number"
-                value={rewardAmount}
-                onChange={(e) => onRewardAmountChange(e.target.value)}
-                placeholder="10.00 (USDT)"
-                min={0}
-              />
-            </div>
-          </div>
-          <div className="flex gap-2 mt-4">
-            <Button
-              size="sm"
-              onClick={() => onAddReward(user.id)}
-            >
-              Confirmar Recompensa em USDT
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => onSelectUser(null)}
-            >
-              Cancelar
-            </Button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

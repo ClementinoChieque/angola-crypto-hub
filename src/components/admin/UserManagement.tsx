@@ -9,8 +9,6 @@ import { useInvestmentPlans } from './user-management/hooks/useInvestmentPlans';
 import { UserWithReferrals } from './user-management/types';
 
 const UserManagement: React.FC = () => {
-  const [rewardAmount, setRewardAmount] = useState('10');
-  // Remover rewardCurrency
   const [selectedUser, setSelectedUser] = useState<UserWithReferrals | null>(null);
   
   const [investmentPlanId, setInvestmentPlanId] = useState<string | null>(null);
@@ -18,7 +16,7 @@ const UserManagement: React.FC = () => {
   const [dailyLimit, setDailyLimit] = useState<string>('');
 
   const { users, loading, refetchUsers } = useUsers();
-  const { referralRewards, addReferralReward, refetchReferralRewards } = useReferralRewards();
+  const { referralRewards, refetchReferralRewards } = useReferralRewards();
   const { toggleQuantification, deleteUser, deletingUserId, updateUserInvestment } = useUserActions();
   const { plans: investmentPlans, loading: plansLoading } = useInvestmentPlans();
 
@@ -40,17 +38,6 @@ const UserManagement: React.FC = () => {
     } else {
       const user = users.find(u => u.id === userId);
       setSelectedUser(user || null);
-    }
-  };
-
-  const handleAddReward = async (userId: string) => {
-    const amount = parseFloat(rewardAmount);
-    // Chamar addReferralReward com apenas USDT
-    const success = await addReferralReward(userId, amount);
-    if (success) {
-      setSelectedUser(null);
-      setRewardAmount('10');
-      await refetchUsers();
     }
   };
 
@@ -89,10 +76,7 @@ const UserManagement: React.FC = () => {
         loading={loading || plansLoading}
         selectedUser={selectedUser?.id || null}
         deletingUserId={deletingUserId}
-        rewardAmount={rewardAmount}
         onSelectUser={handleSelectUser}
-        onRewardAmountChange={setRewardAmount}
-        onAddReward={handleAddReward}
         onToggleQuantification={handleToggleQuantification}
         onDeleteUser={handleDeleteUser}
         investmentPlans={investmentPlans}
