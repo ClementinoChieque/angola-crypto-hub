@@ -131,7 +131,7 @@ const TermsOfUse = () => {
               <p><strong>10.3.</strong> Esta Política é regida pelas leis Internacional.</p>
             </div>
             
-            <p className="mt-8 text-right font-semibold text-gray-800">Data de Vigência: 30/06/2025</p>
+            <p className="mt-8 text-right font-semibold text-gray-800">Data de Vigência: 30/05/2025</p>
           </CardContent>
         </Card>
       </main>
