@@ -104,6 +104,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchBalanceFromDB = async () => {
       if (user?.id && isAuthenticated) {
         try {
+          console.log('Fetching balance for user:', user.id);
           const { data, error } = await supabase
             .from('user_quantifications')
             .select('balance, investment_plan:investment_plans(currency, level_name)')
@@ -115,12 +116,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           }
           
           if (data) {
+            console.log('Balance data found:', data);
             setBalance({
               amount: data.balance || 0,
               currency: data.investment_plan?.currency || 'AKZ',
             });
             setLevelName(data.investment_plan?.level_name || null);
           } else {
+            console.log('No balance data found, using defaults');
             // New user - reset to defaults
             setBalance({ amount: 0, currency: 'AKZ' });
             setLevelName(null);
@@ -133,8 +136,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
+    // Add a small delay to ensure user data is fully loaded
     if (isAuthenticated && user?.id) {
-      fetchBalanceFromDB();
+      const timeoutId = setTimeout(() => {
+        fetchBalanceFromDB();
+      }, 100);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [isAuthenticated, user?.id]);
 
