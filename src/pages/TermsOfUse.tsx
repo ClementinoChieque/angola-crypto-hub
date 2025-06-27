@@ -127,7 +127,7 @@ const TermsOfUse = () => {
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">10. Disposições Gerais</h2>
               <p className="mb-2"><strong>10.1.</strong> Esta Política pode ser atualizada periodicamente, com notificação prévia aos investidores.</p>
-              <p className="mb-2"><strong>10.2.</strong> Dúvidas ou reclamações devem ser encaminhadas ao suporte da plataforma via Telegram.</p>
+              <p className="mb-2"><strong>10.2.</strong> Dúvidas ou reclamações devem ser encaminhadas ao suporte da plataforma.</p>
               <p><strong>10.3.</strong> Esta Política é regida pelas leis Internacional.</p>
             </div>
             
