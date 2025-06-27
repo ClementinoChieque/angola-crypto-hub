@@ -7,8 +7,6 @@ import UsersList from './user-management/components/UsersList';
 import ReferralRewardsList from './user-management/components/ReferralRewardsList';
 import { useInvestmentPlans } from './user-management/hooks/useInvestmentPlans';
 import { UserWithReferrals } from './user-management/types';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 const UserManagement: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<UserWithReferrals | null>(null);
@@ -16,13 +14,11 @@ const UserManagement: React.FC = () => {
   const [investmentPlanId, setInvestmentPlanId] = useState<string | null>(null);
   const [balance, setBalance] = useState<string>('');
   const [dailyLimit, setDailyLimit] = useState<string>('');
-  const [rewardAmount, setRewardAmount] = useState<string>('');
 
   const { users, loading, refetchUsers } = useUsers();
   const { referralRewards, refetchReferralRewards } = useReferralRewards();
   const { toggleQuantification, deleteUser, deletingUserId, updateUserInvestment } = useUserActions();
   const { plans: investmentPlans, loading: plansLoading } = useInvestmentPlans();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (selectedUser) {
@@ -73,47 +69,6 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleGiveReward = async (userId: string) => {
-    if (!rewardAmount || parseFloat(rewardAmount) <= 0) {
-      toast({
-        title: "Erro",
-        description: "Por favor, insira um valor válido para a recompensa",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('referral_rewards')
-        .insert({
-          referrer_id: userId,
-          referred_user_id: userId,
-          reward_amount: parseFloat(rewardAmount),
-          reward_currency: 'USDT',
-          status: 'completed'
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Sucesso",
-        description: "Recompensa atribuída com sucesso",
-        variant: "default"
-      });
-
-      setRewardAmount('');
-      await refetchReferralRewards();
-    } catch (error: any) {
-      console.error('Error giving reward:', error);
-      toast({
-        title: "Erro",
-        description: error?.message || "Erro ao atribuir recompensa",
-        variant: "destructive"
-      });
-    }
-  };
-
   return (
     <div className="space-y-6">
       <UsersList
@@ -132,9 +87,6 @@ const UserManagement: React.FC = () => {
         dailyLimit={dailyLimit}
         onDailyLimitChange={setDailyLimit}
         onUpdateInvestment={handleUpdateInvestment}
-        rewardAmount={rewardAmount}
-        onRewardAmountChange={setRewardAmount}
-        onGiveReward={handleGiveReward}
       />
 
       <ReferralRewardsList referralRewards={referralRewards} />

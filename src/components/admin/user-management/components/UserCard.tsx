@@ -45,6 +45,13 @@ const UserCard: React.FC<UserCardProps> = ({
       <div className="flex gap-2 mt-3">
         <Button
           size="sm"
+          variant="outline"
+          onClick={() => onSelectUser(user.id)}
+        >
+          {isSelected ? 'Fechar' : 'Editar'}
+        </Button>
+        <Button
+          size="sm"
           variant={user.quantification_active ? "destructive" : "default"}
           onClick={() => onToggleQuantification(user.id, user.quantification_active)}
         >
