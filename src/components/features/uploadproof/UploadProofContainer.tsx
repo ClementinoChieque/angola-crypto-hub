@@ -184,7 +184,7 @@ const UploadProofContainer: React.FC<UploadProofContainerProps> = ({ onUpload })
       <div className="bg-blue-50 p-3 rounded-lg text-sm">
         <p className="text-blue-800 font-medium mb-1">Importante:</p>
         <p className="text-blue-700">
-          Após o envio e aprovação do seu comprovativo, as operaçõe de investimento serão ativadas automaticamente na sua conta.
+          Após o envio e aprovação do seu comprovativo, as operaçõe de investimento serão activadas automaticamente em 30 minutos na sua conta.
         </p>
       </div>
 
