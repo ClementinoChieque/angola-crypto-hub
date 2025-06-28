@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,10 @@ import OptimizedCountrySelect from './OptimizedCountrySelect';
 interface RegisterFormProps {
   onSubmit: (values: RegisterFormData) => Promise<void>;
   isLoading: boolean;
+  initialInviteCode?: string;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading, initialInviteCode }) => {
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   
@@ -26,9 +26,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, isLoading }) => {
       countryCode: '+244',
       password: '',
       fullName: '',
-      inviteCode: '',
+      inviteCode: initialInviteCode || '',
     },
   });
+
+  // Atualizar o campo inviteCode quando initialInviteCode muda
+  useEffect(() => {
+    if (initialInviteCode) {
+      form.setValue('inviteCode', initialInviteCode);
+    }
+  }, [initialInviteCode, form]);
 
   return (
     <Form {...form}>
