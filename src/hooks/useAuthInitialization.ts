@@ -55,6 +55,7 @@ export const useAuthInitialization = ({ setUser, setIsAuthenticated }: UseAuthIn
             fullName
           };
           
+          // Set user and authentication state immediately
           setUser(userFromSupabase);
           setIsAuthenticated(true);
         }
@@ -67,6 +68,8 @@ export const useAuthInitialization = ({ setUser, setIsAuthenticated }: UseAuthIn
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session ? 'Session exists' : 'No session');
+        
         if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
           const supabaseUser = session.user;
           
@@ -97,6 +100,7 @@ export const useAuthInitialization = ({ setUser, setIsAuthenticated }: UseAuthIn
             fullName
           };
           
+          // Set user and authentication state immediately
           setUser(userUpdate);
           setIsAuthenticated(true);
         } else if (event === 'SIGNED_OUT') {

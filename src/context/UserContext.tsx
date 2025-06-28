@@ -136,13 +136,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    // Add a small delay to ensure user data is fully loaded
+    // Remove the timeout and fetch immediately when user is authenticated
     if (isAuthenticated && user?.id) {
-      const timeoutId = setTimeout(() => {
-        fetchBalanceFromDB();
-      }, 100);
-      
-      return () => clearTimeout(timeoutId);
+      fetchBalanceFromDB();
     }
   }, [isAuthenticated, user?.id]);
 
