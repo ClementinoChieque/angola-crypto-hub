@@ -54,25 +54,7 @@ const AboutUs = () => {
             
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">Nossa Missão</h2>
-              <p>Proporcionar aos investidores, ¨
-Como Encontrar e Comprar Novas Criptomoedas Antes da Listagem? | CoinE Academy
-coinex.com
- • 
-SM-J400F
- • 
-Visitou Há 5 horas
-Onde consultar as criptomoedas a qye não foram listadas ainda? - Pesquisa Google
-google.com
- • 
-SM-J400F
- • 
-Visitou Há 5 horas
-Onde consultar as criptomoeadas a serem lisadas? - Pesquisa Google
-google.com
- • 
-SM-J400F
- • 
-Visitou Há 5 horas" a oportunidade de participar do mercado de criptomoedas com confiança, por meio da gestão profissional da Bitget12. Nosso objectivo é simplificar o processo de investimento, garantindo transparência, segurança e distribuição justa dos lucros gerados.</p>
+              <p>Proporcionar aos investidores, a oportunidade de participar do mercado de criptomoedas com confiança, por meio da gestão profissional da Bitget12. Nosso objectivo é simplificar o processo de investimento, garantindo transparência, segurança e distribuição justa dos lucros gerados.</p>
             </div>
 
             <div>
@@ -81,7 +63,7 @@ Visitou Há 5 horas" a oportunidade de participar do mercado de criptomoedas com
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-3 text-gray-800">O Que Fazemo</h2>
+              <h2 className="text-2xl font-semibold mb-3 text-gray-800">O Que Fazemos</h2>
               <p>Conectamos investidores á Bitget12, responsável pelo gerenciamento dos fundos aportados com estratégias avançadas e bem fundamentadas. Durante 365 dias, os lucros gerados são distribuídos mensalmente aos investidores, proporcionando uma experiência de investimento prática e orientada a resultados. Nosso modelo elimina a complexidade de negociar criptoativos diretamente, permitindo que os usuários se beneficiem do conhecimento e da expertise da Bitget12 no setor.</p>
             </div>
 
@@ -96,7 +78,7 @@ Visitou Há 5 horas" a oportunidade de participar do mercado de criptomoedas com
             </div>
             
             <p className="mt-8 pt-4 text-center font-semibold text-gray-800 border-t">Junte-se a Nós</p>
-            <p className="text-center font-semibold text-gray-800">Bitget12 – Transformando o futuros do investimento, um bloco de cada vez.</p>
+            <p className="text-center font-semibold text-gray-800">Bitget12 – Transformando o futuro do investimento, um bloco de cada vez.</p>
           </CardContent>
         </Card>
       </main>
