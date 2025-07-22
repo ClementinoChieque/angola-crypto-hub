@@ -55,7 +55,7 @@ const AboutUs = () => {
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">Nossa Missão</h2>
               <p>Proporcionar aos investidores, ¨
-Como Encontrar e Comprar Novas Criptomoedas Antes da Listagem? | CoinEx Academy
+Como Encontrar e Comprar Novas Criptomoedas Antes da Listagem? | CoinE Academy
 coinex.com
  • 
 SM-J400F
