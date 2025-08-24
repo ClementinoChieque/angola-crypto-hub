@@ -27,7 +27,7 @@ interface DashboardMenuProps {
 
 const DashboardMenu: React.FC<DashboardMenuProps> = ({ activeTab, setActiveTab }) => {
   const menuItems: MenuItem[] = [
-    { id: 'quantify', label: 'Quantificar', icon: <Circle size={20} /> },
+   
     { id: 'ganhos', label: 'Ganhos', icon: <Coins size={20} /> },
     { id: 'investment', label: 'Plano de Investimento', icon: <TrendingUp size={20} /> },
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={20} /> },

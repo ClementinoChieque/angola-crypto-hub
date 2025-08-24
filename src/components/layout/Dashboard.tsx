@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
       
       <div className="mb-6 md:mb-8 relative z-10">
         <h1 className="text-2xl md:text-3xl font-bold mb-2 text-white drop-shadow-lg">
-          Bem-vindo, {user?.phoneNumber}
+          Seja Bem-vindo, {user?.phoneNumber}
         </h1>
         <p className="text-white/90 drop-shadow-md">
           Gerencie seus investimentos e maximize seus lucros
