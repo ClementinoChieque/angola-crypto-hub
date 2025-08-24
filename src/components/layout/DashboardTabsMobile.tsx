@@ -30,7 +30,7 @@ const DashboardTabsMobile: React.FC<DashboardTabsMobileProps> = ({ activeTab, se
   const isMobile = useIsMobile();
 
   const menuItems: MenuItem[] = [
-    { id: 'quantify', label: 'Quantificar', icon: <Circle size={isMobile ? 16 : 20} /> },
+   
     { id: 'ganhos', label: 'Ganhos', icon: <Coins size={isMobile ? 16 : 20} /> },
     { id: 'investment', label: 'Plano de Investimento', icon: <TrendingUp size={isMobile ? 16 : 20} /> },
     { id: 'add-account', label: 'Adicionar Conta', icon: <Plus size={isMobile ? 16 : 20} /> },
