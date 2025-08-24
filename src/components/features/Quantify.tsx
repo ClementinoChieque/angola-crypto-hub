@@ -5,7 +5,7 @@ import { useQuantification } from './quantify/useQuantification';
 import QuantifyLoader from './quantify/QuantifyLoader';
 import QuantifyBlocked from './quantify/QuantifyBlocked';
 import QuantificationDial from './quantify/QuantificationDial';
-import QuantificationButton from './quantify/QuantificationButton';
+import  from './quantify/';
 import QuantificationResults from './quantify/QuantificationResults';
 import QuantificationInfo from './quantify/QuantificationInfo';
 
@@ -42,7 +42,7 @@ const Quantify: React.FC = () => {
         dailyLimit={dailyLimit}
       />
       
-      <QuantificationButton
+      <
         onClick={startQuantify}
         isActive={isActive}
         canQuantify={canQuantify}
