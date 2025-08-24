@@ -29,7 +29,7 @@ const Quantify: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4 md:space-y-8">
-      <h2 className="text-lg md:text-xl font-semibold">Quantificar</h2>
+      <h2 className="text-lg md:text-xl font-semibold"></h2>
       
       {!canQuantify && <QuantifyBlocked />}
 
