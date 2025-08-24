@@ -20,6 +20,24 @@ const QuantificationButton: React.FC<QuantificationButtonProps> = ({
   isMobile,
 }) => {
   const isDisabled = isActive || !canQuantify || usedToday >= dailyLimit;
+  
+  const getButtonText = () => {
+    if (isActive) return "Processando...";
+    if (!canQuantify) return "Bloqueado";
+    if (usedToday >= dailyLimit) return "Limite Atingido";
+    return "Iniciar Quantificação";
+  };
+
+  return (
+    <Button
+      onClick={onClick}
+      disabled={isDisabled}
+      size={isMobile ? "sm" : "default"}
+      className="bg-green-600 hover:bg-green-700 disabled:opacity-50"
+    >
+      {getButtonText()}
+    </Button>
+  );
 };
 
 export default QuantificationButton;
