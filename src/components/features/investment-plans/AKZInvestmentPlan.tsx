@@ -15,10 +15,10 @@ const AKZInvestmentPlan: React.FC = () => {
   const isMobile = useIsMobile();
   
   const investmentData = [
-    { level: 'BitcoinL1', investment: '4 000,00 Kz', daily: '800,00 Kz', monthlyEarnings: '30 000,00 Kz', yearlyEarnings: '91 250,00 Kz' },
-    { level: 'BitcoinL2', investment: '10 000,00 Kz', daily: '1200,00 Kz', monthlyEarnings: '46 000,00 Kz', yearlyEarnings: '273 750,00 Kz' },
-    { level: 'BitcoinL3', investment: '50 000,00 Kz', daily: '2500,00 Kz', monthlyEarnings: '75 000,00 Kz', yearlyEarnings: '638 750,00 Kz' },
-    { level: 'BitcoinL4', investment: '100 000,00 Kz', daily: '7000,00 Kz', monthlyEarnings: '210 000,00 Kz', yearlyEarnings: '730 000,00 Kz' },
+    { level: 'BitcoinL1', investment: '4 000,00 Kz', daily: '800,00 Kz', monthly: '30 000,00 Kz', yearly: '7DIAS= 5 600,00 kz' },
+    { level: 'BitcoinL2', investment: '10 000,00 Kz', daily: '1200,00 Kz', monthly: '46 000,00 Kz', yearly: '14DIAS= 20 000,00 Kz' },
+    { level: 'BitcoinL3', investment: '50 000,00 Kz', daily: '2500,00 Kz', monthly: '75 000,00 Kz', yearly: '50DIAS=230 000,00 Kz' },
+    { level: 'BitcoinL4', investment: '100 000,00 Kz', daily: '7000,00 Kz', monthly: '210 000,00 Kz', yearly: '120DIAS= 1 200 000,00 Kz' },
 
   ];
 
