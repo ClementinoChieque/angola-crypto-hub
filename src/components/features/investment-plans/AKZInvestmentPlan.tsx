@@ -44,7 +44,7 @@ const AKZInvestmentPlan: React.FC = () => {
         </div>
         
         <div className="pt-2 border-t">
-          <span className="text-gray-500 text-sm block">Retornos prolongados</span>
+          <span className="text-gray-500 text-sm block">Dias</span>
           <span className="font-bold text-sm text-green-600">{row.yearlyEarnings}</span>
         </div>
       </div>
@@ -73,7 +73,7 @@ const AKZInvestmentPlan: React.FC = () => {
                 <TableHead className="text-white font-bold">Investimento</TableHead>
                 <TableHead className="text-white font-bold">Ganhos diários</TableHead>
                 <TableHead className="text-white font-bold">Ganhos Mensais</TableHead>
-                <TableHead className="text-white font-bold">365 Dias</TableHead>
+                <TableHead className="text-white font-bold">Dias</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
