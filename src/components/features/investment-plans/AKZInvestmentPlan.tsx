@@ -19,10 +19,7 @@ const AKZInvestmentPlan: React.FC = () => {
     { level: 'BitcoinL2', investment: '30 000,00 Kz', dailyEarning: '750,00 Kz', monthlyEarnings: '22 500,00 Kz', yearlyEarnings: '273 750,00 Kz' },
     { level: 'BitcoinL3', investment: '70 000,00 Kz', dailyEarning: '1750,00 Kz', monthlyEarnings: '52 500,00 Kz', yearlyEarnings: '638 750,00 Kz' },
     { level: 'BitcoinL4', investment: '80 000,00 Kz', dailyEarning: '2000,00 Kz', monthlyEarnings: '60 000,00 Kz', yearlyEarnings: '730 000,00 Kz' },
-    { level: 'BitcoinL5', investment: '100 000,00 Kz', dailyEarning: '2 500,00 Kz', monthlyEarnings: '75 000,00 Kz', yearlyEarnings: '912 500,00 Kz' },
-    { level: 'BitcoinL6', investment: '150 000,00 Kz', dailyEarning: '3 750,00 Kz', monthlyEarnings: '112 500,00 Kz', yearlyEarnings: '1 368 750,00 Kz' },
-    { level: 'BitcoinL7', investment: '300 000,00 Kz', dailyEarning: '7 500,00 Kz', monthlyEarnings: '225 000,00 Kz', yearlyEarnings: '2 737 500,00 Kz' },
-    { level: 'BitcoinL8', investment: '1 000 000,00 Kz', dailyEarning: '25 000,00 Kz', monthlyEarnings: '750 000,00 Kz', yearlyEarnings: '9 125 000,00 Kz' },
+   
   ];
 
   const MobileCard = ({ row, index }: { row: typeof investmentData[0], index: number }) => (
