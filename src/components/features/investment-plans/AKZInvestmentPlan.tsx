@@ -15,10 +15,10 @@ const AKZInvestmentPlan: React.FC = () => {
   const isMobile = useIsMobile();
   
   const investmentData = [
-    { level: 'BitcoinL1', investment: '4 000,00 Kz', daily: '800,00 Kz', monthly: '30 000,00 Kz', yearly: '7DIAS= 5 600,00 kz' },
-    { level: 'BitcoinL2', investment: '10 000,00 Kz', daily: '1200,00 Kz', monthly: '46 000,00 Kz', yearly: '14DIAS= 20 000,00 Kz' },
-    { level: 'BitcoinL3', investment: '50 000,00 Kz', daily: '2500,00 Kz', monthly: '75 000,00 Kz', yearly: '50DIAS=230 000,00 Kz' },
-    { level: 'BitcoinL4', investment: '100 000,00 Kz', daily: '7000,00 Kz', monthly: '210 000,00 Kz', yearly: '120DIAS= 1 200 000,00 Kz' },
+    { level: 'BitcoinL1', investment: '4 000,00 Kz', dailyEarning: '800,00 Kz', monthlyEarnings: '30 000,00 Kz', yearlyEarnings: '7DIAS= 5.600 kz' },
+    { level: 'BitcoinL2', investment: '10 000,00 Kz', dailyEarning: '1200,00 Kz', monthlyEarnings: '46 000,00 Kz', yearlyEarnings: '14DIAS= 20.000 Kz'},
+    { level: 'BitcoinL3', investment: '50 000,00 Kz', dailyEarning: '2500,00 Kz', monthlyEarnings: '75 000,00 Kz', yearlyEarnings: '50DIAS=230.000,00 Kz'},
+    { level: 'BitcoinL4', investment: '100 000,00 Kz', dailyEarning: '7000,00 Kz', monthlyEarnings: '210 000,00 Kz', yearlyEarnings: '120DIAS= 1200.000,00 Kz'},
 
   ];
 
@@ -74,7 +74,6 @@ const AKZInvestmentPlan: React.FC = () => {
                 <TableHead className="text-white font-bold">Ganhos diários</TableHead>
                 <TableHead className="text-white font-bold">Ganhos Mensais</TableHead>
                 <TableHead className="text-white font-bold">365 Dias</TableHead>
-               
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -97,6 +96,7 @@ const AKZInvestmentPlan: React.FC = () => {
         <ul className="text-sm text-green-800 space-y-1">
           <li>• Investimento mínimo: 4.000,00 Kz</li>
           <li>• Retornos diários em Kwanza</li>
+
           <li>• Saques disponíveis após período mínimo</li>
         </ul>
       </div>
