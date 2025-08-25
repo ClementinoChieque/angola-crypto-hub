@@ -15,12 +15,12 @@ const USDTInvestmentPlan: React.FC = () => {
   const isMobile = useIsMobile();
   
   const investmentData = [
-    { level: 'BitcoinL1', investment: '10', dailyEarning: '0,20', monthlyEarnings: '6,00', yearlyEarnings: '73,00' },
-    { level: 'BitcoinL2', investment: '20', dailyEarning: '0,8', monthlyEarnings: '18', yearlyEarnings: '292' },
-    { level: 'BitcoinL3', investment: '30', dailyEarning: '1,2', monthlyEarnings: '27', yearlyEarnings: '438' },
-    { level: 'BitcoinL4', investment: '40', dailyEarning: '1,6', monthlyEarnings: '36', yearlyEarnings: '584' },
-    { level: 'BitcoinL5', investment: '50', dailyEarning: '2', monthlyEarnings: '45', yearlyEarnings: '730' },
-    { level: 'BitcoinL6', investment: '100', dailyEarning: '4', monthlyEarnings: '90', yearlyEarnings: '1460' },
+    { level: 'BitcoinL1', investment: '10', dailyEarning: '1', monthlyEarnings: '30,00', yearlyEarnings: '7DIAS= 15$' },
+    { level: 'BitcoinL2', investment: '20', dailyEarning: '2', monthlyEarnings: '60,00', yearlyEarnings: '15DIAS=30$' },
+    { level: 'BitcoinL3', investment: '30', dailyEarning: '3', monthlyEarnings: '90,00', yearlyEarnings: '50DIAS=150$' },
+    { level: 'BitcoinL4', investment: '40', dailyEarning: '4', monthlyEarnings: '120,00', yearlyEarnings: '80DIAS=400$' },
+    { level: 'BitcoinL5', investment: '50', dailyEarning: '5', monthlyEarnings: '150,00', yearlyEarnings: '90DIAS=600$' },
+    { level: 'BitcoinL6', investment: '100', dailyEarning: '6', monthlyEarnings: '200,00', yearlyEarnings: '120DIAS=900$' },
   ];
 
   const MobileCard = ({ row, index }: { row: typeof investmentData[0], index: number }) => (
@@ -45,7 +45,7 @@ const USDTInvestmentPlan: React.FC = () => {
         </div>
         
         <div className="pt-2 border-t">
-          <span className="text-gray-500 text-sm block">365 Dias</span>
+          <span className="text-gray-500 text-sm block">Dias</span>
           <span className="font-bold text-lg text-green-600">{row.yearlyEarnings}</span>
         </div>
       </div>
@@ -74,7 +74,7 @@ const USDTInvestmentPlan: React.FC = () => {
                 <TableHead className="text-white font-bold">Investment in usdt</TableHead>
                 <TableHead className="text-white font-bold">Daily Earning</TableHead>
                 <TableHead className="text-white font-bold">Monthly earnings</TableHead>
-                <TableHead className="text-white font-bold">365 days</TableHead>
+                <TableHead className="text-white font-bold">Days</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -97,7 +97,6 @@ const USDTInvestmentPlan: React.FC = () => {
         <ul className="text-sm text-blue-800 space-y-1">
           <li>• Investimento mínimo: 10 USDT</li>
           <li>• Retornos diários garantidos</li>
-          <li>• Período de investimento: 365 dias</li>
           <li>• Saques disponíveis após período mínimo</li>
         </ul>
       </div>
