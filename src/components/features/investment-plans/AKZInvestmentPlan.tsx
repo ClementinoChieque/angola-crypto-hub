@@ -74,6 +74,7 @@ const AKZInvestmentPlan: React.FC = () => {
                 <TableHead className="text-white font-bold">Ganhos diários</TableHead>
                 <TableHead className="text-white font-bold">Ganhos Mensais</TableHead>
                 <TableHead className="text-white font-bold">365 Dias</TableHead>
+                <TableHead className="text-white font-bold">365 Dias</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -94,9 +95,8 @@ const AKZInvestmentPlan: React.FC = () => {
       <div className="mt-6 p-4 bg-green-50 rounded-lg">
         <h4 className="font-semibold text-green-900 mb-2">Informações Importantes:</h4>
         <ul className="text-sm text-green-800 space-y-1">
-          <li>• Investimento mínimo: 10.000,00 Kz</li>
+          <li>• Investimento mínimo: 4.000,00 Kz</li>
           <li>• Retornos diários em Kwanza</li>
-          <li>• Período de investimento: 365 dias</li>
           <li>• Saques disponíveis após período mínimo</li>
         </ul>
       </div>
