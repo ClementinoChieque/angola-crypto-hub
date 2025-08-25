@@ -15,8 +15,8 @@ const AKZInvestmentPlan: React.FC = () => {
   const isMobile = useIsMobile();
   
   const investmentData = [
-    { level: 'BitcoinL1', investment: '4 000,00 Kz', dailyEarning: '800,00 Kz', monthlyEarnings: '30 000,00 Kz', yearlyEarnings: '7DIAS= 5.600 kz' },
-    { level: 'BitcoinL2', investment: '10 000,00 Kz', dailyEarning: '1200,00 Kz', monthlyEarnings: '46 000,00 Kz', yearlyEarnings: '14DIAS= 20.000 Kz'},
+    { level: 'BitcoinL1', investment: '4 000,00 Kz', dailyEarning: '800,00 Kz', monthlyEarnings: '30 000,00 Kz', yearlyEarnings: '7DIAS= 5.600,00 kz' },
+    { level: 'BitcoinL2', investment: '10 000,00 Kz', dailyEarning: '1200,00 Kz', monthlyEarnings: '46 000,00 Kz', yearlyEarnings: '14DIAS= 20.000,00 Kz'},
     { level: 'BitcoinL3', investment: '50 000,00 Kz', dailyEarning: '2500,00 Kz', monthlyEarnings: '75 000,00 Kz', yearlyEarnings: '50DIAS=230.000,00 Kz'},
     { level: 'BitcoinL4', investment: '100 000,00 Kz', dailyEarning: '7000,00 Kz', monthlyEarnings: '210 000,00 Kz', yearlyEarnings: '120DIAS= 1200.000,00 Kz'},
 
@@ -44,7 +44,7 @@ const AKZInvestmentPlan: React.FC = () => {
         </div>
         
         <div className="pt-2 border-t">
-          <span className="text-gray-500 text-sm block">365 Dias</span>
+          <span className="text-gray-500 text-sm block">Retornos prolongados</span>
           <span className="font-bold text-sm text-green-600">{row.yearlyEarnings}</span>
         </div>
       </div>
