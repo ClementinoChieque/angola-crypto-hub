@@ -24,7 +24,7 @@ const EarningsList: React.FC<EarningsListProps> = ({ earnings }) => {
         <CardContent className="p-6 text-center">
           <p className="text-muted-foreground">Nenhum ganho registrado ainda.</p>
           <p className="text-sm text-muted-foreground mt-2">
-            Seus ganhos de quantificação aparecerão aqui.
+            Seus ganhos de investimento aparecerão aqui.
           </p>
         </CardContent>
       </Card>
