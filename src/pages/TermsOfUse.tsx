@@ -47,7 +47,7 @@ const TermsOfUse = () => {
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">2. Definições</h2>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong>Plataforma:</strong> Sistema online que conecta investidores ao mercado de criptomoedas para gestão de investimentos.</li>
-                <li><strong>Período de Investimento:</strong> 365 dias a partir da data de activação do investimento.</li>
+                <li><strong>Período de Investimento:</strong> a partir da data de activação do investimento.</li>
                 <li><strong>Lucro Mensal:</strong> Retorno financeiro gerado pelos investimentos, distribuído aos investidores a cada 30 dias ou antes desde que atinja o limite estabelecida pela Bitget12.</li>
               </ul>
             </div>
@@ -74,7 +74,7 @@ const TermsOfUse = () => {
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">4. Distribuição de Lucros</h2>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">4.1. Periodicidade:</h3>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Os lucros, serão calculados e distribuídos mensalmente, a cada 30 dias ou menos, durante o período de 365 dias.</li>
+                <li>Os lucros, serão calculados e distribuídos mensalmente, a cada 30 dias ou menos, durante o período de aporte.</li>
                 <li>O primeiro pagamento será realizado até 30 dias ou menos após a activação do investimento.</li>
               </ul>
               <h3 className="text-xl font-semibold mt-4 mb-2 text-gray-800">4.2. Cálculo dos Lucros:</h3>
@@ -98,8 +98,8 @@ const TermsOfUse = () => {
             
             <div>
               <h2 className="text-2xl font-semibold mb-3 text-gray-800">7. Prazo do Investimento</h2>
-              <p className="mb-2"><strong>7.1.</strong> O investimento tem duração de 365 dias, contados a partir da activação do aporte.</p>
-              <p><strong>7.3.</strong> Ao final dos 365 dias, o investidor poderá optar por resgatar o capital remanescente, reinvestir ou encerrar sua participação.</p>
+              <p className="mb-2"><strong>7.1.</strong> O investimento tem duração de acordo com o plano escolhido, contados a partir da activação do aporte.</p>
+              <p><strong>7.3.</strong> Ao final do período do aporte, o investidor poderá optar por resgatar o capital remanescente, reinvestir ou encerrar sua participação.</p>
             </div>
 
             <div>
@@ -131,7 +131,7 @@ const TermsOfUse = () => {
               <p><strong>10.3.</strong> Esta Política é regida pelas leis Internacional.</p>
             </div>
             
-            <p className="mt-8 text-right font-semibold text-gray-800">Data de Vigência: 30/05/2025</p>
+            <p className="mt-8 text-right font-semibold text-gray-800">Data de Vigência: 30/03/2025</p>
           </CardContent>
         </Card>
       </main>
